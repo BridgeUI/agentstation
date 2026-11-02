@@ -30,7 +30,7 @@ export default tseslint.config(
   },
   {
     // 導入キットのスクリプト（人が手元で実行する CLI。結果を画面に出すので console を許可）
-    files: ['kit/**/*.mjs'],
+    files: ['kit/**/*.mjs', 'docs/media/*.mjs'],
     languageOptions: { globals: { console: 'readonly', process: 'readonly' } },
     rules: { 'no-console': 'off' },
   },

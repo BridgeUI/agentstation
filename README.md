@@ -1,48 +1,52 @@
 # macmini-dashboard
 
-Mac mini 1 台で 3 つの macOS 環境（本体＋Tart の VM 2 台）を常駐させ、それぞれで Claude Code の Remote Control（と Codex）を動かし続ける。その状態を Cloudflare 上のダッシュボードから確認・操作する仕組み一式。
+**English** | [日本語](README.ja.md)
 
-3 人で 1 台の Mac mini を分け合い、各自がスマホの Claude アプリから自分の環境の Claude Code を使う、という使い方を想定している。
+Keep macOS environments running on a single Mac mini — the Mac itself plus zero to two [Tart](https://tart.run) VMs — each running Claude Code's Remote Control (and optionally Codex), and watch and operate all of them from a dashboard on Cloudflare.
 
-![ダッシュボードの一覧](worker/public/guide/dashboard-overview.jpg)
+It is built for up to three people sharing one Mac mini, each using Claude Code in their own environment from the Claude app on their phone. One person using only the Mac itself works too.
 
-## できること
+<p align="center"><img src="docs/media/overview.en.svg" width="960" alt="How it works: each environment's agent reports to Cloudflare, you check status on your phone, a disconnect is detected and sent to Slack, and one tap fixes it"></p>
 
-- 3 環境の状態を一覧：Claude Code・Remote Control・Codex・VM・エージェントの生死、CPU / メモリ / ディスク
-- ボタンで復旧：Remote Control の立て直し、Claude Code の更新、VM の再起動、ホストの再起動（猶予つき）、スマートプラグでの電源の入れ直し（SwitchBot、任意）
-- 作業フォルダごとの Remote Control の作成・起動・停止、セッションの復元
-- 途絶・要ログインなどを Slack に通知（任意）
-- ブラウザだけで SSH / 画面共有（Cloudflare Access）。WARP 経由で iPhone の SSH・VNC・ファイルアプリからも
-- 利用者向けの使い方ガイド（ダッシュボード内）
+## Features
 
-## 仕組み
+- One view of every environment: Claude Code, Remote Control, Codex, VM and agent health; CPU / memory / disk
+- One-tap recovery: restart Remote Control, update Claude Code, restart a VM, restart the host (with a grace period), power-cycle via a smart plug (SwitchBot, optional)
+- Per-folder Remote Control: create, start and stop; restore previous sessions
+- Slack notifications for outages, login required, etc. (optional)
+- SSH and screen sharing in the browser (Cloudflare Access), and over WARP from iPhone SSH / VNC / Files apps
+- A built-in guide for the people using each environment
+
+![Dashboard overview](worker/public/guide/dashboard-overview.jpg)
+
+## How it works
 
 ```
-スマホ・PC ──(Cloudflare Access：Google ログイン)──> Worker ＋ D1（画面・API・1 分ごとの Cron）
-                                                          ↑ 60 秒ごとのハートビートで状態を送り、指示を受け取る
+Phone / PC ──(Cloudflare Access: Google login)──> Worker + D1 (UI, API, 1-minute Cron)
+                                                       ↑ heartbeat every 60 s: report status, receive commands
 Mac mini
- ├─ host：エージェント、claude remote-control、cloudflared（Tunnel。SSH / VNC を外向き接続で公開）
- ├─ vm1（Tart）：エージェント、claude remote-control
- └─ vm2（Tart）：エージェント、claude remote-control
+ ├─ host: agent, claude remote-control, cloudflared (Tunnel; exposes SSH / VNC over outbound connections)
+ ├─ vm1 (Tart, optional): agent, claude remote-control
+ └─ vm2 (Tart, optional): agent, claude remote-control
 ```
 
-- Mac 側からは外向きの接続だけ。ダッシュボードからの操作は D1 に積まれ、エージェントが次のハートビートで拾う
-- エージェントは LLM ではなく、決め打ちの操作（ホワイトリスト）だけを実行する。任意のコマンドを送る経路は無い
-- パスワード・トークン・会話内容・ファイル名はダッシュボードに送らない
-- 権限は Worker が Access の JWT で判定する（オーナー／本人／閲覧者）
+- The Mac only makes outbound connections. Commands from the dashboard are queued in D1 and picked up by the agent on its next heartbeat. No router ports are opened.
+- The agent is not an LLM. It runs only a fixed allowlist of operations; there is no path to send arbitrary commands.
+- Passwords, tokens, conversation content and file names are never sent to the dashboard.
+- Authorization is decided by the Worker from the Cloudflare Access JWT (owner / member / viewer), not by hiding buttons.
 
-詳しくは [`docs/spec.md`](docs/spec.md)。
+Design details (Japanese): [`docs/spec.md`](docs/spec.md).
 
-## 必要なもの
+## Requirements
 
-- Apple Silicon の Mac mini（メモリ 24GB 以上推奨）。**Claude 専用にできるもの**（FileVault オフ・自動ログイン・スリープ無効にする）
-- Cloudflare アカウントと、DNS を Cloudflare に置いた独自ドメイン（Workers・D1・Zero Trust とも無料プランで可）
-- 使う人の Google アカウント（Gmail で可）と Claude のアカウント（1 人で 3 環境を使ってもよい）
-- 任意：Slack の Incoming Webhook、SwitchBot プラグミニ
+- An Apple Silicon Mac you can **dedicate to Claude** (FileVault off, automatic login, no sleep). 24 GB of memory or more is recommended for two VMs.
+- A Cloudflare account and a domain whose DNS is on Cloudflare (Workers, D1 and Zero Trust free plans are enough)
+- A Google account (Gmail is fine) and a Claude account for each person
+- Optional: a Slack Incoming Webhook, a SwitchBot Plug Mini
 
-## 導入
+## Installation
 
-Claude Code に手伝ってもらう前提で手順を書いてある。人がやるのは、ブラウザでのログインと画面操作、sudo のパスワード入力、秘密情報の入力、実機での確認。目安は半日〜1 日。
+The setup is written to be done together with Claude Code. You handle browser logins and settings screens, sudo passwords, entering secrets, and checks on the real machine. Expect half a day to a day.
 
 ```bash
 mkdir -p ~/workspace && cd ~/workspace
@@ -51,30 +55,33 @@ cd macmini-dashboard
 claude
 ```
 
-Claude Code に次のように頼む（`/macmini-install` でも同じ）：
+Then ask Claude Code (or run `/macmini-install`):
 
 ```
-kit/START.md を読んで、このリポジトリを私の環境に導入するのを手伝ってください。
+Read kit/START.md and help me install this repository in my environment.
 ```
 
-導入キットの中身と、上流の更新の取り込み方は [`kit/README.md`](kit/README.md)。手順の本体は [`docs/initial-setup.md`](docs/initial-setup.md)。
+The installation guide, the dashboard UI and most documentation are in **Japanese**. Claude Code can follow them and explain each step in English if you ask it to.
 
-## 制約
+What the kit contains and how to take in upstream updates: [`kit/README.md`](kit/README.md). The step-by-step procedure: [`docs/initial-setup.md`](docs/initial-setup.md).
 
-- 環境は host・vm1・vm2 の 3 つで固定。VM は Tart、IP は `192.168.64.10` / `.11`
-- 画面とドキュメントは日本語
-- 実機で確かめたのは macOS 27、Claude Code 2.1 系、Tart 2.41。Claude Code の Remote Control のログの形などに依存しているので、バージョンが変わると状態の判定がずれることがある（`agent/src/collect/`）
+## Limitations
 
-## 開発
+- Environment names are fixed to host, vm1 and vm2. VMs: zero to two (Apple's macOS license allows up to two additional macOS instances in VMs per Mac). VMs run on Tart with IPs `192.168.64.10` / `.11`.
+- The UI and installation guide are in Japanese.
+- Verified with macOS 27, Claude Code 2.1.x and Tart 2.41. Status detection depends on things such as the format of Claude Code's Remote Control logs, so other versions may be misjudged (`agent/src/collect/`).
+
+## Development
 
 ```bash
 npm ci
 npm run typecheck && npm test --workspaces --if-present && npm run lint
-npm run dev    # wrangler dev。ローカルの見本データは docs/dev.md
+npm run dev    # wrangler dev; local sample data: docs/dev.md
+node docs/media/overview.mjs   # regenerate the animation above
 ```
 
-開発のルールは [`CLAUDE.md`](CLAUDE.md)。`main` には見本の値だけを入れ、実在のメールアドレス・ドメイン・Cloudflare の ID はコミットしない。
+Development rules are in [`CLAUDE.md`](CLAUDE.md). Keep only sample values on `main`; never commit real email addresses, domains or Cloudflare IDs.
 
-## ライセンス
+## License
 
 [MIT](LICENSE)

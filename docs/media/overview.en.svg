@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" font-family='-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif' role="img" aria-label="Each environment runs an agent that reports to Cloudflare every 60 s (outbound only) / Open the dashboard on your phone to see every environment (Cloudflare Access login) / When Remote Control drops, the dashboard turns red and Slack is notified / Tap to fix: the command waits in D1 and the agent picks it up on its next report">
+<style>
+@keyframes a0{0.000%{opacity:1}23.611%{opacity:1}25.000%{opacity:0}100.000%{opacity:0}}
+@keyframes a1{0.000%{opacity:0}23.611%{opacity:0}25.000%{opacity:1}43.056%{opacity:1}44.444%{opacity:0}100.000%{opacity:0}}
+@keyframes a2{0.000%{opacity:0}43.056%{opacity:0}44.444%{opacity:1}62.500%{opacity:1}63.889%{opacity:0}100.000%{opacity:0}}
+@keyframes a3{0.000%{opacity:0}62.500%{opacity:0}63.889%{opacity:1}100.000%{opacity:1}}
+@keyframes a4{0.000%{opacity:1}24.944%{opacity:1}25.000%{opacity:0.15}100.000%{opacity:0.15}}
+@keyframes a5{0.000%{opacity:0.15}24.944%{opacity:0.15}25.000%{opacity:1}44.389%{opacity:1}44.444%{opacity:0.15}100.000%{opacity:0.15}}
+@keyframes a6{0.000%{opacity:0.15}44.389%{opacity:0.15}44.444%{opacity:1}63.833%{opacity:1}63.889%{opacity:0.15}100.000%{opacity:0.15}}
+@keyframes a7{0.000%{opacity:0.15}63.833%{opacity:0.15}63.889%{opacity:1}100.000%{opacity:1}}
+@keyframes a8{0.000%{opacity:1}48.056%{opacity:1}49.444%{opacity:0}100.000%{opacity:0}}
+@keyframes a9{0.000%{opacity:0}48.056%{opacity:0}49.444%{opacity:1}88.056%{opacity:1}89.444%{opacity:0}100.000%{opacity:0}}
+@keyframes a10{0.000%{opacity:0}88.056%{opacity:0}89.444%{opacity:1}100.000%{opacity:1}}
+@keyframes a11{0.000%{fill:#30a46c}49.389%{fill:#30a46c}49.444%{fill:#e5484d}89.389%{fill:#e5484d}89.444%{fill:#30a46c}100.000%{fill:#30a46c}}
+@keyframes a12{0.000%{opacity:0}49.389%{opacity:0}49.444%{opacity:0.08}89.389%{opacity:0.08}89.444%{opacity:0}100.000%{opacity:0}}
+@keyframes a13{0.000%{opacity:0}64.167%{opacity:0}65.556%{opacity:1}73.333%{opacity:1}74.722%{opacity:0}100.000%{opacity:0}}
+@keyframes a14{0.000%{opacity:0;transform:scale(1)}68.333%{opacity:0}68.611%{opacity:0.6}71.667%{opacity:0}100.000%{opacity:0}}
+@keyframes a15{0.000%{opacity:0}70.833%{opacity:0}72.222%{opacity:1}78.889%{opacity:1}80.278%{opacity:0}100.000%{opacity:0}}
+@keyframes a16{0.000%{opacity:0}50.833%{opacity:0}52.222%{opacity:1}63.333%{opacity:1}64.722%{opacity:0}100.000%{opacity:0}}
+@keyframes a17{0.000%{fill:#30a46c}46.056%{fill:#30a46c}46.111%{fill:#e5484d}81.056%{fill:#e5484d}81.111%{fill:#f5a524}85.500%{fill:#f5a524}85.556%{fill:#30a46c}100.000%{fill:#30a46c}}
+@keyframes a18{0.000%{opacity:1}45.000%{opacity:1}45.556%{opacity:0}100.000%{opacity:0}}
+@keyframes a19{0.000%{opacity:0}45.556%{opacity:0}46.111%{opacity:1}80.556%{opacity:1}81.111%{opacity:0}100.000%{opacity:0}}
+@keyframes a20{0.000%{opacity:0}80.556%{opacity:0}81.111%{opacity:1}85.000%{opacity:1}85.556%{opacity:0}100.000%{opacity:0}}
+@keyframes a21{0.000%{opacity:0}85.000%{opacity:0}85.556%{opacity:1}100.000%{opacity:1}}
+@keyframes a22{0.000%{opacity:0;transform:translate(676px,229px)}3.278%{opacity:0;transform:translate(676px,229px)}3.333%{opacity:1;transform:translate(676px,229px)}8.333%{opacity:1;transform:translate(572px,233px)}8.389%{opacity:0;transform:translate(572px,233px)}14.389%{opacity:0;transform:translate(676px,229px)}14.444%{opacity:1;transform:translate(676px,229px)}19.444%{opacity:1;transform:translate(572px,233px)}19.500%{opacity:0;transform:translate(572px,233px)}33.278%{opacity:0;transform:translate(676px,229px)}33.333%{opacity:1;transform:translate(676px,229px)}38.333%{opacity:1;transform:translate(572px,233px)}38.389%{opacity:0;transform:translate(572px,233px)}56.611%{opacity:0;transform:translate(676px,229px)}56.667%{opacity:1;transform:translate(676px,229px)}61.667%{opacity:1;transform:translate(572px,233px)}61.722%{opacity:0;transform:translate(572px,233px)}100.000%{opacity:0;transform:translate(676px,229px)}}
+@keyframes a23{0.000%{opacity:0;transform:translate(676px,311px)}4.944%{opacity:0;transform:translate(676px,311px)}5.000%{opacity:1;transform:translate(676px,311px)}10.000%{opacity:1;transform:translate(572px,233px)}10.056%{opacity:0;transform:translate(572px,233px)}16.056%{opacity:0;transform:translate(676px,311px)}16.111%{opacity:1;transform:translate(676px,311px)}21.111%{opacity:1;transform:translate(572px,233px)}21.167%{opacity:0;transform:translate(572px,233px)}34.944%{opacity:0;transform:translate(676px,311px)}35.000%{opacity:1;transform:translate(676px,311px)}40.000%{opacity:1;transform:translate(572px,233px)}40.056%{opacity:0;transform:translate(572px,233px)}100.000%{opacity:0;transform:translate(676px,311px)}}
+@keyframes a24{0.000%{opacity:0;transform:translate(676px,311px)}46.056%{opacity:0;transform:translate(676px,311px)}46.111%{opacity:1;transform:translate(676px,311px)}49.444%{opacity:1;transform:translate(572px,233px)}49.500%{opacity:0;transform:translate(572px,233px)}100.000%{opacity:0;transform:translate(676px,311px)}}
+@keyframes a25{0.000%{opacity:0;transform:translate(676px,311px)}74.389%{opacity:0;transform:translate(676px,311px)}74.444%{opacity:1;transform:translate(676px,311px)}77.778%{opacity:1;transform:translate(572px,233px)}77.833%{opacity:0;transform:translate(572px,233px)}100.000%{opacity:0;transform:translate(676px,311px)}}
+@keyframes a26{0.000%{opacity:0;transform:translate(676px,311px)}86.056%{opacity:0;transform:translate(676px,311px)}86.111%{opacity:1;transform:translate(676px,311px)}89.444%{opacity:1;transform:translate(572px,233px)}89.500%{opacity:0;transform:translate(572px,233px)}100.000%{opacity:0;transform:translate(676px,311px)}}
+@keyframes a27{0.000%{opacity:0;transform:translate(676px,393px)}6.611%{opacity:0;transform:translate(676px,393px)}6.667%{opacity:1;transform:translate(676px,393px)}11.667%{opacity:1;transform:translate(572px,233px)}11.722%{opacity:0;transform:translate(572px,233px)}17.722%{opacity:0;transform:translate(676px,393px)}17.778%{opacity:1;transform:translate(676px,393px)}22.778%{opacity:1;transform:translate(572px,233px)}22.833%{opacity:0;transform:translate(572px,233px)}36.611%{opacity:0;transform:translate(676px,393px)}36.667%{opacity:1;transform:translate(676px,393px)}41.667%{opacity:1;transform:translate(572px,233px)}41.722%{opacity:0;transform:translate(572px,233px)}100.000%{opacity:0;transform:translate(676px,393px)}}
+@keyframes a28{0.000%{opacity:0;transform:translate(378px,233px)}27.722%{opacity:0;transform:translate(378px,233px)}27.778%{opacity:1;transform:translate(378px,233px)}31.667%{opacity:1;transform:translate(248px,262px)}31.722%{opacity:0;transform:translate(248px,262px)}46.056%{opacity:0;transform:translate(378px,233px)}46.111%{opacity:1;transform:translate(378px,233px)}49.167%{opacity:1;transform:translate(248px,262px)}49.222%{opacity:0;transform:translate(248px,262px)}86.333%{opacity:0;transform:translate(378px,233px)}86.389%{opacity:1;transform:translate(378px,233px)}89.167%{opacity:1;transform:translate(248px,262px)}89.222%{opacity:0;transform:translate(248px,262px)}100.000%{opacity:0;transform:translate(378px,233px)}}
+@keyframes a29{0.000%{opacity:0;transform:translate(244px,397px)}68.833%{opacity:0;transform:translate(244px,397px)}68.889%{opacity:1;transform:translate(244px,397px)}72.222%{opacity:1;transform:translate(400px,348px)}72.278%{opacity:0;transform:translate(400px,348px)}100.000%{opacity:0;transform:translate(244px,397px)}}
+@keyframes a30{0.000%{opacity:0;transform:translate(550px,348px)}77.722%{opacity:0;transform:translate(550px,348px)}77.778%{opacity:1;transform:translate(550px,348px)}81.111%{opacity:1;transform:translate(690px,319px)}81.167%{opacity:0;transform:translate(690px,319px)}100.000%{opacity:0;transform:translate(550px,348px)}}
+text{dominant-baseline:auto}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}
+</style>
+<rect width="960" height="540" fill="#f5f5f7"/>
+<text x="480" y="52" text-anchor="middle" font-size="19" font-weight="600" fill="#1d1d1f" style="animation:a0 18s linear infinite">Each environment runs an agent that reports to Cloudflare every 60 s (outbound only)</text><text x="480" y="52" text-anchor="middle" font-size="19" font-weight="600" fill="#1d1d1f" style="animation:a1 18s linear infinite">Open the dashboard on your phone to see every environment (Cloudflare Access login)</text><text x="480" y="52" text-anchor="middle" font-size="19" font-weight="600" fill="#1d1d1f" style="animation:a2 18s linear infinite">When Remote Control drops, the dashboard turns red and Slack is notified</text><text x="480" y="52" text-anchor="middle" font-size="19" font-weight="600" fill="#1d1d1f" style="animation:a3 18s linear infinite">Tap to fix: the command waits in D1 and the agent picks it up on its next report</text>
+<circle cx="450" cy="78" r="4" fill="#1d1d1f" style="animation:a4 18s linear infinite"/><circle cx="470" cy="78" r="4" fill="#1d1d1f" style="animation:a5 18s linear infinite"/><circle cx="490" cy="78" r="4" fill="#1d1d1f" style="animation:a6 18s linear infinite"/><circle cx="510" cy="78" r="4" fill="#1d1d1f" style="animation:a7 18s linear infinite"/>
+
+    <line x1="260" y1="300" x2="350" y2="300" stroke="#d2d2d7" stroke-width="2" stroke-dasharray="5 5"/>
+    <line x1="600" y1="300" x2="660" y2="300" stroke="#d2d2d7" stroke-width="2" stroke-dasharray="5 5"/>
+    <text x="630" y="500" text-anchor="middle" font-size="11" fill="#6e6e73">⟵ HTTPS, outbound only</text>
+
+    <g>
+      <rect x="350" y="150" width="250" height="300" rx="14" fill="#fff" stroke="#d2d2d7"/>
+      <text x="475" y="180" text-anchor="middle" font-size="14" font-weight="700" fill="#f38020">Cloudflare</text>
+      <rect x="378" y="198" width="194" height="70" rx="10" fill="#f5f5f7" stroke="#d2d2d7"/>
+      <text x="475" y="226" text-anchor="middle" font-size="14" font-weight="600" fill="#1d1d1f">Worker</text>
+      <text x="475" y="248" text-anchor="middle" font-size="11" fill="#6e6e73">Access · API · Cron</text>
+      <rect x="378" y="284" width="194" height="86" rx="10" fill="#f5f5f7" stroke="#d2d2d7"/>
+      <text x="475" y="308" text-anchor="middle" font-size="14" font-weight="600" fill="#1d1d1f">D1</text>
+      <text x="475" y="326" text-anchor="middle" font-size="10.5" fill="#6e6e73">command queue</text>
+      <g style="animation:a15 18s linear infinite">
+        <rect x="400" y="336" width="150" height="24" rx="6" fill="#fff" stroke="#1d1d1f"/>
+        <text x="475" y="352" text-anchor="middle" font-size="11" font-family="ui-monospace, Menlo, monospace" fill="#1d1d1f">rc_restart → vm1</text>
+      </g>
+      <g style="animation:a16 18s linear infinite">
+        <rect x="372" y="388" width="206" height="44" rx="10" fill="#4a154b"/>
+        <text x="390" y="408" font-size="11" font-weight="700" fill="#fff">Slack</text>
+        <text x="390" y="424" font-size="11" fill="#fff">vm1: Remote Control disconnected</text>
+      </g>
+    </g>
+
+    <g>
+      <rect x="660" y="150" width="248" height="300" rx="14" fill="#fff" stroke="#d2d2d7"/>
+      <text x="784" y="180" text-anchor="middle" font-size="14" font-weight="700" fill="#1d1d1f">Mac mini</text>
+      <rect x="676" y="196" width="216" height="66" rx="10" fill="#f5f5f7" stroke="#d2d2d7"/>
+      <text x="690" y="218" font-size="13" font-weight="700" fill="#1d1d1f">Taro</text>
+      <text x="730" y="218" font-size="11" fill="#6e6e73">host</text>
+      <rect x="690" y="226" width="60" height="20" rx="10" fill="#fff" stroke="#d2d2d7"/>
+      <text x="720" y="240" text-anchor="middle" font-size="10.5" fill="#1d1d1f">agent</text>
+      <rect x="784" y="226" width="100" height="20" rx="10" fill="#30a46c"/>
+         <text x="834" y="240" text-anchor="middle" font-size="10.5" font-weight="600" fill="#fff">Connected</text>
+      <rect x="676" y="278" width="216" height="66" rx="10" fill="#f5f5f7" stroke="#d2d2d7"/>
+      <text x="690" y="300" font-size="13" font-weight="700" fill="#1d1d1f">Hanako</text>
+      <text x="746" y="300" font-size="11" fill="#6e6e73">vm1 · Tart</text>
+      <rect x="690" y="308" width="60" height="20" rx="10" fill="#fff" stroke="#d2d2d7"/>
+      <text x="720" y="322" text-anchor="middle" font-size="10.5" fill="#1d1d1f">agent</text>
+      <g>
+          <rect x="784" y="308" width="100" height="20" rx="10" style="animation:a17 18s linear infinite"/>
+          <text x="834" y="322" text-anchor="middle" font-size="10.5" font-weight="600" fill="#fff" style="animation:a18 18s linear infinite">Connected</text>
+          <text x="834" y="322" text-anchor="middle" font-size="10.5" font-weight="600" fill="#fff" style="animation:a19 18s linear infinite">Disconnected</text>
+          <text x="834" y="322" text-anchor="middle" font-size="10.5" font-weight="600" fill="#fff" style="animation:a20 18s linear infinite">Restarting</text>
+          <text x="834" y="322" text-anchor="middle" font-size="10.5" font-weight="600" fill="#fff" style="animation:a21 18s linear infinite">Connected</text>
+        </g>
+      <rect x="676" y="360" width="216" height="66" rx="10" fill="#f5f5f7" stroke="#d2d2d7"/>
+      <text x="690" y="382" font-size="13" font-weight="700" fill="#1d1d1f">Jiro</text>
+      <text x="730" y="382" font-size="11" fill="#6e6e73">vm2 · Tart</text>
+      <rect x="690" y="390" width="60" height="20" rx="10" fill="#fff" stroke="#d2d2d7"/>
+      <text x="720" y="404" text-anchor="middle" font-size="10.5" fill="#1d1d1f">agent</text>
+      <rect x="784" y="390" width="100" height="20" rx="10" fill="#30a46c"/>
+         <text x="834" y="404" text-anchor="middle" font-size="10.5" font-weight="600" fill="#fff">Connected</text>
+      <text x="784" y="468" text-anchor="middle" font-size="10.5" fill="#6e6e73">Claude Code RC</text>
+    </g>
+
+    <g>
+      <text x="166" y="128" text-anchor="middle" font-size="12" fill="#6e6e73">You</text>
+      <rect x="72" y="138" width="188" height="356" rx="30" fill="#fff" stroke="#1d1d1f" stroke-width="3"/>
+      <rect x="136" y="148" width="60" height="8" rx="4" fill="#1d1d1f" opacity=".85"/>
+      <text x="90" y="182" font-size="17" font-weight="700" fill="#1d1d1f">Overview</text>
+      
+        <circle cx="100" cy="214" r="11" fill="#f2f2f4"/><text x="100" y="218" text-anchor="middle" font-size="11" font-weight="600" fill="#1d1d1f">T</text>
+        <text x="118" y="212" font-size="13" font-weight="600" fill="#1d1d1f">Taro</text>
+        <text x="118" y="227" font-size="10" fill="#6e6e73">host</text>
+        <circle cx="162" cy="215" r="4" fill="#30a46c"/>
+        <text x="232" y="219" text-anchor="end" font-size="12" fill="#30a46c">Connected</text><rect x="84" y="242" width="164" height="40" rx="8" fill="#e5484d" style="animation:a12 18s linear infinite"/>
+        <circle cx="100" cy="262" r="11" fill="#f2f2f4"/><text x="100" y="266" text-anchor="middle" font-size="11" font-weight="600" fill="#1d1d1f">H</text>
+        <text x="118" y="260" font-size="13" font-weight="600" fill="#1d1d1f">Hanako</text>
+        <text x="118" y="275" font-size="10" fill="#6e6e73">vm1</text>
+        <circle cx="162" cy="263" r="4" style="animation:a11 18s linear infinite"/>
+        <text x="232" y="267" text-anchor="end" font-size="12" fill="#30a46c" style="animation:a8 18s linear infinite">Connected</text>
+           <text x="232" y="267" text-anchor="end" font-size="12" font-weight="600" fill="#e5484d" style="animation:a9 18s linear infinite">Disconnected</text>
+           <text x="232" y="267" text-anchor="end" font-size="12" fill="#30a46c" style="animation:a10 18s linear infinite">Connected</text>
+        <circle cx="100" cy="310" r="11" fill="#f2f2f4"/><text x="100" y="314" text-anchor="middle" font-size="11" font-weight="600" fill="#1d1d1f">J</text>
+        <text x="118" y="308" font-size="13" font-weight="600" fill="#1d1d1f">Jiro</text>
+        <text x="118" y="323" font-size="10" fill="#6e6e73">vm2</text>
+        <circle cx="162" cy="311" r="4" fill="#30a46c"/>
+        <text x="232" y="315" text-anchor="end" font-size="12" fill="#30a46c">Connected</text>
+      <g style="animation:a13 18s linear infinite">
+        <rect x="88" y="380" width="156" height="34" rx="9" fill="#1d1d1f"/>
+        <text x="166" y="402" text-anchor="middle" font-size="11.5" font-weight="600" fill="#fff">Restart Remote Control</text>
+        <circle cx="200" cy="397" r="8" fill="#fff" style="animation:a14 18s linear infinite"/>
+      </g>
+    </g>
+<g style="animation:a22 18s ease-in-out infinite"><circle r="6" fill="#30a46c"/></g><g style="animation:a23 18s ease-in-out infinite"><circle r="6" fill="#30a46c"/></g><g style="animation:a24 18s ease-in-out infinite"><circle r="6" fill="#e5484d"/></g><g style="animation:a25 18s ease-in-out infinite"><circle r="6" fill="#e5484d"/></g><g style="animation:a26 18s ease-in-out infinite"><circle r="6" fill="#30a46c"/></g><g style="animation:a27 18s ease-in-out infinite"><circle r="6" fill="#30a46c"/></g><g style="animation:a28 18s ease-in-out infinite"><circle r="6" fill="#0a84ff"/></g><g style="animation:a29 18s ease-in-out infinite"><circle r="6" fill="#1d1d1f"/></g><g style="animation:a30 18s ease-in-out infinite"><circle r="6" fill="#1d1d1f"/></g>
+</svg>

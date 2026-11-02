@@ -18,7 +18,7 @@ import {
   type VmHeartbeat,
   isEnv,
   pollIntervalFor,
-} from '@macmini/shared';
+} from '@agentstation/shared';
 import { authenticateAgent } from '../auth.js';
 import {
   audit,

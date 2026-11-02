@@ -1,4 +1,4 @@
-import type { ClaudeStatus } from '@macmini/shared';
+import type { ClaudeStatus } from '@agentstation/shared';
 
 /**
  * ログ監視による自動の立て直し（docs/spec.md 7章「3.」）。

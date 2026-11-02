@@ -22,7 +22,7 @@ export interface Bindings {
    */
   SWITCHBOT_TOKEN?: string;
   SWITCHBOT_SECRET?: string;
-  /** Mac mini の電源ケーブルに挟んだプラグの deviceId（wrangler.toml の [vars]）。3 つ揃って初めてプラグの機能が有効になる */
+  /** Mac の電源ケーブルに挟んだプラグの deviceId（wrangler.toml の [vars]）。3 つ揃って初めてプラグの機能が有効になる */
   SWITCHBOT_PLUG_DEVICE_ID?: string;
   /**
    * ローカル開発専用（.dev.vars に書く。本番には絶対に設定しない）。

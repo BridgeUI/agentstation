@@ -4,7 +4,7 @@ import {
   isVmEnv,
   type Command,
   type CommandResult,
-} from '@macmini/shared';
+} from '@agentstation/shared';
 import { summarizeOutput } from '../send/filter.js';
 import { codexRestart } from './codex.js';
 import type { ActionContext, ActionOutcome } from './context.js';

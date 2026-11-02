@@ -1,4 +1,4 @@
-import { POLL_FAST_MS } from '@macmini/shared';
+import { POLL_FAST_MS } from '@agentstation/shared';
 
 /**
  * 報告の間隔（docs/spec.md 3.6）。Mac からは外向きだけなので、速さは Worker を見に行く間隔で決まる。

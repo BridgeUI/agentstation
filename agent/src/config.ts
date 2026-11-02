@@ -1,12 +1,12 @@
 import { readFileSync, statSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { isEnv, isVmEnv, VM_ENVS, type Env, type VmEnv } from '@macmini/shared';
+import { isEnv, isVmEnv, VM_ENVS, type Env, type VmEnv } from '@agentstation/shared';
 
 /**
  * エージェントの設定（docs/spec.md 3.6・9章）。
  *
- * ~/.config/macmini-agent/config.json（例。パスはすべて絶対パス）
+ * ~/.config/agentstation/config.json（例。パスはすべて絶対パス）
  * {
  *   "base_url": "https://workstation.example.com",
  *   "claude_path": "/Users/<user>/.local/bin/claude",
@@ -23,7 +23,7 @@ import { isEnv, isVmEnv, VM_ENVS, type Env, type VmEnv } from '@macmini/shared';
  *   "tart_vms_dir": "/Users/<user>/.tart/vms",
  *   "interval_ms": 60000
  * }
- * ~/.config/macmini-agent/token.json（chmod 600）
+ * ~/.config/agentstation/token.json（chmod 600）
  * { "client_id": "...", "client_secret": "..." }
  *
  * 設定値（特にトークン）はログや送信データに出さない。
@@ -76,7 +76,7 @@ export interface AgentConfig {
   sudoPath: string;
 }
 
-export const CONFIG_DIR = join(homedir(), '.config', 'macmini-agent');
+export const CONFIG_DIR = join(homedir(), '.config', 'agentstation');
 
 export const DEFAULT_LABELS = {
   claude_rc: 'com.example.claude-rc',

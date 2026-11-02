@@ -4,8 +4,8 @@
   監視エージェント（docs/spec.md 3.6）。host / vm1 / vm2 の 3 か所に同じテンプレートを置き、__ENV__ だけ変える。
   プレースホルダ: __USER__（その環境のユーザー名: taro / hanako / jiro）、__ENV__（host / vm1 / vm2）
   配置先: ~/Library/LaunchAgents/com.example.agent.plist
-  ログ  : ~/Library/Logs/macmini-agent/（先に mkdir -p しておく）
-  設定  : ~/.config/macmini-agent/config.json と token.json（agent/src/config.ts。token.json は chmod 600）
+  ログ  : ~/Library/Logs/agentstation/（先に mkdir -p しておく）
+  設定  : ~/.config/agentstation/config.json と token.json（agent/src/config.ts。token.json は chmod 600）
   起動  : launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.agent.plist
   更新後: launchctl kickstart -k gui/$(id -u)/com.example.agent
   ExitTimeOut 35: エージェントは SIGTERM で実行中の操作を最大 30 秒待ってから止まる（agent/src/index.ts）。launchd の既定 20 秒だと途中で SIGKILL される。
@@ -17,11 +17,11 @@
   <key>ProgramArguments</key>
   <array>
     <string>/Users/__USER__/.nodebrew/current/bin/node</string>
-    <string>/Users/__USER__/workspace/macmini-dashboard/agent/dist/index.js</string>
+    <string>/Users/__USER__/workspace/agentstation/agent/dist/index.js</string>
     <string>--env=__ENV__</string>
   </array>
   <key>WorkingDirectory</key>
-  <string>/Users/__USER__/workspace/macmini-dashboard/agent</string>
+  <string>/Users/__USER__/workspace/agentstation/agent</string>
   <key>EnvironmentVariables</key>
   <dict>
     <key>HOME</key>
@@ -42,8 +42,8 @@
   <key>ExitTimeOut</key>
   <integer>35</integer>
   <key>StandardOutPath</key>
-  <string>/Users/__USER__/Library/Logs/macmini-agent/out.log</string>
+  <string>/Users/__USER__/Library/Logs/agentstation/out.log</string>
   <key>StandardErrorPath</key>
-  <string>/Users/__USER__/Library/Logs/macmini-agent/err.log</string>
+  <string>/Users/__USER__/Library/Logs/agentstation/err.log</string>
 </dict>
 </plist>

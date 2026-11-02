@@ -1,5 +1,5 @@
 import { cpus } from 'node:os';
-import type { HostHeartbeat, VmView } from '@macmini/shared';
+import type { HostHeartbeat, VmView } from '@agentstation/shared';
 import type { AgentConfig } from '../config.js';
 import { runDf, type ExecResult, type Runner } from '../exec.js';
 import { tartGet, tartIp, tartList, vmStateOf } from './tart.js';

@@ -1,6 +1,6 @@
 -- ローカル確認用のサンプル状態。本番には入れない。
 -- 使い方（worker/ で）:
---   npx wrangler d1 execute macmini-dashboard --local --file ui/dev-seed.sql
+--   npx wrangler d1 execute agentstation --local --file ui/dev-seed.sql
 -- received_at は「いま」に寄せたいので、実行前に `strftime` で現在時刻を入れる。
 -- シナリオの切り替えは下のコメントを参照（応答なし＝host の received_at を 15 分前にする、など）。
 
@@ -19,9 +19,9 @@ INSERT INTO heartbeats (env, received_at, payload) VALUES (
     "codex":{"state":"running"},
     "sessions":[],
     "maintenance":{"last_run_at":1761854400000,"last_result":"ok"},
-    "rc_dirs":{"root":"workspace","available":["macmini-dashboard","example-site","notes"],
+    "rc_dirs":{"root":"workspace","available":["agentstation","example-site","notes"],
       "running":[
-        {"dir":"macmini-dashboard","state":"running","name":"host-macmini-dashboard","started_at":1793440000000},
+        {"dir":"agentstation","state":"running","name":"host-agentstation","started_at":1793440000000},
         {"dir":"example-site","state":"error","name":"host-example-site","detail":"not trusted"}
       ]},
     "setup":[

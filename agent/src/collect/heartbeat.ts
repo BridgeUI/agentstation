@@ -12,7 +12,7 @@ import {
   type VmEnv,
   type VmHeartbeat,
   type VmView,
-} from '@macmini/shared';
+} from '@agentstation/shared';
 
 /** ハートビートの組み立て（純粋関数）。docs/spec.md 4.4 の形 */
 export interface HeartbeatParts {

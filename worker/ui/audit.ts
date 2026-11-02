@@ -1,5 +1,5 @@
-import type { AuditEntry, Millis } from '@macmini/shared';
-import { isEnv } from '@macmini/shared';
+import type { AuditEntry, Millis } from '@agentstation/shared';
+import { isEnv } from '@agentstation/shared';
 import { dayTime } from './format.js';
 import { html, raw } from './dom.js';
 import { actionLabel } from './judge.js';

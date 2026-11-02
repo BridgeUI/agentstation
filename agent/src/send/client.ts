@@ -1,4 +1,4 @@
-import type { CommandResult, Heartbeat, HeartbeatResponse } from '@macmini/shared';
+import type { CommandResult, Heartbeat, HeartbeatResponse } from '@agentstation/shared';
 import type { AgentConfig } from '../config.js';
 import type { Logger } from '../log.js';
 import { findForbidden } from './filter.js';

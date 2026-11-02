@@ -8,7 +8,7 @@ import {
   type Heartbeat,
   type Millis,
   type PlugView,
-} from '@macmini/shared';
+} from '@agentstation/shared';
 import { liveness } from '../api/dashboard.js';
 import {
   activeCommand,
@@ -200,7 +200,7 @@ async function recover(
 }
 
 const RECOVER_TITLES: Record<string, (e: Env) => { title: string; word: string }> = {
-  outage: () => ({ title: 'Mac mini が応答', word: '停止' }),
+  outage: () => ({ title: 'Mac が応答', word: '停止' }),
   agent: (e) => ({ title: `${e} のエージェントが応答`, word: '停止' }),
   vm_stopped: (e) => ({ title: `${e} が起動`, word: '停止' }),
   rc_login: (e) => ({ title: `${envLabel(e)} の再ログインが完了`, word: '継続' }),
@@ -229,7 +229,7 @@ async function evaluate(
         env: 'host',
         afterMs: PLUG_OFF_MS,
         state: 'alerting',
-        title: 'スマートプラグがオフ（Mac mini に電源が来ていない）',
+        title: 'スマートプラグがオフ（Mac に電源が来ていない）',
         lines: ['ダッシュボードの「電源を入れ直す」か、SwitchBot アプリでオンにする'],
       });
     }
@@ -250,7 +250,7 @@ async function evaluate(
       since: hostRow.received_at,
       afterMs: 0,
       state: 'alerting',
-      title: 'Mac mini 応答なし',
+      title: 'Mac 応答なし',
       lines,
     });
     // host が止まっている間は他の様子が分からないので、他のキーは触らない

@@ -23,7 +23,7 @@ import {
   type StatusAlert,
   type StatusResponse,
   type VmView,
-} from '@macmini/shared';
+} from '@agentstation/shared';
 import { authenticateUser } from '../auth.js';
 import {
   activeCommand,
@@ -101,9 +101,9 @@ export async function getStatus(request: Request, env: Bindings): Promise<Respon
 
   const alerts: StatusAlert[] = [];
   if (hostLive === 'unresponsive')
-    alerts.push({ level: 'error', message: 'Mac mini が応答していません' });
+    alerts.push({ level: 'error', message: 'Mac が応答していません' });
   else if (hostLive === 'delayed')
-    alerts.push({ level: 'warn', message: 'Mac mini からの報告が遅れています' });
+    alerts.push({ level: 'warn', message: 'Mac からの報告が遅れています' });
   else if (hostLive === 'unknown')
     alerts.push({ level: 'warn', message: 'まだ報告を受け取っていません' });
   if (hostHb) {
@@ -142,7 +142,7 @@ export async function getStatus(request: Request, env: Bindings): Promise<Respon
     plug.state === 'off' &&
     (active.get('host')?.action ?? null) !== 'host_power_cycle'
   )
-    alerts.push({ level: 'error', message: 'スマートプラグがオフ（Mac mini に電源が来ていない）' });
+    alerts.push({ level: 'error', message: 'スマートプラグがオフ（Mac に電源が来ていない）' });
 
   const res: StatusResponse = {
     now,
@@ -276,7 +276,7 @@ async function checkPowerCycleAllowed(env: Bindings, now: Millis): Promise<void>
   if (live === 'ok' || live === 'delayed') {
     throw new HttpError(
       409,
-      'Mac mini からの報告が届いているので電源は切らない。10 分以上途絶えたときだけ使える（先に「ホストを再起動」を）',
+      'Mac からの報告が届いているので電源は切らない。10 分以上途絶えたときだけ使える（先に「ホストを再起動」を）',
     );
   }
 }

@@ -1,6 +1,6 @@
 import { env } from 'cloudflare:test';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import type { Command, Heartbeat } from '@macmini/shared';
+import type { Command, Heartbeat } from '@agentstation/shared';
 import { runCron } from '../src/cron/index.js';
 import { insertCommand, saveHeartbeat } from '../src/db.js';
 import type { Bindings } from '../src/env.js';
@@ -92,7 +92,7 @@ describe('途絶の判定', () => {
 
     await runCron(withSlack(), T0);
     expect(posted).toHaveLength(1);
-    expect(posted[0]).toContain('Mac mini 応答なし');
+    expect(posted[0]).toContain('Mac 応答なし');
     expect(posted[0]).toContain('https://workstation.example.com/');
     expect(await notifyKeys()).toEqual({ 'outage:host': 'alerting' });
 
@@ -119,7 +119,7 @@ describe('途絶の判定', () => {
     await runCron(withSlack(), T0);
     expect(posted).toHaveLength(1);
     expect(posted[0]).toContain('vm1 のエージェントが応答なし');
-    expect(posted[0]).not.toContain('Mac mini 応答なし');
+    expect(posted[0]).not.toContain('Mac 応答なし');
     expect(posted[0]).toContain('https://workstation.example.com/vm1.html');
 
     await vmAt('vm1', T0 + 3 * MIN);
@@ -214,7 +214,7 @@ describe('Remote Control', () => {
     await hostAt(T0 + 15 * MIN, reconnecting);
     await runCron(withSlack(), T0 + 15 * MIN);
     expect(posted).toHaveLength(1);
-    expect(posted[0]).toContain('Mac mini（host） の Remote Control がつながらない');
+    expect(posted[0]).toContain('Mac（host） の Remote Control がつながらない');
   });
 });
 

@@ -2,7 +2,7 @@
 # claude remote-control のラッパー。com.example.claude-rc.plist の ProgramArguments から呼ばれる。
 #
 # やること（agent/src/actions/rc.ts の session_restore と対になる）:
-#   1. ~/.config/macmini-agent/session.json（{"session_id": "..."}）があれば、その ID を読んでファイルを消し、
+#   1. ~/.config/agentstation/session.json（{"session_id": "..."}）があれば、その ID を読んでファイルを消し、
 #      `claude remote-control --session-id <id>` で起動する。
 #   2. 無ければ `claude remote-control` で起動する。
 #   3. どちらも --debug-file ~/Library/Logs/claude-rc.log を付け、exec で claude に置き換わる
@@ -18,8 +18,8 @@ set -u
 
 CLAUDE_BIN="${CLAUDE_BIN:-$HOME/.local/bin/claude}"
 DEBUG_LOG="${CLAUDE_RC_DEBUG_LOG:-$HOME/Library/Logs/claude-rc.log}"
-SESSION_FILE="${MACMINI_AGENT_SESSION_FILE:-$HOME/.config/macmini-agent/session.json}"
-RC_SETTINGS="${MACMINI_AGENT_RC_SETTINGS:-$HOME/.config/macmini-agent/rc.json}"
+SESSION_FILE="${AGENTSTATION_SESSION_FILE:-$HOME/.config/agentstation/session.json}"
+RC_SETTINGS="${AGENTSTATION_RC_SETTINGS:-$HOME/.config/agentstation/rc.json}"
 
 # 権限モード（docs/spec.md 13章 #18）。rc.json の permission_mode。無い・不正なら bypassPermissions（この Mac は Claude 専用）。
 # ダッシュボードの「権限の確認を省く」がこのファイルを書き換え、RC を立て直す（agent/src/actions/rc.ts）。

@@ -27,6 +27,6 @@ function main(): void {
 try {
   main();
 } catch (e) {
-  log.error('macmini-agent 起動失敗', { reason: (e as Error).message });
+  log.error('agentstation 起動失敗', { reason: (e as Error).message });
   process.exit(1);
 }

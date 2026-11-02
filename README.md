@@ -1,19 +1,20 @@
-# macmini-dashboard
+# agentstation
 
 **English** | [日本語](README.ja.md)
 
-Keep macOS environments running on a single Mac mini — the Mac itself plus zero to two [Tart](https://tart.run) VMs — each running Claude Code's Remote Control (and optionally Codex), and watch and operate all of them from a dashboard on Cloudflare.
+Keep Claude Code running on your own Mac (a Mac mini, Mac Studio or any Apple Silicon Mac you can dedicate to it), and watch and control it from your phone. The Mac itself plus zero to two [Tart](https://tart.run) macOS VMs each run Claude Code's Remote Control (and optionally Codex); a dashboard on Cloudflare shows their status, starts Remote Control for any folder, and fixes problems with one tap.
 
-It is built for up to three people sharing one Mac mini, each using Claude Code in their own environment from the Claude app on their phone. One person using only the Mac itself works too.
+It is built for up to three people sharing one Mac, each using Claude Code in their own environment from the Claude app on their phone. One person using only the Mac itself works too.
 
-<p align="center"><img src="docs/media/overview.en.gif" width="960" alt="How it works: each environment's agent reports to Cloudflare, you check status on your phone, a disconnect is detected and sent to Slack, and one tap fixes it"></p>
+<p align="center"><img src="docs/media/overview.en.gif" width="960" alt="How it works: each environment's agent reports to Cloudflare, you check status on your phone, a disconnect is detected and sent to Slack, one tap fixes it, and you can start Remote Control for any folder from your phone"></p>
 <p align="center"><sub>MP4 version: <a href="docs/media/overview.en.mp4"><code>docs/media/overview.en.mp4</code></a></sub></p>
 
 ## Features
 
+- **Start Claude Code Remote Control from your phone**: pick a folder (or create one) in the dashboard and start Remote Control there, then continue the session in the Claude app. No terminal needed
 - One view of every environment: Claude Code, Remote Control, Codex, VM and agent health; CPU / memory / disk
 - One-tap recovery: restart Remote Control, update Claude Code, restart a VM, restart the host (with a grace period), power-cycle via a smart plug (SwitchBot, optional)
-- Per-folder Remote Control: create, start and stop; restore previous sessions
+- Per-folder Remote Control: stop it, restore previous sessions, choose the permission mode
 - Slack notifications for outages, login required, etc. (optional)
 - SSH and screen sharing in the browser (Cloudflare Access), and over WARP from iPhone SSH / VNC / Files apps
 - A built-in guide for the people using each environment
@@ -25,7 +26,7 @@ It is built for up to three people sharing one Mac mini, each using Claude Code 
 ```
 Phone / PC ──(Cloudflare Access: Google login)──> Worker + D1 (UI, API, 1-minute Cron)
                                                        ↑ heartbeat every 60 s: report status, receive commands
-Mac mini
+Mac
  ├─ host: agent, claude remote-control, cloudflared (Tunnel; exposes SSH / VNC over outbound connections)
  ├─ vm1 (Tart, optional): agent, claude remote-control
  └─ vm2 (Tart, optional): agent, claude remote-control
@@ -51,12 +52,12 @@ The setup is written to be done together with Claude Code. You handle browser lo
 
 ```bash
 mkdir -p ~/workspace && cd ~/workspace
-git clone https://github.com/BridgeUI/macmini-dashboard.git
-cd macmini-dashboard
+git clone https://github.com/BridgeUI/agentstation.git
+cd agentstation
 claude
 ```
 
-Then ask Claude Code (or run `/macmini-install`):
+Then ask Claude Code (or run `/agentstation-install`):
 
 ```
 Read kit/START.md and help me install this repository in my environment.

@@ -4,10 +4,10 @@ import {
   isRcPermissionMode,
   RC_PERMISSION_MODE_DEFAULT,
   type RcPermissionMode,
-} from '@macmini/shared';
+} from '@agentstation/shared';
 
 /**
- * Remote Control の起動設定（~/.config/macmini-agent/rc.json。docs/spec.md 13章 #18）。
+ * Remote Control の起動設定（~/.config/agentstation/rc.json。docs/spec.md 13章 #18）。
  * claude-rc.sh（launchd のメイン RC）と rcdirs/manager.ts（フォルダごとの RC）が同じファイルを読む。
  *
  *   { "permission_mode": "bypassPermissions" }

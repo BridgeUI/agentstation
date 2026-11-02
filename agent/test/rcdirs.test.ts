@@ -1,7 +1,7 @@
 import { EventEmitter } from 'node:events';
 import { PassThrough } from 'node:stream';
 import { describe, expect, it } from 'vitest';
-import type { Command } from '@macmini/shared';
+import type { Command } from '@agentstation/shared';
 import type { ActionContext } from '../src/actions/context.js';
 import { executeCommand } from '../src/actions/index.js';
 import { rcMkdir } from '../src/actions/rcdirs.js';
@@ -40,8 +40,8 @@ describe('起動できるフォルダの一覧', () => {
     expect(filterAvailableDirs(null)).toEqual([]);
   });
   it('root は作業フォルダの最後の要素。パスは出ない', () => {
-    const d = buildRcDirs('/Users/taro/workspace', ['rc', 'macmini-dashboard'], []);
-    expect(d).toEqual({ root: 'workspace', available: ['macmini-dashboard', 'rc'], running: [] });
+    const d = buildRcDirs('/Users/taro/workspace', ['rc', 'agentstation'], []);
+    expect(d).toEqual({ root: 'workspace', available: ['agentstation', 'rc'], running: [] });
     expect(findForbidden({ rc_dirs: d })).toEqual([]);
   });
 });
@@ -123,24 +123,24 @@ function setup(opts: { exists?: (p: string) => boolean; log?: Logger } = {}) {
 describe('RcDirManager', () => {
   it('spawn の引数と cwd。シェルは使わず、--name と --debug-file を付ける', () => {
     const { mgr, spawned } = setup();
-    expect(mgr.start('macmini-dashboard', 'c1')).toEqual({ ok: true, already: false });
+    expect(mgr.start('agentstation', 'c1')).toEqual({ ok: true, already: false });
     expect(spawned).toHaveLength(1);
     expect(spawned[0]).toMatchObject({
       cmd: '/opt/claude/bin/claude',
       args: [
         'remote-control',
         '--name',
-        'macmini-dashboard',
+        'agentstation',
         '--permission-mode',
         'bypassPermissions',
         '--debug-file',
-        '/Users/t/Library/Logs/claude-rc-macmini-dashboard.log',
+        '/Users/t/Library/Logs/claude-rc-agentstation.log',
       ],
-      cwd: '/Users/t/workspace/macmini-dashboard',
+      cwd: '/Users/t/workspace/agentstation',
     });
-    expect(mgr.desired()).toEqual(['macmini-dashboard']);
+    expect(mgr.desired()).toEqual(['agentstation']);
     // 2 回目は already
-    expect(mgr.start('macmini-dashboard', 'c1')).toEqual({ ok: true, already: true });
+    expect(mgr.start('agentstation', 'c1')).toEqual({ ok: true, already: true });
     expect(spawned).toHaveLength(1);
   });
 
@@ -286,7 +286,7 @@ describe('rc_start_dir / rc_stop_dir', () => {
       token: { client_id: 'a', client_secret: 'b' },
       home: '/Users/t',
       uid: 501,
-      configDir: '/Users/t/.config/macmini-agent',
+      configDir: '/Users/t/.config/agentstation',
     });
     const ctx = {
       cfg,
@@ -365,7 +365,7 @@ describe('rc_mkdir', () => {
       token: { client_id: 'a', client_secret: 'b' },
       home: '/Users/t',
       uid: 501,
-      configDir: '/Users/t/.config/macmini-agent',
+      configDir: '/Users/t/.config/agentstation',
     });
     const ctx = {
       cfg,

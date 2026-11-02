@@ -1,5 +1,5 @@
 {
-  "name": "macmini-ops",
+  "name": "agentstation",
   "private": true,
   "description": "Mac mini 3環境の監視・操作ダッシュボード（Workers + D1 + エージェント）",
   "workspaces": [

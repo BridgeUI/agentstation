@@ -5,14 +5,13 @@
 // 出力：docs/media/overview.{en,ja}.mp4（1920×1080・30fps）と overview.{en,ja}.gif（960×540・15fps）
 /* global document */
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { chromium } from 'playwright-core';
 
 const DIR = process.argv[2];
 if (!DIR) throw new Error('docs/media の絶対パスを渡す');
-const SECONDS = 18; // overview.mjs の T と同じ
 const FPS = 30;
 
 const browser = await chromium.launch({
@@ -28,7 +27,11 @@ for (const lang of ['en', 'ja']) {
   });
   const page = await ctx.newPage();
   await page.goto(`file://${join(DIR, `overview.${lang}.svg`)}`);
-  const total = SECONDS * FPS;
+  // 1 周の長さは SVG の animation の秒数から読む（overview.mjs の TOTAL）
+  const svgText = readFileSync(join(DIR, `overview.${lang}.svg`), 'utf8');
+  const seconds = Number(/animation:a0 ([\d.]+)s/.exec(svgText)?.[1]);
+  if (!(seconds > 0)) throw new Error('SVG から長さを読めない');
+  const total = Math.round(seconds * FPS);
   for (let i = 0; i < total; i++) {
     await page.evaluate(
       (ms) => {

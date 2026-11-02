@@ -1,4 +1,4 @@
-import type { MaintenanceResult, PeerSummary, VmEnv } from '@macmini/shared';
+import type { MaintenanceResult, PeerSummary, VmEnv } from '@agentstation/shared';
 import type { ActionContext } from '../actions/context.js';
 import { claudeUpdate } from '../actions/rc.js';
 import { vmRestart } from '../actions/vm.js';

@@ -11,8 +11,8 @@ import {
   type Millis,
   type PlugView,
   type SessionInfo,
-} from '@macmini/shared';
-import type { AuditEntry, SessionRow } from '@macmini/shared';
+} from '@agentstation/shared';
+import type { AuditEntry, SessionRow } from '@agentstation/shared';
 
 /** D1 のクエリ層。時刻はすべて unix ミリ秒。秘密情報・会話内容・パスは入れない。 */
 

@@ -1,9 +1,9 @@
 import { mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { isRcDirName, type MaintenanceResult, type MaintenanceStatus } from '@macmini/shared';
+import { isRcDirName, type MaintenanceResult, type MaintenanceStatus } from '@agentstation/shared';
 
 /**
- * 再起動をまたいで持ちたい小さな状態（~/.config/macmini-agent/state.json）。
+ * 再起動をまたいで持ちたい小さな状態（~/.config/agentstation/state.json）。
  * 秘密情報・パス・セッションの中身は入れない。
  */
 export interface AgentState {

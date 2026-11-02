@@ -21,7 +21,7 @@
   <key>ProgramArguments</key>
   <array>
     <string>/bin/bash</string>
-    <string>/Users/__USER__/workspace/macmini-dashboard/mac/launchd/claude-rc.sh</string>
+    <string>/Users/__USER__/workspace/agentstation/mac/launchd/claude-rc.sh</string>
   </array>
   <key>WorkingDirectory</key>
   <string>/Users/__USER__/workspace</string>

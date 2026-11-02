@@ -6,8 +6,8 @@ import type {
   Liveness,
   StatusResponse,
   VmView,
-} from '@macmini/shared';
-import { isHostHeartbeat } from '@macmini/shared';
+} from '@agentstation/shared';
+import { isHostHeartbeat } from '@agentstation/shared';
 import { PEOPLE, shortOf } from './people.js';
 import { minutesSince } from './format.js';
 
@@ -116,13 +116,13 @@ export function banners(
   const hostLive = hostLiveness(s);
   for (const a of s.alerts) {
     if (
-      a.message.startsWith('Mac mini') &&
+      a.message.startsWith('Mac') &&
       hostLive === 'unresponsive' &&
       s.host_received_at !== null
     ) {
       out.push({
         level: 'error',
-        title: `Mac miniから${minutesSince(s.host_received_at, s.now)}分間応答がありません`,
+        title: `Macから${minutesSince(s.host_received_at, s.now)}分間応答がありません`,
         body: outageAdvice(s),
       });
     } else if (hostLive === 'unknown' && a.level === 'warn' && s.host_received_at === null) {
@@ -158,7 +158,7 @@ function outageAdvice(s: StatusResponse): string {
   if (!p.ok) {
     return 'スマートプラグにも届きません。自宅の回線かルーターが落ちている可能性が高いので、戻るまで待ってください。';
   }
-  if (p.state === 'off') return `スマートプラグがオフで、Mac mini に電源が来ていません。${cycle}`;
+  if (p.state === 'off') return `スマートプラグがオフで、Mac に電源が来ていません。${cycle}`;
   if (p.state === 'on' && p.watts !== null && p.watts < PLUG_OFF_LIKE_W) {
     return `プラグはオンですが消費電力がほぼ 0 です。Mac が落ちている可能性があります。${cycle}`;
   }
@@ -250,7 +250,7 @@ export interface Share {
 }
 
 /**
- * 各環境の使用量（Mac mini 全体に対する割合）。
+ * 各環境の使用量（Mac 全体に対する割合）。
  * host（本体）は全体から VM（0〜2 台）の分を引いた値。
  */
 export function shares(s: StatusResponse): Record<string, Share> {

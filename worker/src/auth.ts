@@ -5,7 +5,7 @@ import {
   resolveIdentity,
   type Env,
   type Identity,
-} from '@macmini/shared';
+} from '@agentstation/shared';
 import type { Bindings } from './env.js';
 import { HttpError } from './http.js';
 

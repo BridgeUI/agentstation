@@ -1,6 +1,6 @@
 import { readdirSync } from 'node:fs';
 import { basename } from 'node:path';
-import { isRcDirName, type RcDirRunning, type RcDirs } from '@macmini/shared';
+import { isRcDirName, type RcDirRunning, type RcDirs } from '@agentstation/shared';
 
 /**
  * フォルダを選んで起動する Remote Control の「起動できるフォルダ」一覧（docs/spec.md 13章 #13）。

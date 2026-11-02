@@ -1,5 +1,5 @@
-import type { Command, CommandAction, Env, MeResponse } from '@macmini/shared';
-import { COMMAND_SPECS, canOperate, isRcDirName, type RcPermissionMode } from '@macmini/shared';
+import type { Command, CommandAction, Env, MeResponse } from '@agentstation/shared';
+import { COMMAND_SPECS, canOperate, isRcDirName, type RcPermissionMode } from '@agentstation/shared';
 import { ApiFailure, api } from './api.js';
 import { confirmDialog, hostnameDialog, sessionDialog } from './dialogs.js';
 import { html } from './dom.js';
@@ -60,16 +60,16 @@ const HOST_OPS: OpDef[] = [
     button: '再起動…',
     danger: true,
     confirmBody:
-      'Mac mini 本体を再起動します。VM も止まり、全員の Claude Code が数分間使えなくなります。次の画面でホスト名を入力します。',
+      'Mac 本体を再起動します。VM も止まり、全員の Claude Code が数分間使えなくなります。次の画面でホスト名を入力します。',
   },
   {
     action: 'host_power_cycle',
     name: '電源を入れ直す（スマートプラグ）',
-    desc: 'オーナーのみ。最後の手段です。Mac mini の電源ケーブルに挟んだ SwitchBot のプラグをオフにし、約 1 分後にオンにします。エージェントも SSH も効かないときだけ使えます（報告が 10 分以上途絶えているときだけ受け付けます）。強制電源断なので、ディスクや書きかけのファイルが壊れることがあります。',
+    desc: 'オーナーのみ。最後の手段です。Mac の電源ケーブルに挟んだ SwitchBot のプラグをオフにし、約 1 分後にオンにします。エージェントも SSH も効かないときだけ使えます（報告が 10 分以上途絶えているときだけ受け付けます）。強制電源断なので、ディスクや書きかけのファイルが壊れることがあります。',
     button: '入れ直す…',
     danger: true,
     confirmBody:
-      'Mac mini の電源を強制的に切って入れ直します。保存していない作業は失われ、VM のイメージが壊れることもあります。戻るまで 3〜5 分かかります。次の画面でホスト名を入力します。',
+      'Mac の電源を強制的に切って入れ直します。保存していない作業は失われ、VM のイメージが壊れることもあります。戻るまで 3〜5 分かかります。次の画面でホスト名を入力します。',
   },
 ];
 

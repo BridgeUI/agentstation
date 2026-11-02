@@ -154,7 +154,7 @@ export const COMMAND_SPECS: Record<CommandAction, CommandSpec> = {
     ttlMs: TEN_MIN,
     graceMs: 60 * 1000,
   },
-  // スマートプラグで Mac mini の電源を切って入れる（docs/spec.md 6.1）。Worker が SwitchBot のクラウドを呼ぶ。
+  // スマートプラグで Mac の電源を切って入れる（docs/spec.md 6.1）。Worker が SwitchBot のクラウドを呼ぶ。
   // host の報告が 10 分以上途絶えているときだけ受け付ける（サーバーで判定）
   host_power_cycle: {
     targets: ['host'],

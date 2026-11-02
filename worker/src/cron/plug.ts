@@ -1,4 +1,4 @@
-import { CLOUD_EXECUTOR, type Millis, type PlugView } from '@macmini/shared';
+import { CLOUD_EXECUTOR, type Millis, type PlugView } from '@agentstation/shared';
 import {
   audit,
   claimCommands,
@@ -106,7 +106,7 @@ function reason(e: unknown): string {
 export function plugLine(p: PlugView | null): string | null {
   if (!p) return null;
   if (!p.ok) return '電源プラグ: 届かない（自宅の回線かルーターが落ちている可能性）';
-  if (p.state === 'off') return '電源プラグ: オフ（Mac mini に電源が来ていない）';
+  if (p.state === 'off') return '電源プラグ: オフ（Mac に電源が来ていない）';
   if (p.state === 'on' && p.watts !== null) {
     return p.watts < PLUG_OFF_LIKE_W
       ? `電源プラグ: オン・${p.watts}W（消費電力がほぼ 0。Mac が落ちている可能性）`
@@ -115,5 +115,5 @@ export function plugLine(p: PlugView | null): string | null {
   return p.state === 'on' ? '電源プラグ: オン' : '電源プラグ: 状態不明';
 }
 
-/** これ未満の W なら「ほぼ 0」。Mac mini のアイドルは実測 2〜4 W（2026-11-01）、電源が落ちていれば 1 W を大きく下回る */
+/** これ未満の W なら「ほぼ 0」。Mac のアイドルは実測 2〜4 W（2026-11-01）、電源が落ちていれば 1 W を大きく下回る */
 export const PLUG_OFF_LIKE_W = 1;

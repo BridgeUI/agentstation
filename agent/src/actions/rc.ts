@@ -1,5 +1,5 @@
 import { mkdirSync, unlinkSync, writeFileSync } from 'node:fs';
-import { isRcPermissionMode } from '@macmini/shared';
+import { isRcPermissionMode } from '@agentstation/shared';
 import { prepareMainRc, realTrust } from '../claudetrust.js';
 import { readRcSettings, writeRcSettings } from '../rcsettings.js';
 import {
@@ -65,7 +65,7 @@ export async function waitConnected(
  * session_restore：`claude remote-control --session-id <id>` を同じ作業フォルダで起動し直す。
  *
  * TODO(docs/verify.md C-2): --session-id の取り方と、停止→再起動で戻るかは未確認。
- * plist は書き換えない。代わりに ~/.config/macmini-agent/session.json に {"session_id": "..."} を書き、
+ * plist は書き換えない。代わりに ~/.config/agentstation/session.json に {"session_id": "..."} を書き、
  * kickstart する。plist 側の ProgramArguments は claude を直接ではなくラッパー（mac/launchd のシェル
  * スクリプト。フェーズ2で用意）を指し、ラッパーがこのファイルがあれば --session-id を付けて起動し、
  * 起動後にファイルを消す想定。ここでは接続確認が終わった時点でもファイルを消す（残すと KeepAlive の

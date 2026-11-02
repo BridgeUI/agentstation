@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Command } from '@macmini/shared';
+import type { Command } from '@agentstation/shared';
 import type { ActionContext } from '../src/actions/context.js';
 import { executeCommand } from '../src/actions/index.js';
 import { rcMkdir } from '../src/actions/rcdirs.js';
@@ -176,7 +176,7 @@ describe('rc_start_dir / rc_mkdir は起動の前に信頼を記録する', () =
       token: { client_id: 'a', client_secret: 'b' },
       home: '/Users/t',
       uid: 501,
-      configDir: '/Users/t/.config/macmini-agent',
+      configDir: '/Users/t/.config/agentstation',
     });
     const ctx = {
       cfg,

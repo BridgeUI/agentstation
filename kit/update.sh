@@ -7,7 +7,7 @@
 # 上流の変更と自分の値がぶつかってマージで困ることがない。自分でコードを直したいときは上流に PR を送る。
 #
 # 前提：
-#   - remote「upstream」が OSS のリポジトリを指している（git remote add upstream https://github.com/BridgeUI/macmini-dashboard.git）
+#   - remote「upstream」が OSS のリポジトリを指している（git remote add upstream https://github.com/BridgeUI/agentstation.git）
 #   - いまのブランチが deploy で、kit/site.json がコミットされている（git add -f kit/site.json）
 #   - 作業ツリーがきれい
 set -euo pipefail
@@ -49,7 +49,7 @@ git commit -q -m "導入先の値を適用（upstream ${up}）"
 echo
 echo "deploy を upstream ${up} から作り直した（前は ${prev}。戻すなら git reset --hard ${prev}）。"
 echo "次にやること:"
-echo "  cd worker && npx wrangler d1 migrations apply macmini-dashboard --remote && npx wrangler deploy"
+echo "  cd worker && npx wrangler d1 migrations apply agentstation --remote && npx wrangler deploy"
 echo "  git push --force-with-lease origin deploy        # 自分の private リポジトリへ"
 echo "  各マシンで: git fetch origin && git reset --hard origin/deploy && npm ci && npm run build --workspace agent"
 echo "             → launchctl kickstart -k gui/\$(id -u)/<label_prefix>.agent（kit/lessons.md の注意を先に読む）"

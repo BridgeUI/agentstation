@@ -1,5 +1,5 @@
 {
-  "name": "@macmini/agent",
+  "name": "@agentstation/agent",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -11,7 +11,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@macmini/shared": "*"
+    "@agentstation/shared": "*"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

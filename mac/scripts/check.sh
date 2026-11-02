@@ -129,7 +129,7 @@ fi
 H "ツールの絶対パス（plist が参照する。spec 3.1）"
 [ -x "$HOME_DIR/.nodebrew/current/bin/node" ] && OK "node: $HOME_DIR/.nodebrew/current/bin/node ($("$HOME_DIR/.nodebrew/current/bin/node" -v))" || NG "node" "$HOME_DIR/.nodebrew/current/bin/node が無い"
 [ -x "$HOME_DIR/.local/bin/claude" ] && OK "claude: $HOME_DIR/.local/bin/claude" || NG "claude" "$HOME_DIR/.local/bin/claude が無い（which claude で場所を確認し plist の CLAUDE_BIN を直す）"
-[ -x "$HOME_DIR/workspace/macmini-dashboard/mac/launchd/claude-rc.sh" ] && OK "claude-rc.sh（ラッパー）がある" || NG "claude-rc.sh" "$HOME_DIR/workspace/macmini-dashboard/mac/launchd/claude-rc.sh が無いか実行権が無い"
+[ -x "$HOME_DIR/workspace/agentstation/mac/launchd/claude-rc.sh" ] && OK "claude-rc.sh（ラッパー）がある" || NG "claude-rc.sh" "$HOME_DIR/workspace/agentstation/mac/launchd/claude-rc.sh が無いか実行権が無い"
 if [ "$ENV_NAME" = host ]; then
   [ -x /opt/homebrew/bin/tart ] && OK "tart: /opt/homebrew/bin/tart" || NG "tart" "/opt/homebrew/bin/tart が無い"
   [ -x /opt/homebrew/bin/cloudflared ] && OK "cloudflared: /opt/homebrew/bin/cloudflared" || NG "cloudflared" "/opt/homebrew/bin/cloudflared が無い"
@@ -143,7 +143,7 @@ ASK "作業フォルダの信頼" "一度 claude を対話的に起動して信�
 
 # ---- 9. エージェントの設定 ----
 H "エージェントの設定（agent/src/config.ts）"
-cfgdir="$HOME_DIR/.config/macmini-agent"
+cfgdir="$HOME_DIR/.config/agentstation"
 [ -f "$cfgdir/config.json" ] && OK "config.json がある" || NG "config.json" "$cfgdir/config.json が無い"
 if [ -f "$cfgdir/token.json" ]; then
   mode=$(stat -f %Lp "$cfgdir/token.json" 2>/dev/null)
@@ -155,7 +155,7 @@ if [ -f "$cfgdir/config.json" ]; then
   for k in base_url claude_path; do grep -q "\"$k\"" "$cfgdir/config.json" && OK "config.json: $k" || NG "config.json" "$k が無い"; done
   if [ "$ENV_NAME" = host ]; then grep -q '"tart_path"' "$cfgdir/config.json" && OK "config.json: tart_path" || NG "config.json" "host には tart_path が必要"; fi
 fi
-[ -f "$HOME_DIR/workspace/macmini-dashboard/agent/dist/index.js" ] && OK "agent/dist/index.js がある" || NG "agent/dist/index.js" "無い（npm run build --workspace agent）"
+[ -f "$HOME_DIR/workspace/agentstation/agent/dist/index.js" ] && OK "agent/dist/index.js がある" || NG "agent/dist/index.js" "無い（npm run build --workspace agent）"
 
 # ---- 10. launchd ----
 H "launchd（state = running を期待）"
@@ -196,26 +196,26 @@ fi
 # ---- 11. sudoers ----
 if [ "$ENV_NAME" = host ]; then
   H "sudoers（host_restart 用。spec 6章）"
-  if [ -f /etc/sudoers.d/macmini-agent ] || sudo -n test -f /etc/sudoers.d/macmini-agent 2>/dev/null; then
+  if [ -f /etc/sudoers.d/agentstation ] || sudo -n test -f /etc/sudoers.d/agentstation 2>/dev/null; then
     if can_sudo; then
-      sudo -n visudo -cf /etc/sudoers.d/macmini-agent >/dev/null 2>&1 && OK "visudo -cf /etc/sudoers.d/macmini-agent" || NG "sudoers" "visudo -cf が失敗"
+      sudo -n visudo -cf /etc/sudoers.d/agentstation >/dev/null 2>&1 && OK "visudo -cf /etc/sudoers.d/agentstation" || NG "sudoers" "visudo -cf が失敗"
       sudo -n -l /sbin/shutdown -r now >/dev/null 2>&1 && OK "sudo -n /sbin/shutdown -r now が許可されている" || NG "sudoers" "shutdown -r now が NOPASSWD になっていない"
     else
       SKIP "sudoers の検証" "sudo が要る（sudo -v してから再実行）"
     fi
   else
-    NG "sudoers" "/etc/sudoers.d/macmini-agent が無い"
+    NG "sudoers" "/etc/sudoers.d/agentstation が無い"
   fi
 fi
 
 # ---- 12. newsyslog ----
 H "ログローテーション（mac/newsyslog.d）"
-if [ -f /etc/newsyslog.d/macmini.conf ]; then
-  grep -q "__" /etc/newsyslog.d/macmini.conf && NG "newsyslog" "プレースホルダが残っている" || OK "/etc/newsyslog.d/macmini.conf がある"
+if [ -f /etc/newsyslog.d/agentstation.conf ]; then
+  grep -q "__" /etc/newsyslog.d/agentstation.conf && NG "newsyslog" "プレースホルダが残っている" || OK "/etc/newsyslog.d/agentstation.conf がある"
 else
-  NG "newsyslog" "/etc/newsyslog.d/macmini.conf が無い"
+  NG "newsyslog" "/etc/newsyslog.d/agentstation.conf が無い"
 fi
-for d in "$HOME_DIR/Library/Logs/macmini-agent"; do [ -d "$d" ] && OK "ログ用フォルダ $d" || NG "ログ用フォルダ" "$d が無い（mkdir -p）"; done
+for d in "$HOME_DIR/Library/Logs/agentstation"; do [ -d "$d" ] && OK "ログ用フォルダ $d" || NG "ログ用フォルダ" "$d が無い（mkdir -p）"; done
 
 # ---- 13. Time Machine / Spotlight ----
 if [ "$ENV_NAME" = host ]; then

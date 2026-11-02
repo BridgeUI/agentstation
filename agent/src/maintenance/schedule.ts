@@ -1,4 +1,4 @@
-import { VM_ENVS, type Env, type PeerSummary, type VmEnv } from '@macmini/shared';
+import { VM_ENVS, type Env, type PeerSummary, type VmEnv } from '@agentstation/shared';
 import { hhmm, jstParts } from '../time.js';
 
 /**

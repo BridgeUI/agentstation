@@ -5,9 +5,9 @@ import type {
   EnvStatus,
   MeResponse,
   StatusResponse,
-} from '@macmini/shared';
-import { SETUP_CHECK_SPECS, canOperate, setupKeysFor, summarizeSetup } from '@macmini/shared';
-import type { SetupCheck } from '@macmini/shared';
+} from '@agentstation/shared';
+import { SETUP_CHECK_SPECS, canOperate, setupKeysFor, summarizeSetup } from '@agentstation/shared';
+import type { SetupCheck } from '@agentstation/shared';
 import { auditView } from './audit.js';
 import { activeBox, canPress, opsFor } from './commands.js';
 import { $, html, raw, Raw, ICON_ARROW, ICON_SCREEN, ICON_TERM, explainOpen } from './dom.js';
@@ -87,7 +87,7 @@ export function renderEnvPage(ctx: EnvPageCtx): void {
 
   // この環境に関係するバナーだけ
   const bs = banners(s).filter(
-    (b) => b.title.includes(`（${env}）`) || b.title.startsWith('Mac mini'),
+    (b) => b.title.includes(`（${env}）`) || b.title.startsWith('Mac'),
   );
   const bn = $('banners');
   bn.hidden = bs.length === 0;
@@ -191,9 +191,9 @@ function renderMetrics(ctx: EnvPageCtx, e: EnvStatus): void {
   $('metric-note').textContent =
     env === 'host'
       ? s.envs.length > 1
-        ? 'Mac mini 全体のうち、VM を除いた本体の分'
-        : 'Mac mini 全体の値'
-      : 'Mac mini 全体のうち、この VM の分';
+        ? 'Mac 全体のうち、VM を除いた本体の分'
+        : 'Mac 全体の値'
+      : 'Mac 全体のうち、この VM の分';
 }
 
 /** 要対応：他のタブで直すものへの入口 */
@@ -581,7 +581,7 @@ function renderOps(ctx: EnvPageCtx, e: EnvStatus, canUse: boolean): void {
       hostLive !== 'unknown'
     ) {
       disabled = true;
-      why = 'Mac mini からの報告が届いているあいだは使えません（先に「ホストを再起動」）';
+      why = 'Mac からの報告が届いているあいだは使えません（先に「ホストを再起動」）';
     } else if (op.action === 'vm_start' && vmState === 'running') {
       disabled = true;
       why = 'すでに起動しています';

@@ -5,7 +5,7 @@
 # 手順：cloudflare/cloudflared/setup.md
 #
 # 置き換えるもの：
-#   <TUNNEL_ID>   `cloudflared tunnel create macmini` が出す UUID
+#   <TUNNEL_ID>   `cloudflared tunnel create agentstation` が出す UUID
 #   192.168.64.10 / .11  VM の固定 IP。docs/verify.md B-2 の結果で置き換える
 #                  （ゲスト内静的 IP なら .10/.11 のまま。ブリッジにしたならルーターの DHCP 予約の IP）
 
@@ -13,7 +13,7 @@ tunnel: <TUNNEL_ID>
 credentials-file: /etc/cloudflared/<TUNNEL_ID>.json   # 秘密情報。root:wheel, 600
 
 # 内部ネットワーク（192.168.64.0/24）を WARP 経由で公開する設定は
-# `cloudflared tunnel route ip add 192.168.64.0/24 macmini` で Cloudflare 側に登録する。
+# `cloudflared tunnel route ip add 192.168.64.0/24 agentstation` で Cloudflare 側に登録する。
 # 以前は `warp-routing: enabled: true` が必要だったが、cloudflared 2023.9.0 以降は
 # 不要（書くと設定警告が出る）。
 # https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/do-more-with-tunnels/local-management/configuration-file/

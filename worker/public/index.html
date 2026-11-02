@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="referrer" content="same-origin" />
-    <title>一覧 · Mac mini 監視ダッシュボード</title>
+    <title>一覧 · agentstation</title>
     <link rel="icon" href="/logo.png" />
     <meta name="theme-color" content="#f5f5f7" />
     <link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials" />
@@ -12,7 +12,7 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="Mac mini" />
+    <meta name="apple-mobile-web-app-title" content="Mac" />
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body data-page="index">
@@ -20,7 +20,7 @@
       <div class="wrap">
         <a class="nav-brand" href="/">
           <img src="/logo.png" alt="Example" />
-          <span>Mac mini 監視ダッシュボード</span>
+          <span>agentstation</span>
         </a>
         <div class="nav-links">
           <a href="/" aria-current="page">一覧</a>
@@ -39,7 +39,7 @@
             <h1>一覧</h1>
             <span class="pill s-none" id="overall"><span class="dot"></span>読み込み中</span>
           </div>
-          <p class="meta" id="hero-sub"><span>Mac mini</span><span>最終受信 —</span></p>
+          <p class="meta" id="hero-sub"><span>Mac</span><span>最終受信 —</span></p>
         </div>
         <div class="right">
           <span class="small muted">5秒ごとに自動更新</span>
@@ -78,7 +78,7 @@
             </button>
           </div>
           <div class="tools">
-            <span class="small muted">使用量は Mac mini 全体に対する割合</span>
+            <span class="small muted">使用量は Mac 全体に対する割合</span>
           </div>
         </div>
         <div class="panel-body flush table-wrap">
@@ -104,17 +104,17 @@
           </table>
         </div>
         <div class="panel-note" data-explain-body="envs" hidden>
-          VM は Mac mini の上で動くため、そのままでは host の値に VM
+          VM は Mac の上で動くため、そのままでは host の値に VM
           の分が混ざります。Taro（本体）は、全体から VM
           の分を引いた値です。基礎設定に未完了があるときは、状態の下に件数を出します。
         </div>
       </section>
 
-      <!-- Mac mini 全体：使用量はタイル、配分（設定）は表。セグメントで切り替え -->
+      <!-- Mac 全体：使用量はタイル、配分（設定）は表。セグメントで切り替え -->
       <section class="panel" aria-labelledby="total-h">
         <div class="panel-head">
           <div class="t">
-            <h2 id="total-h">Mac mini 全体</h2>
+            <h2 id="total-h">Mac 全体</h2>
             <button type="button" class="explain" data-explain="total" aria-expanded="false">
               <svg
                 width="14"

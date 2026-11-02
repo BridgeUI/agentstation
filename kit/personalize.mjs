@@ -67,7 +67,7 @@ need(
 );
 need(RE.label.test(site.label_prefix ?? ''), 'label_prefix（逆ドメイン。例 com.example）');
 need(typeof site.timezone === 'string' && site.timezone.includes('/'), 'timezone（例 Asia/Tokyo）');
-need(site.people?.host, 'people.host（Mac mini 本体を使う人。必須）');
+need(site.people?.host, 'people.host（Mac 本体を使う人。必須）');
 for (const env of ENVS) {
   const p = site.people?.[env];
   // VM（vm1 / vm2）は使うものだけ書く。0〜2 台（macOS の使用許諾で、1 台の Mac で動かせる macOS の VM は 2 つまで）

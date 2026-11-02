@@ -6,7 +6,7 @@ import type {
   MeResponse,
   SessionRow,
   StatusResponse,
-} from '@macmini/shared';
+} from '@agentstation/shared';
 
 /** 画面から Worker の API を呼ぶ。Access の Cookie はブラウザが自動で付ける。 */
 

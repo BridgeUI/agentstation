@@ -44,7 +44,7 @@ launchctl print gui/$(id -u)/com.example.agent | grep -E "state|pid|last exit"
 ```
 
 ```bash
-tail -50 ~/Library/Logs/macmini-agent/err.log
+tail -50 ~/Library/Logs/agentstation/err.log
 ```
 
 起動し直す：
@@ -55,7 +55,7 @@ launchctl kickstart -k gui/$(id -u)/com.example.agent
 
 期待：1〜2 分で「最終受信」が更新される。`launchctl print` に `state = running` が出ない場合は、plist が読み込まれていない（`docs/setup-mac.md` の launchd の章で `bootstrap` し直す）。
 
-ログの見方：設定ファイルが読めない（`~/.config/macmini-agent/` の config.json / token.json）、サービストークンの失効（HTTP 403）、`node` のパスが変わった（nodebrew で入れ直したとき）、のどれかが多い。
+ログの見方：設定ファイルが読めない（`~/.config/agentstation/` の config.json / token.json）、サービストークンの失効（HTTP 403）、`node` のパスが変わった（nodebrew で入れ直したとき）、のどれかが多い。
 
 ## 3. GUI セッションが落ちた（ログアウトしてしまった等）
 
@@ -86,7 +86,7 @@ launchctl print gui/$(id -u)/com.example.tart-vm1 | grep -E "state|pid|last exit
 ```
 
 ```bash
-tail -50 ~/Library/Logs/macmini-vm/vm1.err.log
+tail -50 ~/Library/Logs/agentstation-vm/vm1.err.log
 ```
 
 手で起動して様子を見る（launchd を止めてから）：
@@ -190,5 +190,5 @@ sudo /sbin/shutdown -r now
 - ダッシュボード：https://workstation.example.com
 - Slack の通知チャンネル：（記入）
 - スマートプラグ：（使うなら記入。例：SwitchBot アプリのアカウントと機器名）。API の token・secret は Worker の secret にだけある
-- 設定ファイル：各環境の `~/.config/macmini-agent/`（トークンはここだけ。ダッシュボードにもリポジトリにも無い）
-- ログ：`~/Library/Logs/macmini-agent/`、`~/Library/Logs/claude-rc*.log`、`/Library/Logs/cloudflared/`
+- 設定ファイル：各環境の `~/.config/agentstation/`（トークンはここだけ。ダッシュボードにもリポジトリにも無い）
+- ログ：`~/Library/Logs/agentstation/`、`~/Library/Logs/claude-rc*.log`、`/Library/Logs/cloudflared/`

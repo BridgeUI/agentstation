@@ -4,14 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="referrer" content="same-origin" />
-    <title>使い方ガイド · Mac mini 監視ダッシュボード</title>
+    <title>使い方ガイド · agentstation</title>
     <link rel="icon" href="/logo.png" />
     <meta name="theme-color" content="#f5f5f7" />
     <link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="Mac mini" />
+    <meta name="apple-mobile-web-app-title" content="Mac" />
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body data-page="guide">
@@ -19,7 +19,7 @@
       <div class="wrap">
         <a class="nav-brand" href="/">
           <img src="/logo.png" alt="Example" />
-          <span>Mac mini 監視ダッシュボード</span>
+          <span>agentstation</span>
         </a>
         <div class="nav-links">
           <a href="/">一覧</a>
@@ -48,7 +48,7 @@
           <p class="eyebrow">使い方ガイド</p>
           <h1>自分の Mac で Claude を使う</h1>
           <p class="lead-p">
-            会社の Mac mini の中に、あなた専用の Mac（仮想マシン）があります。そこで Claude Code が動き続けていて、
+            会社の Mac の中に、あなた専用の Mac（仮想マシン）があります。そこで Claude Code が動き続けていて、
             スマホや PC の Claude アプリから Remote Control でつないで使います。このガイドは 4 つに分かれています。
           </p>
         </header>
@@ -100,7 +100,7 @@
 
         <section class="sec" aria-labelledby="who-h">
           <h2 id="who-h">しくみ</h2>
-          <figure class="diagram" aria-label="あなたの端末から Cloudflare を通って Mac mini の中の自分の Mac につながる図">
+          <figure class="diagram" aria-label="あなたの端末から Cloudflare を通って Mac の中の自分の Mac につながる図">
             <svg viewBox="0 0 760 230" role="img" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -120,7 +120,7 @@
               <text x="323" y="60" text-anchor="middle" font-size="12" fill="#6e6e73">Google でログインします。鍵の登録は要りません</text>
               <line x1="408" y1="118" x2="478" y2="118" stroke="#6e6e73" stroke-width="2" marker-end="url(#arr)" />
               <rect x="480" y="22" width="264" height="190" rx="14" fill="#f5f5f7" stroke="#d2d2d7" />
-              <text x="612" y="46" text-anchor="middle" font-size="13" fill="#6e6e73" font-weight="600">会社の Mac mini</text>
+              <text x="612" y="46" text-anchor="middle" font-size="13" fill="#6e6e73" font-weight="600">会社の Mac</text>
               <rect x="498" y="60" width="228" height="40" rx="8" fill="#fff" stroke="#d2d2d7" />
               <text x="612" y="85" text-anchor="middle" font-size="13" fill="#1d1d1f">Taro の Mac（本体）</text>
               <rect x="498" y="108" width="228" height="40" rx="8" fill="#fff" stroke="#1d1d1f" stroke-width="1.5" />
@@ -129,7 +129,7 @@
               <text x="612" y="181" text-anchor="middle" font-size="13" fill="#1d1d1f" font-weight="700">Jiro の Mac（仮想マシン vm2）</text>
             </svg>
             <figcaption>
-              入り口は Cloudflare です。会社の Google アカウントで本人確認が済むと、自分の Mac につながります。インターネットから Mac mini へ直接はつなげません。
+              入り口は Cloudflare です。会社の Google アカウントで本人確認が済むと、自分の Mac につながります。インターネットから Mac へ直接はつなげません。
             </figcaption>
           </figure>
           <div class="tips">

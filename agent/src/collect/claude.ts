@@ -1,4 +1,4 @@
-import type { ClaudeStatus, CodexStatus } from '@macmini/shared';
+import type { ClaudeStatus, CodexStatus } from '@agentstation/shared';
 import type { AgentConfig } from '../config.js';
 import type { Runner } from '../exec.js';
 import { launchctlInfo, type LaunchdInfo } from './launchctl.js';

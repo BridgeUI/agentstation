@@ -1,4 +1,4 @@
-import type { Env } from '@macmini/shared';
+import type { Env } from '@agentstation/shared';
 
 /**
  * 画面に出す「人」の情報（CLAUDE.md の表）。URL・ID はマシン名（host/vm1/vm2）で固定し、

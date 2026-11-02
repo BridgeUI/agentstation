@@ -1,4 +1,4 @@
-import type { VmHeartbeat } from '@macmini/shared';
+import type { VmHeartbeat } from '@agentstation/shared';
 import { runDf, type Runner } from '../exec.js';
 import { parseBoottime, parseDfK, parseSwVers } from './usage.js';
 

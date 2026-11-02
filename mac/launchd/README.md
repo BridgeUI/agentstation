@@ -6,7 +6,7 @@
 | `com.example.agent.plist` | LaunchAgent | `~/Library/LaunchAgents/` | host / vm1 / vm2（`__ENV__` を変える） |
 | `com.example.tart-vm1.plist` / `com.example.tart-vm2.plist` | LaunchAgent | `~/Library/LaunchAgents/` | host |
 | `com.example.claude-rc.plist` | LaunchAgent | `~/Library/LaunchAgents/` | host / vm1 / vm2 |
-| `claude-rc.sh` | 上の plist が呼ぶラッパー（`session.json` があれば `--session-id` を付ける） | リポジトリの場所のまま使う（`~/workspace/macmini-dashboard/mac/launchd/claude-rc.sh`） | host / vm1 / vm2 |
+| `claude-rc.sh` | 上の plist が呼ぶラッパー（`session.json` があれば `--session-id` を付ける） | リポジトリの場所のまま使う（`~/workspace/agentstation/mac/launchd/claude-rc.sh`） | host / vm1 / vm2 |
 | `com.example.codex.plist` | LaunchAgent | `~/Library/LaunchAgents/` | **未確認（docs/verify.md C-5）。確認が取れるまで配置しない** |
 
 ラベルは `com.example.<名前>`（cloudflared だけ公式の `com.cloudflare.cloudflared`）。VM のラベル `com.example.tart-vm1/2` はエージェントの既定値（`agent/src/config.ts` の `DEFAULT_LABELS`）に合わせてある。
@@ -22,7 +22,7 @@
 置換は `sed` で行い、置換後に `plutil -lint` を通す。例（host の Taro）：
 
 ```bash
-mkdir -p ~/Library/LaunchAgents ~/Library/Logs/macmini-agent ~/Library/Logs/macmini-vm
+mkdir -p ~/Library/LaunchAgents ~/Library/Logs/agentstation ~/Library/Logs/agentstation-vm
 sed -e "s/__USER__/$(whoami)/g" -e "s/__ENV__/host/g" com.example.agent.plist > ~/Library/LaunchAgents/com.example.agent.plist
 sed -e "s/__USER__/$(whoami)/g" com.example.claude-rc.plist > ~/Library/LaunchAgents/com.example.claude-rc.plist
 sed -e "s/__USER__/$(whoami)/g" com.example.tart-vm1.plist > ~/Library/LaunchAgents/com.example.tart-vm1.plist
@@ -50,7 +50,7 @@ sudo plutil -lint /Library/LaunchDaemons/com.cloudflare.cloudflared.plist
 
 ## claude-rc.sh（Remote Control のラッパー）
 
-`com.example.claude-rc.plist` は `claude` を直接ではなく `claude-rc.sh` を起動する。ラッパーは `~/.config/macmini-agent/session.json`（エージェントの `session_restore` が書く。`{"session_id": "..."}`）があれば ID を読んでファイルを消し、`--session-id` を付けて `claude remote-control --debug-file ~/Library/Logs/claude-rc.log` を `exec` する。無ければそのまま起動する。ファイルはリポジトリの checkout（`~/workspace/macmini-dashboard`）をそのまま使うので、コピーは不要（`git pull` で更新される）。
+`com.example.claude-rc.plist` は `claude` を直接ではなく `claude-rc.sh` を起動する。ラッパーは `~/.config/agentstation/session.json`（エージェントの `session_restore` が書く。`{"session_id": "..."}`）があれば ID を読んでファイルを消し、`--session-id` を付けて `claude remote-control --debug-file ~/Library/Logs/claude-rc.log` を `exec` する。無ければそのまま起動する。ファイルはリポジトリの checkout（`~/workspace/agentstation`）をそのまま使うので、コピーは不要（`git pull` で更新される）。
 
 - `claude` の場所が `~/.local/bin/claude` でないときは plist の `EnvironmentVariables` に `CLAUDE_BIN` を足す
 - `--session-id` の挙動は要確認（docs/verify.md C-2）
@@ -89,9 +89,9 @@ plist を書き換えたときは `bootout` → `bootstrap` の順でやり直�
 | プロセス | ログ |
 | --- | --- |
 | cloudflared | `/Library/Logs/cloudflared/cloudflared.out.log`、`cloudflared.err.log` |
-| エージェント | `~/Library/Logs/macmini-agent/out.log`、`err.log` |
-| tart run | `~/Library/Logs/macmini-vm/vm1.out.log` など |
+| エージェント | `~/Library/Logs/agentstation/out.log`、`err.log` |
+| tart run | `~/Library/Logs/agentstation-vm/vm1.out.log` など |
 | claude remote-control | `~/Library/Logs/claude-rc.log`（`--debug-file`）、`claude-rc.out.log`、`claude-rc.err.log` |
 | Codex | `~/Library/Logs/codex.out.log`、`codex.err.log` |
 
-ローテーションは `mac/newsyslog.d/macmini.conf`。
+ローテーションは `mac/newsyslog.d/agentstation.conf`。

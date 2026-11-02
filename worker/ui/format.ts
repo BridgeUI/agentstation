@@ -1,4 +1,4 @@
-import type { Millis } from '@macmini/shared';
+import type { Millis } from '@agentstation/shared';
 
 /** 時刻の表示はすべて JST（docs/spec.md 10章）。端末のタイムゾーンに依存しない。 */
 const TZ = 'Asia/Tokyo';

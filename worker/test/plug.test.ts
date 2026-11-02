@@ -1,6 +1,6 @@
 import { env } from 'cloudflare:test';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import type { Command, Heartbeat } from '@macmini/shared';
+import type { Command, Heartbeat } from '@agentstation/shared';
 import { handleApi } from '../src/api/router.js';
 import { runCron } from '../src/cron/index.js';
 import { PLUG_ON_DEADLINE_MS } from '../src/cron/plug.js';
@@ -303,7 +303,7 @@ describe('プラグを使った通知', () => {
     statusReply = { statusCode: 100, body: { power: 'on', weight: 0.4 } };
     await hostAt(T0 - 11 * MIN);
     await runCron(withPlug(), T0);
-    const msg = posted.find((p) => p.includes('Mac mini 応答なし'));
+    const msg = posted.find((p) => p.includes('Mac 応答なし'));
     expect(msg).toContain('電源プラグ: オン・0.4W');
     expect(msg).toContain('ほぼ 0');
   });
@@ -312,7 +312,7 @@ describe('プラグを使った通知', () => {
     statusReply = { statusCode: 161 };
     await hostAt(T0 - 11 * MIN);
     await runCron(withPlug(), T0);
-    const msg = posted.find((p) => p.includes('Mac mini 応答なし'));
+    const msg = posted.find((p) => p.includes('Mac 応答なし'));
     expect(msg).toContain('届かない');
     expect(msg).toContain('ルーター');
   });

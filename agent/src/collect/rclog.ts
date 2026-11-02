@@ -1,5 +1,5 @@
 import { closeSync, fstatSync, openSync, readSync, statSync } from 'node:fs';
-import type { RemoteControlState } from '@macmini/shared';
+import type { RemoteControlState } from '@agentstation/shared';
 
 /**
  * `claude remote-control --debug-file` のログから Remote Control の状態を判定する。

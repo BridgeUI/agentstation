@@ -1,5 +1,5 @@
-import type { AuditEntry, Env, MeResponse, StatusResponse } from '@macmini/shared';
-import { isEnv } from '@macmini/shared';
+import type { AuditEntry, Env, MeResponse, StatusResponse } from '@agentstation/shared';
+import { isEnv } from '@agentstation/shared';
 import { ApiFailure, api } from './api.js';
 import {
   cancelOp,

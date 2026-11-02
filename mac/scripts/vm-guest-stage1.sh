@@ -4,10 +4,10 @@
 #   ssh admin@<vm の IP> 'GUEST_USER=hanako GUEST_FULLNAME=Hanako GUEST_ENV=vm1 HOST_PUBKEY="ssh-ed25519 AAAA..." bash -s' < mac/scripts/vm-guest-stage1.sh
 #
 # 先に scp でホームに置いておくもの（終わったら消す）:
-#   ~/.vm-secrets          USER_PW=... と VNC_PW=...（chmod 600。ホスト側は ~/.config/macmini-agent/<env>-secrets に保管）
+#   ~/.vm-secrets          USER_PW=... と VNC_PW=...（chmod 600。ホスト側は ~/.config/agentstation/<env>-secrets に保管）
 #   ~/ca.pub               cloudflare/access/ca/ca.pub.<env>
 #   ~/50-cloudflare-access.conf   mac/sshd/50-cloudflare-access.conf
-#   ~/macmini.conf         mac/newsyslog.d/macmini.conf（__USER__ を置換し、host だけの区画を削ったもの）
+#   ~/agentstation.conf         mac/newsyslog.d/agentstation.conf（__USER__ を置換し、host だけの区画を削ったもの）
 #
 # やること: 利用者ユーザーの作成（管理者）と自動ログイン、作業用 SSH 鍵、pmset、自動更新オフ、タイムゾーン、
 #           ホスト名、画面共有（VNC パスワード方式）、sshd の Access CA、newsyslog。
@@ -106,8 +106,8 @@ grep -q '^Include /etc/ssh/sshd_config.d/\*' /etc/ssh/sshd_config && echo "Inclu
 sudo sshd -t && echo "sshd -t OK"
 
 step "newsyslog"
-sudo install -m 0644 -o root -g wheel "$HOME/macmini.conf" /etc/newsyslog.d/macmini.conf
+sudo install -m 0644 -o root -g wheel "$HOME/agentstation.conf" /etc/newsyslog.d/agentstation.conf
 
 step "作業ファイルを消す"
-rm -f "$SECRETS" "$HOME/ca.pub" "$HOME/50-cloudflare-access.conf" "$HOME/macmini.conf"
+rm -f "$SECRETS" "$HOME/ca.pub" "$HOME/50-cloudflare-access.conf" "$HOME/agentstation.conf"
 echo "stage1 done"

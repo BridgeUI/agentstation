@@ -1,5 +1,5 @@
-import type { AuditEntry, EnvStatus, MeResponse, StatusResponse } from '@macmini/shared';
-import { summarizeSetup } from '@macmini/shared';
+import type { AuditEntry, EnvStatus, MeResponse, StatusResponse } from '@agentstation/shared';
+import { summarizeSetup } from '@agentstation/shared';
 import { auditRows, eventLine } from './audit.js';
 import { $, html, raw } from './dom.js';
 import { ago, dayTime } from './format.js';
@@ -42,7 +42,7 @@ export function renderOverview(
   const plugText = plug
     ? `電源プラグ ${plug.value}${s.plug?.ok && s.plug.watts !== null ? ` · ${s.plug.watts}W` : ''}`
     : null;
-  $('hero-sub').innerHTML = html`<span>Mac mini · ${s.envs.length}環境</span
+  $('hero-sub').innerHTML = html`<span>Mac · ${s.envs.length}環境</span
     ><span>最終受信 ${ago(s.host_received_at, s.now)}</span
     >${spec ? html`<span>${spec}</span>` : ''}${plugText ? html`<span>${plugText}</span>` : ''}`;
   const ov = overall(s);
@@ -218,7 +218,7 @@ function renderAlloc(s: StatusResponse): void {
       ${raw(
         [
           row(
-            'Mac mini 全体',
+            'Mac 全体',
             n(h.cpu_cores, 'コア'),
             n(h.mem_total_gb, 'GB'),
             n(h.disk_total_gb, 'GB'),

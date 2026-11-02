@@ -1,4 +1,4 @@
-import type { SessionRow } from '@macmini/shared';
+import type { SessionRow } from '@agentstation/shared';
 import { html, raw } from './dom.js';
 import { dayTime } from './format.js';
 

@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import { isRcDirName } from '@macmini/shared';
+import { isRcDirName } from '@agentstation/shared';
 import { applyProjectTrust, realTrust } from '../claudetrust.js';
 import { failOutcome, okOutcome, type ActionContext, type ActionOutcome } from './context.js';
 

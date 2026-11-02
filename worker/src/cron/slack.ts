@@ -1,4 +1,4 @@
-import type { Env, Millis } from '@macmini/shared';
+import type { Env, Millis } from '@agentstation/shared';
 
 /**
  * Slack Incoming Webhook への送信と本文の組み立て。
@@ -15,7 +15,7 @@ export function envPageUrl(env: Env): string {
 
 /** 環境の表示名。人の名前は MEMBERS_JSON（メール）からしか引けないので、マシン名で固定する */
 export function envLabel(env: Env): string {
-  return env === 'host' ? 'Mac mini（host）' : env;
+  return env === 'host' ? 'Mac（host）' : env;
 }
 
 /** メールアドレスの @ より前だけ（@ が無ければそのまま。空なら「不明」） */
@@ -65,7 +65,7 @@ export function formatDuration(ms: Millis): string {
 }
 
 export interface SlackMessage {
-  /** 1行目。例: 「Mac mini 応答なし」 */
+  /** 1行目。例: 「Mac 応答なし」 */
   title: string;
   /** 補足の行（状態・時刻など）。パスやログは入れない */
   lines?: string[] | undefined;

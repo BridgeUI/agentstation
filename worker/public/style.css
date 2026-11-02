@@ -1,4 +1,4 @@
-/* Mac mini 監視ダッシュボード。トンマナは design/README.md（2026-11-01 改定、App Store Connect 風）。
+/* agentstation。トンマナは design/README.md（2026-11-01 改定、App Store Connect 風）。
    薄いグレーの地に白いカード、枠はヘアライン、角丸 12px、システムフォント。影・グラデーションは使わない。 */
 :root {
   color-scheme: light;

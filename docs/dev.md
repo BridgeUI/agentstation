@@ -39,4 +39,4 @@ cloudflare/ cloudflared と Access・WARP の設定手順
 ## 注意
 
 - `worker/wrangler.toml` の `compatibility_date` が手元の wrangler より新しいと怒られる。その場合は wrangler を更新するか、日付を下げる。
-- 秘密情報（Slack Webhook、サービストークン）はリポジトリに書かない。Worker は `wrangler secret put`、エージェントは `~/.config/macmini-agent/token.json`（chmod 600）。
+- 秘密情報（Slack Webhook、サービストークン）はリポジトリに書かない。Worker は `wrangler secret put`、エージェントは `~/.config/agentstation/token.json`（chmod 600）。

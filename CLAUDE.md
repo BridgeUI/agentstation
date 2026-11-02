@@ -1,9 +1,9 @@
-# macmini-dashboard
+# agentstation
 
 Mac mini 1台（メモリ24GB・SSD 512GB）で3つの環境（host＋macOS VM 2台）を常駐させ、各環境で Claude Code / Codex を動かし続ける。その状態を Cloudflare 上のダッシュボードから確認・操作する仕組みのリポジトリ（OSS。MIT ライセンス）。
 
 - `main` には見本の値（example.com、利用者 Taro / Hanako / Jiro）が入っている。実際の導入先の値は `kit/site.json` を `kit/personalize.mjs` で当てた `deploy` ブランチ（導入者の private リポジトリ）に持つ。**`main` に実在のメールアドレス・ドメイン・Cloudflare の ID を入れない。**
-- 新しく導入する人を手伝うとき：`kit/START.md` に従う（`/macmini-install`）。
+- 新しく導入する人を手伝うとき：`kit/START.md` に従う（`/agentstation-install`）。
 
 - 仕様の全体：`docs/spec.md`
 - 実装の順番と完了条件：`docs/tasks.md`

@@ -1,4 +1,4 @@
-import { SESSION_TITLE_MAX, type SessionInfo } from '@macmini/shared';
+import { SESSION_TITLE_MAX, type SessionInfo } from '@agentstation/shared';
 import { readTail } from './rclog.js';
 
 /**

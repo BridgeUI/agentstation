@@ -27,7 +27,7 @@ function cfgWith(codexApp?: string) {
     token: { client_id: 'a', client_secret: 'b' },
     home: '/Users/t',
     uid: 501,
-    configDir: '/Users/t/.config/macmini-agent',
+    configDir: '/Users/t/.config/agentstation',
   });
 }
 

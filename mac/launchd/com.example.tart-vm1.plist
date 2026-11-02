@@ -8,7 +8,7 @@
   tart のパスは実機に合わせる（Homebrew なら /opt/homebrew/bin/tart、公式リリースを ~/Applications に置いたなら
   /Users/__USER__/Applications/tart.app/Contents/MacOS/tart。config.json の tart_path と同じにする）
   配置先: ~/Library/LaunchAgents/com.example.tart-vm1.plist
-  ログ  : ~/Library/Logs/macmini-vm/（先に mkdir -p しておく）
+  ログ  : ~/Library/Logs/agentstation-vm/（先に mkdir -p しておく）
   起動  : launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.tart-vm1.plist
   再起動（vm_restart）: tart stop vm1 → KeepAlive が起動し直す
   停止（vm_stop）     : launchctl disable gui/$(id -u)/com.example.tart-vm1 → launchctl bootout gui/$(id -u)/com.example.tart-vm1 → tart stop vm1
@@ -42,8 +42,8 @@
   <key>ThrottleInterval</key>
   <integer>30</integer>
   <key>StandardOutPath</key>
-  <string>/Users/__USER__/Library/Logs/macmini-vm/vm1.out.log</string>
+  <string>/Users/__USER__/Library/Logs/agentstation-vm/vm1.out.log</string>
   <key>StandardErrorPath</key>
-  <string>/Users/__USER__/Library/Logs/macmini-vm/vm1.err.log</string>
+  <string>/Users/__USER__/Library/Logs/agentstation-vm/vm1.err.log</string>
 </dict>
 </plist>

@@ -1,4 +1,4 @@
-import type { VmEnv } from '@macmini/shared';
+import type { VmEnv } from '@agentstation/shared';
 import { serviceTarget } from '../collect/launchctl.js';
 import { tartIp } from '../collect/tart.js';
 import { summarizeOutput } from '../send/filter.js';

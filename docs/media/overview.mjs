@@ -6,7 +6,25 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const OUT = dirname(fileURLToPath(import.meta.url));
-const T = 18; // 1 周の秒数
+// 時間軸：冒頭（何のための仕組みか）→ 既存の 4 場面 → フォルダの Remote Control を遠隔で起動する場面
+const INTRO = 4;
+const STORY = 18; // 4 場面の長さ。4 場面の要素はこの時間（0〜18 秒）で書き、INTRO だけ後ろへずらして置く
+const EXTRA = 6;
+export const TOTAL = INTRO + STORY + EXTRA; // 1 周の秒数（render-video.mjs も使う）
+/** いま書いている要素の時間の基準。'story' は 4 場面の時間、'raw' は全体の時間 */
+let RAW = false;
+let T = STORY;
+function raw(fn) {
+  RAW = true;
+  T = TOTAL;
+  try {
+    return fn();
+  } finally {
+    RAW = false;
+    T = STORY;
+  }
+}
+const toReal = (t) => (RAW ? t : t <= 0 ? 0 : t >= STORY ? TOTAL : t + INTRO);
 
 const TEXT = {
   en: {
@@ -29,6 +47,22 @@ const TEXT = {
     rc: 'Claude Code RC',
     you: 'You',
     queue: 'command queue',
+    introLabel: 'agentstation',
+    introTitle: [
+      'Keep Claude Code running on your own Mac,',
+      'and watch and control it from your phone',
+    ],
+    introSub:
+      'Mac + up to 2 macOS VMs · start Remote Control remotely · runs on Cloudflare, no open ports',
+    caption5:
+      'Start Remote Control for any folder from your phone, then continue in the Claude app',
+    folders: 'Folders',
+    notRunning: 'Not running',
+    queuedShort: 'Queued',
+    running: 'Running',
+    startBtn: 'Start Remote Control',
+    claudeApp: 'Claude app',
+    queued5: 'rc_start_dir → host',
   },
   ja: {
     font: '-apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif',
@@ -50,6 +84,19 @@ const TEXT = {
     rc: 'Claude Code RC',
     you: 'あなた',
     queue: '指示の待ち行列',
+    introLabel: 'agentstation',
+    introTitle: ['自分の Mac で Claude Code を動かし続け、', 'スマホから見守り・操作する仕組み'],
+    introSub:
+      '本体＋VM 最大 2 台・Remote Control の起動もスマホから・Cloudflare だけで動く（ポート開放なし）',
+    caption5:
+      'フォルダごとの Remote Control もスマホから起動。そのまま Claude アプリで続きができる',
+    folders: 'フォルダ',
+    notRunning: '未起動',
+    queuedShort: '受付',
+    running: '稼働中',
+    startBtn: 'Remote Control を起動',
+    claudeApp: 'Claude アプリ',
+    queued5: 'rc_start_dir → host',
   },
 };
 
@@ -58,10 +105,10 @@ const SCENES = [
   [0, 4.5],
   [4.5, 8],
   [8, 11.5],
-  [11.5, T],
+  [11.5, STORY - 0.01],
 ];
 
-const pct = (t) => `${Math.max(0, Math.min(100, (t / T) * 100)).toFixed(3)}%`;
+const pct = (t) => `${Math.max(0, Math.min(100, (toReal(t) / TOTAL) * 100)).toFixed(3)}%`;
 let css = '';
 let uid = 0;
 
@@ -75,7 +122,7 @@ function anim(points, easing = 'linear') {
     return `${pct(t)}{${body}}`;
   });
   css += `@keyframes ${name}{${frames.join('')}}\n`;
-  return `animation:${name} ${T}s ${easing} infinite`;
+  return `animation:${name} ${TOTAL}s ${easing} infinite`;
 }
 
 /** [開始, 終了] の間だけ見せる（前後 0.25 秒でフェード） */
@@ -131,7 +178,7 @@ function build(lang) {
     .join('');
   const steps = SCENES.map(
     (s, i) =>
-      `<circle cx="${450 + i * 20}" cy="78" r="4" fill="${INK}" style="${anim([
+      `<circle cx="${440 + i * 20}" cy="78" r="4" fill="${INK}" style="${anim([
         [0, { opacity: s[0] === 0 ? 1 : 0.15 }],
         ...(s[0] > 0
           ? [
@@ -266,7 +313,7 @@ function build(lang) {
   const mac = `
     <g>
       <rect x="660" y="150" width="248" height="300" rx="14" fill="#fff" stroke="${LINE}"/>
-      <text x="784" y="180" text-anchor="middle" font-size="14" font-weight="700" fill="${INK}">Mac mini</text>
+      <text x="784" y="180" text-anchor="middle" font-size="14" font-weight="700" fill="${INK}">Mac</text>
       ${envBox(196, 'Taro', 'host', false)}
       ${envBox(278, 'Hanako', 'vm1 · Tart', true)}
       ${envBox(360, 'Jiro', 'vm2 · Tart', false)}
@@ -342,7 +389,87 @@ function build(lang) {
     dot(550, 348, 690, vm1Y + 8, [[14.0, 0.6]], INK),
   ].join('');
 
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" font-family='${L.font}' role="img" aria-label="${esc(L.captions.join(' / '))}">
+  // ---- 5 場面目：フォルダの Remote Control をスマホから起動（全体の時間で書く）----
+  const extra = raw(() => {
+    const S = INTRO + STORY; // 22 秒
+    const tap = S + 1.0;
+    const queuedAt = S + 1.6;
+    const pickAt = S + 2.4; // 次の報告の応答で受け取る
+    const hostStarted = S + 3.0;
+    const phoneRunning = S + 4.2;
+    const appShown = S + 4.5;
+    const cap = `<text x="480" y="52" text-anchor="middle" font-size="19" font-weight="600" fill="${INK}" style="${visible(S, T)}">${esc(L.caption5)}</text>`;
+    const step = `<circle cx="${440 + 4 * 20}" cy="78" r="4" fill="${INK}" style="${anim([
+      [0, { opacity: 0.15 }],
+      [S - 0.01, { opacity: 0.15 }],
+      [S, { opacity: 1 }],
+      [T, { opacity: 1 }],
+    ])}"/>`;
+    const panel = `<g style="${visible(S, T)}">
+      <rect x="80" y="160" width="172" height="300" fill="#fff"/>
+      <text x="90" y="182" font-size="17" font-weight="700" fill="${INK}">${L.folders}</text>
+      <rect x="86" y="198" width="160" height="44" rx="9" fill="#f5f5f7"/>
+      <text x="96" y="225" font-size="13" font-weight="600" font-family="ui-monospace, Menlo, monospace" fill="${INK}">my-app</text>
+      <text x="238" y="225" text-anchor="end" font-size="11.5" fill="${MUTED}" style="${visible(S, tap - 0.1, 0.1)}">${L.notRunning}</text>
+      <text x="238" y="225" text-anchor="end" font-size="11.5" fill="${A}" style="${visible(tap, phoneRunning - 0.1, 0.1)}">${L.queuedShort}</text>
+      <text x="238" y="225" text-anchor="end" font-size="11.5" font-weight="600" fill="${G}" style="${visible(phoneRunning, T, 0.1)}">${L.running}</text>
+      <g style="${visible(S + 0.2, tap + 0.5)}">
+        <rect x="88" y="256" width="156" height="34" rx="9" fill="${INK}"/>
+        <text x="166" y="278" text-anchor="middle" font-size="11.5" font-weight="600" fill="#fff">${L.startBtn}</text>
+        <circle cx="200" cy="273" r="8" fill="#fff" style="${anim([
+          [0, { opacity: 0 }],
+          [tap - 0.05, { opacity: 0 }],
+          [tap, { opacity: 0.6 }],
+          [tap + 0.5, { opacity: 0 }],
+          [T, { opacity: 0 }],
+        ])}"/>
+      </g>
+      <g style="${visible(appShown, T)}">
+        <rect x="86" y="300" width="160" height="58" rx="10" fill="#fff" stroke="${LINE}"/>
+        <text x="98" y="322" font-size="10.5" fill="${MUTED}">${L.claudeApp}</text>
+        <circle cx="104" cy="340" r="4" fill="${G}"/>
+        <text x="114" y="344" font-size="12.5" font-weight="600" font-family="ui-monospace, Menlo, monospace" fill="${INK}">host-my-app</text>
+      </g>
+    </g>`;
+    const queueItem = `<g style="${visible(queuedAt, pickAt + 0.2)}">
+        <rect x="400" y="336" width="150" height="24" rx="6" fill="#fff" stroke="${INK}"/>
+        <text x="475" y="352" text-anchor="middle" font-size="11" font-family="ui-monospace, Menlo, monospace" fill="${INK}">${L.queued5}</text>
+      </g>`;
+    const hostTag = `<g style="${visible(hostStarted, T)}">
+        <rect x="806" y="203" width="78" height="18" rx="9" fill="${G}"/>
+        <text x="845" y="216" text-anchor="middle" font-size="10.5" font-weight="600" fill="#fff">+ my-app</text>
+      </g>`;
+    const moves = [
+      dot(200, 273, 400, 348, [[tap + 0.05, 0.55]], INK),
+      dot(
+        676,
+        229,
+        572,
+        233,
+        [
+          [queuedAt + 0.2, 0.55],
+          [hostStarted + 0.2, 0.55],
+        ],
+        G,
+      ),
+      dot(550, 348, 690, 237, [[pickAt, 0.55]], INK),
+      dot(378, 233, 248, 220, [[phoneRunning - 0.5, 0.45]], '#0a84ff'),
+    ].join('');
+    return { cap, step, panel, queueItem, hostTag, moves };
+  });
+
+  // ---- 冒頭：何のための仕組みか（全体の時間で書く）----
+  const intro = raw(
+    () => `<g style="${visible(0, INTRO - 0.45, 0.4)}">
+    <rect width="960" height="540" fill="#f5f5f7"/>
+    <text x="480" y="196" text-anchor="middle" font-size="16" font-weight="600" fill="${MUTED}">${L.introLabel}</text>
+    <text x="480" y="252" text-anchor="middle" font-size="${lang === 'ja' ? 32 : 32}" font-weight="700" fill="${INK}">${esc(L.introTitle[0])}</text>
+    <text x="480" y="298" text-anchor="middle" font-size="${lang === 'ja' ? 32 : 32}" font-weight="700" fill="${INK}">${esc(L.introTitle[1])}</text>
+    <text x="480" y="352" text-anchor="middle" font-size="15" fill="${MUTED}">${esc(L.introSub)}</text>
+  </g>`,
+  );
+
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" font-family='${L.font}' role="img" aria-label="${esc([L.introTitle.join(''), ...L.captions, L.caption5].join(' / '))}">
 <style>
 ${css}text{dominant-baseline:auto}
 @media (prefers-reduced-motion: reduce){*{animation:none!important}}
@@ -350,11 +477,18 @@ ${css}text{dominant-baseline:auto}
 <rect width="960" height="540" fill="#f5f5f7"/>
 ${captions}
 ${steps}
+${extra.cap}
+${extra.step}
 ${links}
 ${cloud}
+${extra.queueItem}
 ${mac}
+${extra.hostTag}
 ${phone}
+${extra.panel}
 ${dots}
+${extra.moves}
+${intro}
 </svg>
 `;
   return svg;

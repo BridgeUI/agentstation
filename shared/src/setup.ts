@@ -199,7 +199,7 @@ export const SETUP_CHECK_SPECS: Record<SetupCheckKey, SetupCheckSpec> = {
   'sudoers.shutdown': {
     label: 'ホスト再起動の sudoers',
     manual: false,
-    how: 'mac/sudoers.d/macmini-agent を /etc/sudoers.d/ に',
+    how: 'mac/sudoers.d/agentstation を /etc/sudoers.d/ に',
     envs: HOST,
   },
   'timemachine.tart_excluded': {

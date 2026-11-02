@@ -1,4 +1,4 @@
-import { parseMembersConfig } from '@macmini/shared';
+import { parseMembersConfig } from '@agentstation/shared';
 import type { Bindings } from '../env.js';
 import { HttpError, json } from '../http.js';
 import { postHeartbeat, postPoll, postResult } from './agent.js';

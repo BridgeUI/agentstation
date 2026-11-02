@@ -51,7 +51,7 @@ export interface StatusAlert {
 }
 
 /**
- * Mac mini の電源ケーブルに挟んだスマートプラグの直近の状態（docs/spec.md 6.1）。
+ * Mac の電源ケーブルに挟んだスマートプラグの直近の状態（docs/spec.md 6.1）。
  * Cron が 1 分ごとに SwitchBot のクラウド API から取り、D1 の plug_status に置く。エージェントは関与しない。
  */
 export type PlugPower = 'on' | 'off' | 'unknown';
@@ -71,7 +71,7 @@ export interface StatusResponse {
   now: Millis;
   host_received_at: Millis | null;
   envs: EnvStatus[];
-  /** 全環境に効く警告（Mac mini 応答なし、ディスク残量など） */
+  /** 全環境に効く警告（Mac 応答なし、ディスク残量など） */
   alerts: StatusAlert[];
   /** スマートプラグが設定済み（Worker に token・secret・機器 ID がある）か。false なら電源の表示・操作を出さない */
   plug_enabled: boolean;

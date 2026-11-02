@@ -47,11 +47,11 @@ ls -l ~/.cloudflared/cert.pem
 ## 3. トンネルを作る
 
 ```bash
-cloudflared tunnel create macmini
+cloudflared tunnel create agentstation
 cloudflared tunnel list
 ```
 
-期待：UUID と `~/.cloudflared/<TUNNEL_ID>.json` のパスが表示される。`tunnel list` に `macmini` が出る（まだ `CONNECTIONS` は空）。
+期待：UUID と `~/.cloudflared/<TUNNEL_ID>.json` のパスが表示される。`tunnel list` に `agentstation` が出る（まだ `CONNECTIONS` は空）。
 
 控えるもの：`<TUNNEL_ID>`（UUID）。この JSON がトンネルの認証情報（秘密情報）。
 
@@ -61,7 +61,7 @@ cloudflared tunnel list
 
 ```bash
 for h in ssh-host vnc-host ssh-vm1 vnc-vm1 ssh-vm2 vnc-vm2; do
-  cloudflared tunnel route dns macmini "$h.example.com"
+  cloudflared tunnel route dns agentstation "$h.example.com"
 done
 ```
 
@@ -78,11 +78,11 @@ dig +short ssh-host.example.com
 ## 5. 内部ネットワークのルート（WARP 経由・B の経路）
 
 ```bash
-cloudflared tunnel route ip add 192.168.64.0/24 macmini
+cloudflared tunnel route ip add 192.168.64.0/24 agentstation
 cloudflared tunnel route ip show
 ```
 
-期待：`route ip show` に `192.168.64.0/24` が `macmini` のトンネルに紐づいて出る（virtual network は `default`）。
+期待：`route ip show` に `192.168.64.0/24` が `agentstation` のトンネルに紐づいて出る（virtual network は `default`）。
 
 ダッシュボードでは Zero Trust › Networking › Routes に同じ行が出る。
 
@@ -130,13 +130,13 @@ sudo cloudflared --config /etc/cloudflared/config.yml tunnel ingress rule https:
 ## 7. 手動で一度動かして確認
 
 ```bash
-sudo cloudflared --config /etc/cloudflared/config.yml tunnel run macmini
+sudo cloudflared --config /etc/cloudflared/config.yml tunnel run agentstation
 ```
 
 期待：`Registered tunnel connection` が 4 行（4 本の接続）出る。別ターミナルで
 
 ```bash
-cloudflared tunnel info macmini
+cloudflared tunnel info agentstation
 ```
 
 に接続（CONNECTOR ID と所在地）が出る。Ctrl-C で止める。
@@ -169,7 +169,7 @@ sudo cloudflared service install
 ```bash
 sudo launchctl print system/com.cloudflare.cloudflared | head -20
 tail -n 20 /Library/Logs/com.cloudflare.cloudflared.err.log
-cloudflared tunnel info macmini
+cloudflared tunnel info agentstation
 ```
 
 期待：`state = running`、ログに `Registered tunnel connection`、`tunnel info` に接続が 4 本。
@@ -184,7 +184,7 @@ Mac を再起動して、ログイン画面のまま（自動ログイン前で�
 
 ## 9. ダッシュボードで確認
 
-Zero Trust › Networking › Tunnels に `macmini` が `HEALTHY` で出る。Routes に `192.168.64.0/24` と公開ホスト名 6 本（ローカル設定なので hostname は `cloudflared` 側で管理と表示される）。
+Zero Trust › Networking › Tunnels に `agentstation` が `HEALTHY` で出る。Routes に `192.168.64.0/24` と公開ホスト名 6 本（ローカル設定なので hostname は `cloudflared` 側で管理と表示される）。
 
 ここまでで公開ホスト名は Cloudflare に届くが、Access アプリがないと誰でも SSH の入口に到達できる状態（sshd の認証はある）。**続けて `cloudflare/access/setup.md` の SSH/VNC アプリを作る**まで、`route dns` の直後に放置しない。
 

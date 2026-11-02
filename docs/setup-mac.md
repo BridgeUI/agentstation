@@ -227,7 +227,7 @@ Codex（verify.md C-5 で決定：ChatGPT デスクトップアプリ）：
 osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/ChatGPT.app", hidden:false}'
 ```
 
-4. `~/.config/macmini-agent/config.json` に `"codex_app": "/Applications/ChatGPT.app"` を足す（エージェントがプロセスを監視し、「Codex を再起動」でアプリを開き直す）
+4. `~/.config/agentstation/config.json` に `"codex_app": "/Applications/ChatGPT.app"` を足す（エージェントがプロセスを監視し、「Codex を再起動」でアプリを開き直す）
 
 CLI だけで常駐させたい場合（未検証）：アプリ同梱の `codex app-server daemon bootstrap --remote-control`。
 
@@ -347,7 +347,7 @@ claude auth login
 `mac/claude/README.md` の手順で `mac/claude/settings.fragment.json` を `~/.claude/settings.json` にマージする。
 
 ```bash
-cd ~/workspace/macmini-dashboard/mac/claude
+cd ~/workspace/agentstation/mac/claude
 test -f ~/.claude/settings.json || cp settings.fragment.json ~/.claude/settings.json
 ```
 
@@ -360,7 +360,7 @@ cd ~/workspace
 claude remote-control --debug-file ~/Library/Logs/claude-rc.log
 ```
 
-launchd からは `mac/launchd/claude-rc.sh`（ラッパー）経由で同じコマンドが起動される。ラッパーは `~/.config/macmini-agent/session.json` があれば `--session-id` を付ける（`session_restore` 用。要確認 verify.md C-2）。
+launchd からは `mac/launchd/claude-rc.sh`（ラッパー）経由で同じコマンドが起動される。ラッパーは `~/.config/agentstation/session.json` があれば `--session-id` を付ける（`session_restore` 用。要確認 verify.md C-2）。
 
 期待する結果：スマホの Claude アプリ（その環境のアカウント）にセッションが出る。Ctrl+C で止める。ログの文言（接続成功・失敗）は **要確認 verify.md C-3**（エージェントの状態判定に使う）。
 
@@ -370,13 +370,13 @@ launchd からは `mac/launchd/claude-rc.sh`（ラッパー）経由で同じコ
 
 ### 6.1 取得とビルド
 
-plist が参照するパスは `~/workspace/macmini-dashboard`。ここに clone する。各環境の git 認証はその環境のものを使い、他の環境の鍵を持ち込まない（spec 3.1）。
+plist が参照するパスは `~/workspace/agentstation`。ここに clone する。各環境の git 認証はその環境のものを使い、他の環境の鍵を持ち込まない（spec 3.1）。
 
 ```bash
 mkdir -p ~/workspace
 cd ~/workspace
-git clone <リポジトリの URL> macmini-dashboard
-cd macmini-dashboard
+git clone <リポジトリの URL> agentstation
+cd agentstation
 npm install
 npm run build --workspace agent
 ls -l agent/dist/index.js
@@ -387,11 +387,11 @@ ls -l agent/dist/index.js
 ### 6.2 設定ファイル（`agent/src/config.ts` が正。キーが増えたら `agent/README.md` を参照）
 
 ```bash
-mkdir -p ~/.config/macmini-agent
-chmod 700 ~/.config/macmini-agent
+mkdir -p ~/.config/agentstation
+chmod 700 ~/.config/agentstation
 ```
 
-`~/.config/macmini-agent/config.json`（秘密情報は入れない）。host の例：
+`~/.config/agentstation/config.json`（秘密情報は入れない）。host の例：
 
 ```json
 {
@@ -429,15 +429,15 @@ vm1 の例（`tart_path` は不要。`claude_path` などはそのユーザー�
 
 Codex の常駐が無い環境では `"labels": { "codex": null }` を書く（`codex.state` が `unknown` になる）。
 
-`~/.config/macmini-agent/token.json`（**秘密**。Access のサービストークン。環境ごとに別。発行は `cloudflare/access/setup.md` 3章）：
+`~/.config/agentstation/token.json`（**秘密**。Access のサービストークン。環境ごとに別。発行は `cloudflare/access/setup.md` 3章）：
 
 ```json
 { "client_id": "<この環境のトークンの Client ID>", "client_secret": "<この環境の Client Secret>" }
 ```
 
 ```bash
-chmod 600 ~/.config/macmini-agent/token.json
-ls -l ~/.config/macmini-agent/
+chmod 600 ~/.config/agentstation/token.json
+ls -l ~/.config/agentstation/
 ```
 
 期待する結果：`token.json` が `-rw-------`。エージェントは起動時に権限が広いと警告する。`session.json` と `state.json` はエージェントが同じフォルダに作る。
@@ -445,7 +445,7 @@ ls -l ~/.config/macmini-agent/
 ### 6.3 手動で起動確認
 
 ```bash
-cd ~/workspace/macmini-dashboard/agent
+cd ~/workspace/agentstation/agent
 ~/.nodebrew/current/bin/node dist/index.js --env=host
 ```
 
@@ -456,8 +456,8 @@ cd ~/workspace/macmini-dashboard/agent
 `mac/launchd/README.md` の `sed` の例に従って置く。起動は 8 章でまとめて行う。
 
 ```bash
-cd ~/workspace/macmini-dashboard/mac/launchd
-mkdir -p ~/Library/LaunchAgents ~/Library/Logs/macmini-agent
+cd ~/workspace/agentstation/mac/launchd
+mkdir -p ~/Library/LaunchAgents ~/Library/Logs/agentstation
 sed -e "s/__USER__/$(whoami)/g" -e "s/__ENV__/host/g" com.example.agent.plist > ~/Library/LaunchAgents/com.example.agent.plist
 plutil -lint ~/Library/LaunchAgents/com.example.agent.plist
 ```
@@ -478,7 +478,7 @@ plutil -lint ~/Library/LaunchAgents/com.example.agent.plist
 ```bash
 sudo mkdir -p /etc/cloudflared /Library/Logs/cloudflared
 sudo cloudflared tunnel --config /etc/cloudflared/config.yml ingress validate
-cd ~/workspace/macmini-dashboard/mac/launchd
+cd ~/workspace/agentstation/mac/launchd
 sudo install -m 0644 -o root -g wheel com.cloudflare.cloudflared.plist /Library/LaunchDaemons/com.cloudflare.cloudflared.plist
 sudo launchctl bootstrap system /Library/LaunchDaemons/com.cloudflare.cloudflared.plist
 sudo launchctl print system/com.cloudflare.cloudflared | grep -E "state|pid"
@@ -503,8 +503,8 @@ LaunchAgent 同士の順序は launchd が保証しないので、各プロセ�
 ### 8.2 host に置くもの
 
 ```bash
-cd ~/workspace/macmini-dashboard/mac/launchd
-mkdir -p ~/Library/LaunchAgents ~/Library/Logs/macmini-agent ~/Library/Logs/macmini-vm ~/workspace
+cd ~/workspace/agentstation/mac/launchd
+mkdir -p ~/Library/LaunchAgents ~/Library/Logs/agentstation ~/Library/Logs/agentstation-vm ~/workspace
 sed -e "s/__USER__/$(whoami)/g" -e "s/__ENV__/host/g" com.example.agent.plist > ~/Library/LaunchAgents/com.example.agent.plist
 sed -e "s/__USER__/$(whoami)/g" com.example.claude-rc.plist > ~/Library/LaunchAgents/com.example.claude-rc.plist
 sed -e "s/__USER__/$(whoami)/g" com.example.tart-vm1.plist > ~/Library/LaunchAgents/com.example.tart-vm1.plist
@@ -525,8 +525,8 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.claude-rc.pl
 ### 8.3 vm1 / vm2 に置くもの（ゲストの中で、そのユーザーで）
 
 ```bash
-cd ~/workspace/macmini-dashboard/mac/launchd
-mkdir -p ~/Library/LaunchAgents ~/Library/Logs/macmini-agent ~/workspace
+cd ~/workspace/agentstation/mac/launchd
+mkdir -p ~/Library/LaunchAgents ~/Library/Logs/agentstation ~/workspace
 sed -e "s/__USER__/$(whoami)/g" -e "s/__ENV__/vm1/g" com.example.agent.plist > ~/Library/LaunchAgents/com.example.agent.plist
 sed -e "s/__USER__/$(whoami)/g" com.example.claude-rc.plist > ~/Library/LaunchAgents/com.example.claude-rc.plist
 plutil -lint ~/Library/LaunchAgents/com.example.*.plist
@@ -545,7 +545,7 @@ launchctl print gui/$(id -u)/com.example.agent | grep -E "state|pid"
 launchctl print gui/$(id -u)/com.example.claude-rc | grep -E "state|pid"
 launchctl print gui/$(id -u)/com.example.tart-vm1 | grep -E "state|pid"
 launchctl print gui/$(id -u)/com.example.tart-vm2 | grep -E "state|pid"
-tail -20 ~/Library/Logs/macmini-agent/err.log
+tail -20 ~/Library/Logs/agentstation/err.log
 tail -20 ~/Library/Logs/claude-rc.err.log
 tart list
 ```
@@ -561,7 +561,7 @@ tart list
 まとめて確認：
 
 ```bash
-bash ~/workspace/macmini-dashboard/mac/scripts/check.sh
+bash ~/workspace/agentstation/mac/scripts/check.sh
 ```
 
 期待する結果：`NG 0`。`要確認` の項目は目で確かめる。
@@ -582,26 +582,26 @@ plist を書き換えたら `bootout` → `bootstrap`。`kickstart -k` は再起
 ### 9.1 newsyslog（host / vm1 / vm2）
 
 ```bash
-cd ~/workspace/macmini-dashboard/mac/newsyslog.d
-sed "s/__USER__/$(whoami)/g" macmini.conf > /tmp/macmini.conf
-sudo install -m 0644 -o root -g wheel /tmp/macmini.conf /etc/newsyslog.d/macmini.conf
+cd ~/workspace/agentstation/mac/newsyslog.d
+sed "s/__USER__/$(whoami)/g" agentstation.conf > /tmp/agentstation.conf
+sudo install -m 0644 -o root -g wheel /tmp/agentstation.conf /etc/newsyslog.d/agentstation.conf
 sudo newsyslog -nvv
 ```
 
-VM では `macmini.conf` の「host だけ」の行（cloudflared と macmini-vm）を消してから置く。
+VM では `agentstation.conf` の「host だけ」の行（cloudflared と agentstation-vm）を消してから置く。
 
-期待する結果：`newsyslog -nvv` に対象のファイルが列挙され、エラーが無い。50MB を超えたファイルが 30 分以内に `.0.bz2` に回る。開いたままのプロセスは次の再起動から新しいファイルに書く（`macmini.conf` の注意書き。要確認）。
+期待する結果：`newsyslog -nvv` に対象のファイルが列挙され、エラーが無い。50MB を超えたファイルが 30 分以内に `.0.bz2` に回る。開いたままのプロセスは次の再起動から新しいファイルに書く（`agentstation.conf` の注意書き。要確認）。
 
 ### 9.2 sudoers（host だけ。spec 6章）
 
 `host_restart` のためにエージェントが `sudo /sbin/shutdown -r now` を呼ぶ。許可するのはこの 1 つだけ。cloudflared の再起動は Taro が手動で行うので入れない。
 
 ```bash
-cd ~/workspace/macmini-dashboard/mac/sudoers.d
-sed "s/__USER__/$(whoami)/g" macmini-agent > /tmp/macmini-agent
-sudo visudo -cf /tmp/macmini-agent
-sudo install -m 0440 -o root -g wheel /tmp/macmini-agent /etc/sudoers.d/macmini-agent
-rm /tmp/macmini-agent
+cd ~/workspace/agentstation/mac/sudoers.d
+sed "s/__USER__/$(whoami)/g" agentstation > /tmp/agentstation
+sudo visudo -cf /tmp/agentstation
+sudo install -m 0440 -o root -g wheel /tmp/agentstation /etc/sudoers.d/agentstation
+rm /tmp/agentstation
 sudo -n -l /sbin/shutdown -r now
 ```
 
@@ -613,7 +613,7 @@ sudo -n -l /sbin/shutdown -r now
 
 ```bash
 sudo install -m 0644 -o root -g wheel ca.pub /etc/ssh/ca.pub
-cd ~/workspace/macmini-dashboard/mac/sshd
+cd ~/workspace/agentstation/mac/sshd
 sudo install -m 0644 -o root -g wheel 50-cloudflare-access.conf /etc/ssh/sshd_config.d/50-cloudflare-access.conf
 grep Include /etc/ssh/sshd_config
 sudo sshd -t
@@ -668,20 +668,20 @@ ssh taro@<Mac mini の LAN IP> "uptime; launchctl print gui/\$(id -u)/com.exampl
 
 ### 11.1 エージェント（`agent_update` は作らない。決定）
 
-リポジトリに remote は無い。host の `~/workspace/macmini-dashboard` が正本で、VM へは rsync で配る（`.git` ごと。初回は `docs/initial-setup.md` と同じ）。host で変更をコミットしてから：
+リポジトリに remote は無い。host の `~/workspace/agentstation` が正本で、VM へは rsync で配る（`.git` ごと。初回は `docs/initial-setup.md` と同じ）。host で変更をコミットしてから：
 
 ```bash
 # host から vm1 / vm2 へ（node_modules・dist・秘密は送らない。--delete でも除外したものは消えない）
 for t in hanako@192.168.64.10 jiro@192.168.64.11; do
   rsync -az --delete --exclude node_modules --exclude dist --exclude .wrangler --exclude '.dev.vars*' --exclude .DS_Store \
-    ~/workspace/macmini-dashboard "$t":workspace/
-  ssh "$t" 'export PATH=$HOME/.nodebrew/current/bin:$PATH; cd ~/workspace/macmini-dashboard && npm run build --workspace agent && launchctl kickstart -k gui/$(id -u)/com.example.agent && sleep 3 && launchctl print gui/$(id -u)/com.example.agent | grep -E "^\s*(state|pid) "'
+    ~/workspace/agentstation "$t":workspace/
+  ssh "$t" 'export PATH=$HOME/.nodebrew/current/bin:$PATH; cd ~/workspace/agentstation && npm run build --workspace agent && launchctl kickstart -k gui/$(id -u)/com.example.agent && sleep 3 && launchctl print gui/$(id -u)/com.example.agent | grep -E "^\s*(state|pid) "'
 done
 ```
 
 依存（`package.json` / `package-lock.json`）を変えたときだけ、ビルドの前に `npm install` を足す。host は `npm run build --workspace agent` のあと同じく `launchctl kickstart -k gui/$(id -u)/com.example.agent`（host でフォルダごとの RC から作業していると、その Claude のセッションも一緒に切れる。エージェントの子プロセスのため）。
 
-期待する結果：`state = running`、`~/Library/Logs/macmini-agent/out.log` に新しい「macmini-agent 起動」の行。plist を変えたときは `bootout` → `bootstrap`。
+期待する結果：`state = running`、`~/Library/Logs/agentstation/out.log` に新しい「agentstation 起動」の行。plist を変えたときは `bootout` → `bootstrap`。
 
 ### 11.2 Claude Code
 
@@ -694,7 +694,7 @@ launchctl kickstart -k gui/$(id -u)/com.example.claude-rc
 
 ### 11.3 サービストークンの更新（spec 9章）
 
-`cloudflare/access/setup.md` 3章の手順で新しいトークンを発行し、その環境の `~/.config/macmini-agent/token.json` を書き換えて `chmod 600`、`launchctl kickstart -k gui/$(id -u)/com.example.agent`。古いトークンは Cloudflare 側で失効する。VM が乗っ取られた疑いがあればその VM のトークンだけ失効する。
+`cloudflare/access/setup.md` 3章の手順で新しいトークンを発行し、その環境の `~/.config/agentstation/token.json` を書き換えて `chmod 600`、`launchctl kickstart -k gui/$(id -u)/com.example.agent`。古いトークンは Cloudflare 側で失効する。VM が乗っ取られた疑いがあればその VM のトークンだけ失効する。
 
 ### 11.4 macOS・Tart・cloudflared・Homebrew
 

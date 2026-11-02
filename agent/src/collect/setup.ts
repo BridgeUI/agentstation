@@ -9,7 +9,7 @@ import {
   type SetupCheckKey,
   type SetupStatus,
   type VmEnv,
-} from '@macmini/shared';
+} from '@agentstation/shared';
 import { readClaudeDefaultMode } from '../claudesettings.js';
 import type { AgentConfig } from '../config.js';
 import { runDf, type ExecResult, type Runner } from '../exec.js';

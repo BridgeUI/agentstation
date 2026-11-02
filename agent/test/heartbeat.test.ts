@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { FORBIDDEN_PATTERNS, SESSION_TITLE_MAX } from '@macmini/shared';
+import { FORBIDDEN_PATTERNS, SESSION_TITLE_MAX } from '@agentstation/shared';
 import { buildHeartbeat, trimSession } from '../src/collect/heartbeat.js';
 import { findForbidden } from '../src/send/filter.js';
 import { AGENT_VERSION } from '../src/version.js';

@@ -144,7 +144,7 @@ Zero Trust › Access controls › Applications › **Create new application** �
 - Session duration はアプリ側で 1 hour（接続がこの時間で切れる）。Gateway 経由の接続は最長 10 時間で切れる仕様もある
 - ポートフォワード、ProxyJump、agent forwarding、X11 は使えない
 
-**実際に作ったもの（2026-10-31〜11-01）**：アプリは 3 つに分けず、1 つの Infrastructure アプリ `macmini-ssh`（ターゲット host / vm1 / vm2、SSH 22、Session duration 24h）にポリシー `macmini ssh users` を 1 本。Include は taro / hanako / jiro のメール、「email alias でログイン可」オン、SSH user に `hanako` と `jiro`（2026-11-01 02:25 に API で追加。それまでは alias のみだったので、Taro は `taro@192.168.64.1` にしか入れなかった）。ポリシーが共通なので、3 人とも `hanako@192.168.64.10` と `jiro@192.168.64.11` に入れる（Hanako が vm2 に、Jiro が vm1 に入れてしまう）。マシンごとに分けたくなったら、上の表のようにアプリを 3 つに分ける。
+**実際に作ったもの（2026-10-31〜11-01）**：アプリは 3 つに分けず、1 つの Infrastructure アプリ `agentstation-ssh`（ターゲット host / vm1 / vm2、SSH 22、Session duration 24h）にポリシー `agentstation ssh users` を 1 本。Include は taro / hanako / jiro のメール、「email alias でログイン可」オン、SSH user に `hanako` と `jiro`（2026-11-01 02:25 に API で追加。それまでは alias のみだったので、Taro は `taro@192.168.64.1` にしか入れなかった）。ポリシーが共通なので、3 人とも `hanako@192.168.64.10` と `jiro@192.168.64.11` に入れる（Hanako が vm2 に、Jiro が vm1 に入れてしまう）。マシンごとに分けたくなったら、上の表のようにアプリを 3 つに分ける。
 
 期待：保存後、Access controls › Applications に 3 つの Infrastructure アプリ。
 
@@ -262,14 +262,14 @@ Cloudflare 側（2026-11-01 に API で確認・設定済み）：
 Mac 側（各マシンで 1 回。`mac/scripts/smb-workspace.sh`）。やること：(1) 利用者の SMB-NT ハッシュを有効化（既定では無く、SMB ログインが通らない。現在のパスワードを受け取り、同じパスワードで設定し直してハッシュを作る。GUI の「ファイル共有 › オプション › ユーザーをオン」でパスワードを聞かれるのと同じ。パスワードは変わらない）、(2) ファイル共有（smbd）を有効化、(3) 共有ポイント `workspace` を追加（ゲスト不可）。
 
 ```bash
-cd ~/workspace/macmini-dashboard
+cd ~/workspace/agentstation
 # host（Taro 本人。パスワードを聞かれる）
 sudo bash mac/scripts/smb-workspace.sh
-# vm1 / vm2（host から。パスワードは ~/.config/macmini-agent/<env>-secrets の USER_PW を標準入力で渡す。2026-11-01 実施済み）
+# vm1 / vm2（host から。パスワードは ~/.config/agentstation/<env>-secrets の USER_PW を標準入力で渡す。2026-11-01 実施済み）
 scp mac/scripts/smb-workspace.sh admin@192.168.64.10:/tmp/
-sed -n 's/^USER_PW=//p' ~/.config/macmini-agent/vm1-secrets | ssh admin@192.168.64.10 'sudo bash /tmp/smb-workspace.sh hanako; rm /tmp/smb-workspace.sh'
+sed -n 's/^USER_PW=//p' ~/.config/agentstation/vm1-secrets | ssh admin@192.168.64.10 'sudo bash /tmp/smb-workspace.sh hanako; rm /tmp/smb-workspace.sh'
 scp mac/scripts/smb-workspace.sh admin@192.168.64.11:/tmp/
-sed -n 's/^USER_PW=//p' ~/.config/macmini-agent/vm2-secrets | ssh admin@192.168.64.11 'sudo bash /tmp/smb-workspace.sh jiro; rm /tmp/smb-workspace.sh'
+sed -n 's/^USER_PW=//p' ~/.config/agentstation/vm2-secrets | ssh admin@192.168.64.11 'sudo bash /tmp/smb-workspace.sh jiro; rm /tmp/smb-workspace.sh'
 ```
 
 期待：`smbd が 445 で待受中` と `workspace` の共有。host から `smbutil view //hanako@192.168.64.10`（パスワードは USER_PW）で `workspace` が一覧に出る。
@@ -302,7 +302,7 @@ iPhone 側（ガイド「入り方」の「スマホの『ファイル』アプ�
 | 2 | `192.168.64.0/24` が WARP に向いているか | `netstat -rn \| grep 192.168.64`（utun に向くか） | 2 章の Split Tunnels。自宅 LAN が `192.168.64.x` と衝突していないか |
 | 3 | Gateway が通しているか | Zero Trust › Insights › Logs › Network で宛先 IP を検索。Blocked なら Policy name を見る | 5 章の Allow の順序。3 章のプロキシ TCP |
 | 4 | ルートが Tunnel に届いているか | Networking › Routes に `192.168.64.0/24`。`cloudflared tunnel route ip show` | `cloudflare/cloudflared/setup.md` 5 |
-| 5 | Tunnel が生きているか | `cloudflared tunnel info macmini`、Networking › Tunnels が HEALTHY | host の cloudflared を `kickstart -k` |
+| 5 | Tunnel が生きているか | `cloudflared tunnel info agentstation`、Networking › Tunnels が HEALTHY | host の cloudflared を `kickstart -k` |
 | 6 | host から宛先に届くか | host で `nc -vz 192.168.64.10 22`、`nc -vz 192.168.64.1 22` | VM の起動・IP（B-2）。host の `192.168.64.1`（B-3）。macOS のファイアウォールでリモートログイン／画面共有が許可されているか |
 | 7 | SSH が証明書で拒否されるか | `ssh -v user@192.168.64.10` の `Authentications that can continue` | `/etc/ssh/ca.pub` に Gateway SSH CA が入っているか、`sshd -T \| grep trusteduserca`、ユーザーがマシンに存在するか、Infrastructure ポリシーの SSH user |
 | 8 | Access のポリシーで拒否されているか | `warp-cli target list` に出るか。Insights › Logs › Access authentication logs | 4-2 のポリシー（メール、SSH user） |

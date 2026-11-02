@@ -1,7 +1,7 @@
 import { spawn, type ChildProcess } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
-import { isRcDirName, type RcDirRunning, type RcDirState } from '@macmini/shared';
+import { isRcDirName, type RcDirRunning, type RcDirState } from '@agentstation/shared';
 import type { Logger } from '../log.js';
 
 /**

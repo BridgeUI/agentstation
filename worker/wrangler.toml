@@ -1,5 +1,5 @@
-# macmini-dashboard: 静的UI＋API＋Cron を1つの Worker で配信（docs/spec.md 2章）
-name = "macmini-dashboard"
+# agentstation: 静的UI＋API＋Cron を1つの Worker で配信（docs/spec.md 2章）
+name = "agentstation"
 main = "src/index.ts"
 compatibility_date = "2026-04-01"
 compatibility_flags = ["nodejs_compat"]
@@ -17,8 +17,8 @@ not_found_handling = "404-page"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "macmini-dashboard"
-# TODO(導入時): `wrangler d1 create macmini-dashboard` の出力の database_id に置き換える
+database_name = "agentstation"
+# TODO(導入時): `wrangler d1 create agentstation` の出力の database_id に置き換える
 database_id = "REPLACE_WITH_D1_DATABASE_ID"
 migrations_dir = "../db/migrations"
 

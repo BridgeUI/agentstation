@@ -1,4 +1,4 @@
-import { FORBIDDEN_PATTERNS } from '@macmini/shared';
+import { FORBIDDEN_PATTERNS } from '@agentstation/shared';
 
 /**
  * 送信直前の自己チェック（docs/spec.md 3.6「5.」、CLAUDE.md 3）。

@@ -41,23 +41,23 @@ Mac mini（host）と VM 2 台（vm1 / vm2）を実際に構築して確定し�
 | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Zero Trust のチーム          | `example`                                                                                                                                                                                     | ログイン URL `example.cloudflareaccess.com`                                                                                                                                                                |
 | IdP                          | Google                                                                                                                                                                                        | Google Cloud プロジェクト `example-access`（組織 example.com）の OAuth クライアント `cloudflare-access`。同意画面は「外部」（Gmail の人も入れる。Google Workspace の組織内だけで使うなら「内部」でもよい） |
-| Access アプリ（Self-hosted） | `macmini-dashboard`                                                                                                                                                                           | `workstation.example.com`。ポリシー「macmini members」（taro / hanako / jiro）。AUD は `worker/wrangler.toml` の `ACCESS_AUD_DASHBOARD`                                                                    |
-| Access アプリ（Self-hosted） | `macmini-agent-api`                                                                                                                                                                           | `workstation.example.com/api/agent`。Service Auth。サービストークン `macmini-agent-host / vm1 / vm2`。AUD は `ACCESS_AUD_AGENT`                                                                            |
-| Access アプリ（SSH / VNC）   | `ssh-host`, `vnc-host`, `ssh-vm1`, `vnc-vm1`, `ssh-vm2`, `vnc-vm2`                                                                                                                            | マシンごとの再利用ポリシー「macmini host users / vm1 users / vm2 users」                                                                                                                                   |
+| Access アプリ（Self-hosted） | `agentstation`                                                                                                                                                                           | `workstation.example.com`。ポリシー「agentstation members」（taro / hanako / jiro）。AUD は `worker/wrangler.toml` の `ACCESS_AUD_DASHBOARD`                                                                    |
+| Access アプリ（Self-hosted） | `agentstation-api`                                                                                                                                                                           | `workstation.example.com/api/agent`。Service Auth。サービストークン `agentstation-host / vm1 / vm2`。AUD は `ACCESS_AUD_AGENT`                                                                            |
+| Access アプリ（SSH / VNC）   | `ssh-host`, `vnc-host`, `ssh-vm1`, `vnc-vm1`, `ssh-vm2`, `vnc-vm2`                                                                                                                            | マシンごとの再利用ポリシー「agentstation host users / vm1 users / vm2 users」                                                                                                                                   |
 | SSH CA                       | ssh-host / ssh-vm1 / ssh-vm2 用 ＋ Infrastructure 用                                                                                                                                          | 公開鍵は `cloudflare/access/ca/`。各マシンの `/etc/ssh/ca.pub` は `ca.pub.host / .vm1 / .vm2`                                                                                                              |
-| Tunnel                       | `macmini`                                                                                                                                                                                     | 認証情報は host の `/etc/cloudflared/<UUID>.json`。ingress は `cloudflare/cloudflared/config.yml.example` と同じ。内部ネットワーク `192.168.64.0/24` をルート                                              |
-| WARP                         | 端末登録ポリシー「macmini members」、Split Tunnel（Exclude から `192.168.64.0/24` を外す）、Gateway プロキシ TCP、Targets（host .1 / vm1 .10 / vm2 .11）、Infrastructure アプリ `macmini-ssh` | TLS 復号はオフ（クライアントに「証明書がない」警告が出るが実害なし）                                                                                                                                       |
+| Tunnel                       | `agentstation`                                                                                                                                                                                     | 認証情報は host の `/etc/cloudflared/<UUID>.json`。ingress は `cloudflare/cloudflared/config.yml.example` と同じ。内部ネットワーク `192.168.64.0/24` をルート                                              |
+| WARP                         | 端末登録ポリシー「agentstation members」、Split Tunnel（Exclude から `192.168.64.0/24` を外す）、Gateway プロキシ TCP、Targets（host .1 / vm1 .10 / vm2 .11）、Infrastructure アプリ `agentstation-ssh` | TLS 復号はオフ（クライアントに「証明書がない」警告が出るが実害なし）                                                                                                                                       |
 
 注意：サービストークンの JWT の `common_name` は **トークン名ではなく Client ID**。`AGENT_TOKEN_NAMES` には Client ID を入れる。
 
 ## 3. Worker と D1
 
 ```bash
-cd ~/workspace/macmini-dashboard && npm ci
+cd ~/workspace/agentstation && npm ci
 ```
 
 ```bash
-cd worker && npm run build:ui && npx wrangler d1 migrations apply macmini-dashboard --remote && npx wrangler deploy
+cd worker && npm run build:ui && npx wrangler d1 migrations apply agentstation --remote && npx wrangler deploy
 ```
 
 secret（値はリポジトリに書かない。`wrangler secret put <名前>` に標準入力で渡す）：
@@ -123,10 +123,10 @@ cd ~/workspace && claude auth login
 ### 4.5 エージェント
 
 ```bash
-cd ~/workspace/macmini-dashboard/agent && npm run build
+cd ~/workspace/agentstation/agent && npm run build
 ```
 
-`~/.config/macmini-agent/config.json`（600）。実機の値：
+`~/.config/agentstation/config.json`（600）。実機の値：
 
 ```json
 {
@@ -143,7 +143,7 @@ cd ~/workspace/macmini-dashboard/agent && npm run build
 }
 ```
 
-`~/.config/macmini-agent/token.json`（600）に host のサービストークン `{"client_id":"…","client_secret":"…"}`。VM 用のトークンは一時的に `tokens/vm1.json` などに置き、VM に配ったら消す。
+`~/.config/agentstation/token.json`（600）に host のサービストークン `{"client_id":"…","client_secret":"…"}`。VM 用のトークンは一時的に `tokens/vm1.json` などに置き、VM に配ったら消す。
 
 ### 4.6 launchd（LaunchAgent。`mac/launchd/` のテンプレートを `__USER__` 置換して `~/Library/LaunchAgents/` へ）
 
@@ -164,11 +164,11 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.agent.plist
 ### 4.8 sudoers・newsyslog・sshd（sudo が要る。Taro がターミナルで）
 
 ```bash
-sed 's/__USER__/taro/g' mac/sudoers.d/macmini-agent > /tmp/macmini-agent && sudo visudo -cf /tmp/macmini-agent && sudo install -m 0440 -o root -g wheel /tmp/macmini-agent /etc/sudoers.d/macmini-agent
+sed 's/__USER__/taro/g' mac/sudoers.d/agentstation > /tmp/agentstation && sudo visudo -cf /tmp/agentstation && sudo install -m 0440 -o root -g wheel /tmp/agentstation /etc/sudoers.d/agentstation
 ```
 
 ```bash
-sed 's/__USER__/taro/g' mac/newsyslog.d/macmini.conf > /tmp/macmini.conf && sudo install -m 0644 -o root -g wheel /tmp/macmini.conf /etc/newsyslog.d/macmini.conf
+sed 's/__USER__/taro/g' mac/newsyslog.d/agentstation.conf > /tmp/agentstation.conf && sudo install -m 0644 -o root -g wheel /tmp/agentstation.conf /etc/newsyslog.d/agentstation.conf
 ```
 
 ```bash
@@ -220,13 +220,13 @@ ssh-copy-id -i ~/.ssh/id_ed25519.pub admin@<DHCP の IP>
 ### 5.3 秘密情報と資材の準備（Taro）
 
 ```bash
-umask 077; S=~/.config/macmini-agent/vm1-secrets; [ -f $S ] || { echo "USER_PW=$(openssl rand -base64 18 | tr -d '/+=')"; echo "VNC_PW=$(openssl rand -base64 12 | tr -dc 'A-Za-z0-9' | head -c 8)"; } > $S
+umask 077; S=~/.config/agentstation/vm1-secrets; [ -f $S ] || { echo "USER_PW=$(openssl rand -base64 18 | tr -d '/+=')"; echo "VNC_PW=$(openssl rand -base64 12 | tr -dc 'A-Za-z0-9' | head -c 8)"; } > $S
 ```
 
 VNC パスワードは 8 文字まで（VNC の制限）。利用者のログインパスワードは本人に伝え、あとで本人が変えてもよい（変えたら 5.8 の注意）。
 
 ```bash
-IP=<DHCP の IP>; scp ~/.config/macmini-agent/vm1-secrets admin@$IP:.vm-secrets && scp cloudflare/access/ca/ca.pub.vm1 admin@$IP:ca.pub && scp mac/sshd/50-cloudflare-access.conf admin@$IP:50-cloudflare-access.conf && sed -e 's/__USER__/hanako/g' -e '/^# ---- host だけ/,$d' mac/newsyslog.d/macmini.conf > /tmp/macmini-vm1.conf && scp /tmp/macmini-vm1.conf admin@$IP:macmini.conf && ssh admin@$IP 'chmod 600 ~/.vm-secrets'
+IP=<DHCP の IP>; scp ~/.config/agentstation/vm1-secrets admin@$IP:.vm-secrets && scp cloudflare/access/ca/ca.pub.vm1 admin@$IP:ca.pub && scp mac/sshd/50-cloudflare-access.conf admin@$IP:50-cloudflare-access.conf && sed -e 's/__USER__/hanako/g' -e '/^# ---- host だけ/,$d' mac/newsyslog.d/agentstation.conf > /tmp/agentstation-vm1.conf && scp /tmp/agentstation-vm1.conf admin@$IP:agentstation.conf && ssh admin@$IP 'chmod 600 ~/.vm-secrets'
 ```
 
 ### 5.4 stage1：利用者ユーザーと基礎設定（admin で）
@@ -240,7 +240,7 @@ ssh admin@<DHCP の IP> "GUEST_USER=hanako GUEST_FULLNAME=Hanako GUEST_ENV=vm1 H
 ### 5.5 stage2：Node・Claude・エージェント（利用者で）
 
 ```bash
-IP=<DHCP の IP>; ssh hanako@$IP 'mkdir -p ~/workspace ~/.config/macmini-agent && chmod 700 ~/.config/macmini-agent' && rsync -az --delete --exclude node_modules --exclude dist --exclude .wrangler --exclude '.dev.vars*' --exclude .DS_Store ~/workspace/macmini-dashboard hanako@$IP:workspace/ && scp ~/.config/macmini-agent/tokens/vm1.json hanako@$IP:.config/macmini-agent/token.json && ssh hanako@$IP 'chmod 600 ~/.config/macmini-agent/token.json'
+IP=<DHCP の IP>; ssh hanako@$IP 'mkdir -p ~/workspace ~/.config/agentstation && chmod 700 ~/.config/agentstation' && rsync -az --delete --exclude node_modules --exclude dist --exclude .wrangler --exclude '.dev.vars*' --exclude .DS_Store ~/workspace/agentstation hanako@$IP:workspace/ && scp ~/.config/agentstation/tokens/vm1.json hanako@$IP:.config/agentstation/token.json && ssh hanako@$IP 'chmod 600 ~/.config/agentstation/token.json'
 ```
 
 ```bash
@@ -272,7 +272,7 @@ VNC パスワードはダッシュボードの Hanako の環境 › 接続 ›�
 host 側の後片付け：
 
 ```bash
-rm ~/.config/macmini-agent/tokens/vm1.json
+rm ~/.config/agentstation/tokens/vm1.json
 ```
 
 ### 5.8 分かっていること（はまりどころ）
@@ -291,7 +291,7 @@ rm ~/.config/macmini-agent/tokens/vm1.json
 
 ```bash
 scp mac/scripts/smb-workspace.sh admin@192.168.64.10:/tmp/
-sed -n 's/^USER_PW=//p' ~/.config/macmini-agent/vm1-secrets | ssh admin@192.168.64.10 'sudo bash /tmp/smb-workspace.sh hanako; rm /tmp/smb-workspace.sh'
+sed -n 's/^USER_PW=//p' ~/.config/agentstation/vm1-secrets | ssh admin@192.168.64.10 'sudo bash /tmp/smb-workspace.sh hanako; rm /tmp/smb-workspace.sh'
 ```
 
 vm2 は `.11`、`vm2-secrets`、`jiro`。期待：`smbd が 445 で待受中`、`workspace` の共有。Gateway の 445 番のポリシーは作成済み（マシンごとに「その利用者と taro 以外」を遮断）。
@@ -304,10 +304,10 @@ vm2 は `.11`、`vm2-secrets`、`jiro`。期待：`smbd が 445 で待受中`、
 
 | もの                                       | 置き場                                                                                    | 備考                                                                                       |
 | ------------------------------------------ | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| host のサービストークン                    | host `~/.config/macmini-agent/token.json`（600）                                          | ー                                                                                         |
+| host のサービストークン                    | host `~/.config/agentstation/token.json`（600）                                          | ー                                                                                         |
 | VM のサービストークン                      | 各 VM の同じ場所。host の `tokens/` は配布後に削除                                        | ー                                                                                         |
-| 利用者のログインパスワード・VNC パスワード | host `~/.config/macmini-agent/vm1-secrets`、`vm2-secrets`（600。`USER_PW=` と `VNC_PW=`） | 本人に伝える。チャットやダッシュボードには出さない（VNC だけは「パスワードを表示」で出す） |
-| host の VNC パスワード                     | host `~/.config/macmini-agent/host-secrets`（600）                                        | システム設定の画面共有で同じ値にする                                                       |
+| 利用者のログインパスワード・VNC パスワード | host `~/.config/agentstation/vm1-secrets`、`vm2-secrets`（600。`USER_PW=` と `VNC_PW=`） | 本人に伝える。チャットやダッシュボードには出さない（VNC だけは「パスワードを表示」で出す） |
+| host の VNC パスワード                     | host `~/.config/agentstation/host-secrets`（600）                                        | システム設定の画面共有で同じ値にする                                                       |
 | VNC パスワード（画面表示用）               | Worker の secret `VNC_PASSWORDS_JSON`                                                     | 上の 3 ファイルから組み立てて `wrangler secret put`                                        |
 | Tunnel の認証情報                          | host `/etc/cloudflared/<UUID>.json`（root、600）                                          | ー                                                                                         |
 | Slack Webhook                              | Worker の secret `SLACK_WEBHOOK_URL`                                                      | 任意                                                                                       |

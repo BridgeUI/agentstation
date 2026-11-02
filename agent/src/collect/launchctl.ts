@@ -1,4 +1,4 @@
-import type { ClaudeProcessState } from '@macmini/shared';
+import type { ClaudeProcessState } from '@agentstation/shared';
 import type { ExecResult, Runner } from '../exec.js';
 
 /**

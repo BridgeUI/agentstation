@@ -1,4 +1,4 @@
-import type { PlugPower, PlugView } from '@macmini/shared';
+import type { PlugPower, PlugView } from '@agentstation/shared';
 import type { Bindings } from './env.js';
 
 /**

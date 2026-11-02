@@ -2,8 +2,8 @@
 // ローカルの wrangler dev（見本データ ui/dev-seed.sql）を Google Chrome（headless）で開いて撮る。
 // playwright-core はこのリポジトリの依存に入れていない。作業用フォルダに入れて、そこから実行する:
 //   mkdir -p /tmp/guide-shots && cd /tmp/guide-shots && npm init -y && npm i playwright-core
-//   （worker/ で）npx wrangler d1 migrations apply macmini-dashboard --local
-//                 npx wrangler d1 execute macmini-dashboard --local --file ui/dev-seed.sql
+//   （worker/ で）npx wrangler d1 migrations apply agentstation --local
+//                 npx wrangler d1 execute agentstation --local --file ui/dev-seed.sql
 //                 npm run dev   ← 別の端末で
 //   cp worker/scripts/guide-shots.mjs /tmp/guide-shots/ && node /tmp/guide-shots/guide-shots.mjs worker/public/guide
 // 撮る人は .dev.vars の LOCAL_DEV_EMAIL（オーナー）。オーナーだけに出るものは写さないよう隠している。

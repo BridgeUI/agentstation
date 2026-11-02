@@ -1,4 +1,4 @@
-import type { Env } from '@macmini/shared';
+import type { Env } from '@agentstation/shared';
 import { ApiFailure, api } from './api.js';
 import { html } from './dom.js';
 

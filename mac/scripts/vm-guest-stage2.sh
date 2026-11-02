@@ -4,8 +4,8 @@
 #   ssh hanako@<vm の IP> 'GUEST_ENV=vm1 bash -s' < mac/scripts/vm-guest-stage2.sh
 #
 # 先に host から置いておくもの:
-#   ~/workspace/macmini-dashboard          リポジトリ（rsync。node_modules と dist は不要）
-#   ~/.config/macmini-agent/token.json     その VM のサービストークン（chmod 600）
+#   ~/workspace/agentstation          リポジトリ（rsync。node_modules と dist は不要）
+#   ~/.config/agentstation/token.json     その VM のサービストークン（chmod 600）
 #
 # やること: nodebrew と Node 24、Claude Code（ネイティブ版）、Claude の settings.json（自動更新オフ）、
 #           エージェントのビルドと config.json、launchd（エージェント・claude-rc）。
@@ -15,10 +15,10 @@ set -euo pipefail
 ME="$(whoami)"
 step() { printf '\n== %s\n' "$1"; }
 
-mkdir -p ~/workspace ~/Library/LaunchAgents ~/Library/Logs/macmini-agent ~/.config/macmini-agent ~/.claude
-chmod 700 ~/.config/macmini-agent
-[ -f ~/.config/macmini-agent/token.json ] || { echo "token.json が無い" >&2; exit 1; }
-chmod 600 ~/.config/macmini-agent/token.json
+mkdir -p ~/workspace ~/Library/LaunchAgents ~/Library/Logs/agentstation ~/.config/agentstation ~/.claude
+chmod 700 ~/.config/agentstation
+[ -f ~/.config/agentstation/token.json ] || { echo "token.json が無い" >&2; exit 1; }
+chmod 600 ~/.config/agentstation/token.json
 
 step "nodebrew と Node 24"
 if [ ! -x "$HOME/.nodebrew/current/bin/node" ]; then
@@ -47,14 +47,14 @@ JSON
 fi
 
 step "エージェントのビルド"
-cd ~/workspace/macmini-dashboard
+cd ~/workspace/agentstation
 npm ci --no-audit --no-fund >/dev/null
 (cd agent && npm run build >/dev/null)
 ls -la agent/dist/index.js
 
 step "config.json"
-if [ ! -f ~/.config/macmini-agent/config.json ]; then
-  cat > ~/.config/macmini-agent/config.json <<JSON
+if [ ! -f ~/.config/agentstation/config.json ]; then
+  cat > ~/.config/agentstation/config.json <<JSON
 {
   "base_url": "https://workstation.example.com",
   "claude_path": "/Users/$ME/.local/bin/claude",
@@ -64,11 +64,11 @@ if [ ! -f ~/.config/macmini-agent/config.json ]; then
   "interval_ms": 60000
 }
 JSON
-  chmod 600 ~/.config/macmini-agent/config.json
+  chmod 600 ~/.config/agentstation/config.json
 fi
 
 step "launchd（エージェント・claude-rc）"
-cd ~/workspace/macmini-dashboard/mac/launchd
+cd ~/workspace/agentstation/mac/launchd
 sed -e "s/__USER__/$ME/g" -e "s/__ENV__/$GUEST_ENV/g" com.example.agent.plist > ~/Library/LaunchAgents/com.example.agent.plist
 sed -e "s/__USER__/$ME/g" com.example.claude-rc.plist > ~/Library/LaunchAgents/com.example.claude-rc.plist
 plutil -lint ~/Library/LaunchAgents/com.example.agent.plist ~/Library/LaunchAgents/com.example.claude-rc.plist
@@ -83,7 +83,7 @@ if launchctl print "gui/$UID_" >/dev/null 2>&1; then
   launchctl bootstrap "gui/$UID_" ~/Library/LaunchAgents/com.example.claude-rc.plist
   sleep 3
   launchctl print "gui/$UID_/com.example.agent" | grep -E '^\s*(state|pid) '
-  tail -3 ~/Library/Logs/macmini-agent/out.log 2>/dev/null || true
+  tail -3 ~/Library/Logs/agentstation/out.log 2>/dev/null || true
 else
   echo "$ME は GUI にログインしていないので launchd には載せない（再起動後の自動ログインで自動的に読み込まれる）"
 fi

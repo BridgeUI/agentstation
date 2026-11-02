@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Heartbeat } from '@macmini/shared';
+import type { Heartbeat } from '@agentstation/shared';
 import { formatLogLine } from '../src/log.js';
 import { ApiClient, type FetchLike } from '../src/send/client.js';
 import { buildConfig, DEFAULT_LABELS } from '../src/config.js';
@@ -104,7 +104,7 @@ describe('設定', () => {
       token,
       home: '/Users/t',
       uid: 502,
-      configDir: '/Users/t/.config/macmini-agent',
+      configDir: '/Users/t/.config/agentstation',
     });
     expect(c.baseUrl).toBe('https://mac.example.test');
     expect(c.tartPath).toBeNull();
@@ -112,7 +112,7 @@ describe('設定', () => {
     expect(c.labels.vm.vm2).toBe(DEFAULT_LABELS.vm2);
     expect(c.vmPlists.vm1).toBe('/Users/t/Library/LaunchAgents/com.example.tart-vm1.plist');
     expect(c.rcDebugLog).toBe('/Users/t/Library/Logs/claude-rc.log');
-    expect(c.stateFile).toBe('/Users/t/.config/macmini-agent/state.json');
+    expect(c.stateFile).toBe('/Users/t/.config/agentstation/state.json');
     expect(c.intervalMs).toBe(60_000);
   });
   it('host は tart_path が必須、パスは絶対パス', () => {

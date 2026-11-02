@@ -1,4 +1,4 @@
-import type { VmState } from '@macmini/shared';
+import type { VmState } from '@agentstation/shared';
 import type { ExecResult, Runner } from '../exec.js';
 
 /**

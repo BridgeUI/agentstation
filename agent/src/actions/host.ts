@@ -1,4 +1,4 @@
-import type { Command } from '@macmini/shared';
+import type { Command } from '@agentstation/shared';
 import { failOutcome, okOutcome, type ActionContext, type ActionOutcome } from './context.js';
 import { tartStop } from './vm.js';
 

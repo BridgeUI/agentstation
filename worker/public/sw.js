@@ -6,7 +6,7 @@
  * - 画面が開けないときだけ offline.html を返す
  * - Cloudflare Access のログインへのリダイレクト（別オリジン）には触らない
  */
-const CACHE = 'macmini-dashboard-v1';
+const CACHE = 'agentstation-v1';
 // Workers の静的アセットは /host.html を /host に 307 で寄せる（html_handling の既定）ので両方入れる
 const PRECACHE = [
   '/',

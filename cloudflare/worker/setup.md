@@ -33,12 +33,12 @@ npx wrangler whoami
 ## 2. D1 を作る → `database_id`
 
 ```bash
-npx wrangler d1 create macmini-dashboard
+npx wrangler d1 create agentstation
 ```
 
 期待：`database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"` を含む `[[d1_databases]]` の雛形が出る。
 
-`worker/wrangler.toml` の `[[d1_databases]]` の `database_id`（今は `00000000-...`）をその値に置き換える。`binding = "DB"` と `database_name = "macmini-dashboard"` はそのまま。
+`worker/wrangler.toml` の `[[d1_databases]]` の `database_id`（今は `00000000-...`）をその値に置き換える。`binding = "DB"` と `database_name = "agentstation"` はそのまま。
 
 確認：
 
@@ -46,7 +46,7 @@ npx wrangler d1 create macmini-dashboard
 npx wrangler d1 list
 ```
 
-に `macmini-dashboard` が出る。
+に `agentstation` が出る。
 
 ## 3. マイグレーションを本番に当てる
 
@@ -61,8 +61,8 @@ npm run db:migrate:remote --workspace worker
 
 ```bash
 cd worker
-npx wrangler d1 migrations list macmini-dashboard --remote
-npx wrangler d1 execute macmini-dashboard --remote --command "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
+npx wrangler d1 migrations list agentstation --remote
+npx wrangler d1 execute agentstation --remote --command "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
 ```
 
 期待：未適用の一覧が空。テーブル名に `heartbeats`、`commands`、`audit_log`、`sessions` など（`db/schema.sql` の一覧）が出る。
@@ -75,8 +75,8 @@ npx wrangler d1 execute macmini-dashboard --remote --command "SELECT name FROM s
 
 公式：https://api.slack.com/messaging/webhooks
 
-1. 通知先のチャンネルを決めて作る（例：`#macmini-alerts`。通知は 1 分ごとの Cron から来るので、雑談のチャンネルには流さない）
-2. https://api.slack.com/apps › **Create New App** › **From scratch**。App Name は `macmini-dashboard`、ワークスペースは example
+1. 通知先のチャンネルを決めて作る（例：`#agentstation-alerts`。通知は 1 分ごとの Cron から来るので、雑談のチャンネルには流さない）
+2. https://api.slack.com/apps › **Create New App** › **From scratch**。App Name は `agentstation`、ワークスペースは example
 3. 左の **Incoming Webhooks** › **Activate Incoming Webhooks** をオン
 4. 下の **Add New Webhook to Workspace** › 1 のチャンネルを選んで **Allow**
 5. 表示された **Webhook URL**（`https://hooks.slack.com/services/T…/B…/…`）を控える。**この URL を知っている人は誰でもそのチャンネルに投稿できる**ので、秘密情報として扱う（チャット・リポジトリ・画面に貼らない。Taro のパスワードマネージャーへ）
@@ -152,8 +152,8 @@ fetch("https://api.switch-bot.com/v1.1/devices", { headers: { Authorization: tok
 | キー | 値の取り方 | 入れ方 |
 | --- | --- | --- |
 | `ACCESS_TEAM_DOMAIN` | Zero Trust の **Team name and domain**（`<team>.cloudflareaccess.com`） | `wrangler.toml` に書く（秘密ではない） |
-| `ACCESS_AUD_DASHBOARD` | Access アプリ `macmini-dashboard` › Configure › Additional settings › **Application Audience (AUD) Tag** | 同上 |
-| `ACCESS_AUD_AGENT` | Access アプリ `macmini-agent-api` の AUD Tag | 同上 |
+| `ACCESS_AUD_DASHBOARD` | Access アプリ `agentstation` › Configure › Additional settings › **Application Audience (AUD) Tag** | 同上 |
+| `ACCESS_AUD_AGENT` | Access アプリ `agentstation-api` の AUD Tag | 同上 |
 | `MEMBERS_JSON` | `{"owner":"taro@example.com","envs":{"host":"taro@example.com","vm1":"<Hanako のメール>","vm2":"<Jiro のメール>"},"viewers":["<閲覧者のメール>", ...]}` | `wrangler.toml` に書く。メールは公開情報ではないので、コミットしたくなければ下の「コミットしない値」の方法 |
 | `AGENT_TOKEN_NAMES` | **各サービストークンの Client ID**（`{"host":"<host の Client ID>","vm1":"...","vm2":"..."}`） | **`wrangler.toml` に書かず** `wrangler secret put AGENT_TOKEN_NAMES` で入れる（下記） |
 | `TZ_DISPLAY` | `Asia/Tokyo` | そのまま |
@@ -162,7 +162,7 @@ fetch("https://api.switch-bot.com/v1.1/devices", { headers: { Authorization: tok
 
 `worker/src/auth.ts` はサービストークンの JWT の `common_name` と `AGENT_TOKEN_NAMES` の値を突き合わせる。Cloudflare の仕様では **`common_name` にはトークンの名前ではなく Client ID**（`CF-Access-Client-Id` の値、`xxxxxxxx....access`）が入る（公式：https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/authorization-cookie/application-token/ ）。
 
-したがって `wrangler.toml` の現在の値（`macmini-agent-host` など＝トークン名）では **403「このサービストークンはどの環境にも対応していない」** になる。値を Client ID にする。
+したがって `wrangler.toml` の現在の値（`agentstation-host` など＝トークン名）では **403「このサービストークンはどの環境にも対応していない」** になる。値を Client ID にする。
 
 Client ID は Secret ではないが、Access の認証情報の片方なのでリポジトリにコミットしない。`[vars]` から `AGENT_TOKEN_NAMES` の行を消し（または TODO のコメントだけ残し）、secret として入れる：
 
@@ -176,7 +176,7 @@ Worker から見れば `env.AGENT_TOKEN_NAMES` は文字列として同じに見
 ### コミットしない値（`MEMBERS_JSON` など）
 
 - 方法 1：`wrangler.toml` は `example.invalid` のままにして、`wrangler deploy --var MEMBERS_JSON:'{...}'` で上書きする（`--var` が設定ファイルより優先）。毎回付ける必要があるので `worker/package.json` の `deploy` スクリプトか `.env`（gitignore 済み）から読むシェルで包む
-- 方法 2：Cloudflare ダッシュボード › Workers & Pages › `macmini-dashboard` › Settings › Variables and Secrets で入れる。ただし `wrangler deploy` のたびに `[vars]` の値で上書きされるので、方法 1 のほうが事故が少ない
+- 方法 2：Cloudflare ダッシュボード › Workers & Pages › `agentstation` › Settings › Variables and Secrets で入れる。ただし `wrangler deploy` のたびに `[vars]` の値で上書きされるので、方法 1 のほうが事故が少ない
 - 方法 3：`wrangler secret put MEMBERS_JSON` で secret にする（`[vars]` から消す）。Worker のコードは変更不要。これが一番単純
 
 推奨は方法 3（`MEMBERS_JSON` と `AGENT_TOKEN_NAMES` を secret にし、`wrangler.toml` には `ACCESS_TEAM_DOMAIN`・`ACCESS_AUD_*`・`TZ_DISPLAY` だけ残す）。採用するなら `worker/wrangler.toml` のコメントも直す（他の担当に申し送り）。
@@ -191,8 +191,8 @@ npx wrangler deploy
 期待：
 
 ```
-Uploaded macmini-dashboard
-Deployed macmini-dashboard triggers
+Uploaded agentstation
+Deployed agentstation triggers
   workstation.example.com (custom domain)
   schedule: * * * * *
 ```
@@ -212,20 +212,20 @@ npx wrangler deployments list
 確認：
 
 - Cloudflare ダッシュボード › `example.com` › DNS › Records に `mac` の Worker レコード
-- Workers & Pages › `macmini-dashboard` › Settings › Domains & Routes に `workstation.example.com`（Custom Domain）
+- Workers & Pages › `agentstation` › Settings › Domains & Routes に `workstation.example.com`（Custom Domain）
 - `curl -sI https://workstation.example.com/api/health`
 
 期待（Access のアプリを作る前）：`HTTP/2 200`、本文に JSON（`{"ok":true,...}`）。
 
 ## 8. `workers.dev` と Preview URL が無効なことの確認
 
-Workers & Pages › `macmini-dashboard` › Settings › Domains & Routes：
+Workers & Pages › `agentstation` › Settings › Domains & Routes：
 
 - `workers.dev` が **Disabled**
 - **Preview URLs** が **Disabled**
 
 ```bash
-curl -sI https://macmini-dashboard.<account-subdomain>.workers.dev/ | head -1
+curl -sI https://agentstation.<account-subdomain>.workers.dev/ | head -1
 ```
 
 期待：`HTTP/2 404`（または名前解決できない）。`200` が返るならダッシュボードで `workers.dev` を Disable にして `wrangler deploy` し直す（`docs/spec.md` 9章「`*.workers.dev` は無効」）。

@@ -1,5 +1,5 @@
 import { dirname } from 'node:path';
-import type { Command, Heartbeat, PeerSummary, SetupCheck, VmEnv } from '@macmini/shared';
+import type { Command, Heartbeat, PeerSummary, SetupCheck, VmEnv } from '@agentstation/shared';
 import type { ActionContext } from './actions/context.js';
 import { decideFull, nextDelay } from './cadence.js';
 import { executeCommand } from './actions/index.js';
@@ -87,7 +87,7 @@ export class AgentLoop {
   }
 
   start(): void {
-    this.log.info('macmini-agent 起動', {
+    this.log.info('agentstation 起動', {
       version: AGENT_VERSION,
       env: this.cfg.env,
       interval_ms: this.cfg.intervalMs,
@@ -119,7 +119,7 @@ export class AgentLoop {
     if (this.timer) clearTimeout(this.timer);
     await this.queue;
     this.rcDirs.shutdown();
-    this.log.info('macmini-agent 停止');
+    this.log.info('agentstation 停止');
   }
 
   private schedule(): void {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Command } from '@macmini/shared';
+import type { Command } from '@agentstation/shared';
 import { executeCommand } from '../src/actions/index.js';
 import { hostRestartPrepare } from '../src/actions/host.js';
 import type { ActionContext } from '../src/actions/context.js';
@@ -25,7 +25,7 @@ const cfgWith = (settings: Record<string, unknown>) =>
     token: { client_id: 'id', client_secret: 'secret' },
     home: '/Users/tester',
     uid: 501,
-    configDir: '/tmp/macmini-agent-test',
+    configDir: '/tmp/agentstation-test',
   });
 
 function recorder(): { calls: string[]; run: Runner } {

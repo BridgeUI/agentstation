@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { setupKeysFor, type SetupCheckKey } from '@macmini/shared';
+import { setupKeysFor, type SetupCheckKey } from '@agentstation/shared';
 import {
   collectSetup,
   judgeAppStoreAuto,
@@ -297,7 +297,7 @@ describe('collectSetup（外部コマンドは偽物）', () => {
       token: { client_id: 'a', client_secret: 'b' },
       home: '/Users/t',
       uid: 501,
-      configDir: '/Users/t/.config/macmini-agent',
+      configDir: '/Users/t/.config/agentstation',
     });
   }
   const deps: SetupDeps = {

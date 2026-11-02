@@ -1,6 +1,6 @@
-# macmini-agent: host_restart 用（docs/spec.md 6章「ホスト再起動の安全策」）
+# agentstation: host_restart 用（docs/spec.md 6章「ホスト再起動の安全策」）
 # host だけに置く。VM には置かない。
 # 置換: __USER__ → host のユーザー名（通常 taro）
-# 配置: sudo visudo -cf macmini-agent で検証 → sudo install -m 0440 -o root -g wheel macmini-agent /etc/sudoers.d/macmini-agent
+# 配置: sudo visudo -cf agentstation で検証 → sudo install -m 0440 -o root -g wheel agentstation /etc/sudoers.d/agentstation
 # 許可するのはこの 1 コマンド 1 引数の組だけ。cloudflared の再起動は Taro が手動で行うので入れない。
 __USER__ ALL=(root) NOPASSWD: /sbin/shutdown -r now

@@ -5,9 +5,9 @@
 # 使い方
 #   host（Taro 本人。パスワードを聞かれる）:
 #     sudo bash mac/scripts/smb-workspace.sh
-#   vm1 / vm2（host から。パスワードは ~/.config/macmini-agent/<env>-secrets の USER_PW を標準入力で渡す）:
+#   vm1 / vm2（host から。パスワードは ~/.config/agentstation/<env>-secrets の USER_PW を標準入力で渡す）:
 #     scp mac/scripts/smb-workspace.sh admin@192.168.64.10:/tmp/
-#     sed -n 's/^USER_PW=//p' ~/.config/macmini-agent/vm1-secrets | ssh admin@192.168.64.10 'sudo bash /tmp/smb-workspace.sh hanako; rm /tmp/smb-workspace.sh'
+#     sed -n 's/^USER_PW=//p' ~/.config/agentstation/vm1-secrets | ssh admin@192.168.64.10 'sudo bash /tmp/smb-workspace.sh hanako; rm /tmp/smb-workspace.sh'
 #   引数：[ユーザー名] [共有するフォルダ]。省略時はユーザー名が sudo を実行した人（$SUDO_USER）、フォルダが ~/workspace
 #   パスワードの渡し方：環境変数 USER_PW → 標準入力が端末でなければ 1 行読む → 端末なら対話で聞く
 #

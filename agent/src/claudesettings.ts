@@ -7,7 +7,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { dirname } from 'node:path';
-import type { RcPermissionMode } from '@macmini/shared';
+import type { RcPermissionMode } from '@agentstation/shared';
 
 /**
  * Claude Code 全体の設定（~/.claude/settings.json）のうち、既定の権限モードだけを扱う（docs/spec.md 13章 #20）。
@@ -98,7 +98,7 @@ export function writeClaudeSettings(path: string, text: string): void {
     /* 無ければ新規 */
   }
   mkdirSync(dirname(target), { recursive: true, mode: 0o700 });
-  const tmp = `${target}.macmini-tmp`;
+  const tmp = `${target}.agentstation-tmp`;
   writeFileSync(tmp, text, { mode });
   renameSync(tmp, target);
 }

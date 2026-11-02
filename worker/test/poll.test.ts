@@ -1,6 +1,6 @@
 import { env } from 'cloudflare:test';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { POLL_FAST_MS, POLL_IDLE_MS, pollIntervalFor } from '@macmini/shared';
+import { POLL_FAST_MS, POLL_IDLE_MS, pollIntervalFor } from '@agentstation/shared';
 import { agentToken, api, mockJwks, userToken, uuid, vmHeartbeat } from './helpers.js';
 
 beforeAll(mockJwks);

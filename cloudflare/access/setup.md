@@ -26,7 +26,7 @@ Zero Trust › Settings › Custom Pages（または Settings の先頭）に **
 
 公式：https://developers.cloudflare.com/cloudflare-one/integrations/identity-providers/google/
 
-1. Google Cloud Console でプロジェクトを作る（例：`macmini-dashboard-access`）
+1. Google Cloud Console でプロジェクトを作る（例：`agentstation-access`）
 2. APIs & Services › Credentials › Configure Consent Screen
    - App name、User support email を入れる
    - Audience は **External**（Hanako・Jiro が example.com 以外の Google アカウントの可能性があるため。全員が Google Workspace の同一ドメインなら Internal でもよい）
@@ -63,7 +63,7 @@ Zero Trust › Access controls › Applications › **Create new application** �
 
 | 項目 | 値 |
 | --- | --- |
-| Application name | `macmini-dashboard` |
+| Application name | `agentstation` |
 | Session Duration | **24 hours** |
 | Public hostname | Domain `example.com`、Subdomain `mac`、Path は空 |
 | Identity providers | **Google** のみ（Accept all を外す。One-time PIN を入れない） |
@@ -104,9 +104,9 @@ Zero Trust › Access controls › Service credentials › Service Tokens（旧�
 
 | Service token name | Service Token Duration | 渡す先 |
 | --- | --- | --- |
-| `macmini-agent-host` | 1 year | host の `~/.config/macmini-agent/token.json` |
-| `macmini-agent-vm1` | 1 year | vm1 の同じパス |
-| `macmini-agent-vm2` | 1 year | vm2 の同じパス |
+| `agentstation-host` | 1 year | host の `~/.config/agentstation/token.json` |
+| `agentstation-vm1` | 1 year | vm1 の同じパス |
+| `agentstation-vm2` | 1 year | vm2 の同じパス |
 
 **Generate token** を押すと **Client ID** と **Client Secret** が出る。**Client Secret はこの一度しか表示されない**。失くしたら Rotate secret で作り直す。
 
@@ -121,14 +121,14 @@ Zero Trust › Access controls › Service credentials › Service Tokens（旧�
 各環境で（host は Taro、vm1/vm2 は SSH か画面共有で入って）：
 
 ```bash
-mkdir -p ~/.config/macmini-agent
-chmod 700 ~/.config/macmini-agent
+mkdir -p ~/.config/agentstation
+chmod 700 ~/.config/agentstation
 umask 077
-cat > ~/.config/macmini-agent/token.json <<'EOF'
+cat > ~/.config/agentstation/token.json <<'EOF'
 {"client_id":"<CLIENT_ID>","client_secret":"<CLIENT_SECRET>"}
 EOF
-chmod 600 ~/.config/macmini-agent/token.json
-ls -l ~/.config/macmini-agent/token.json
+chmod 600 ~/.config/agentstation/token.json
+ls -l ~/.config/agentstation/token.json
 ```
 
 期待：`-rw-------`。`client_id` / `client_secret` のキー名は `agent/src/config.ts` に合わせる。`config.json`（`base_url`）は `docs/setup-mac.md` の手順で作る。
@@ -143,7 +143,7 @@ Zero Trust › Access controls › Applications › **Create new application** �
 
 | 項目 | 値 |
 | --- | --- |
-| Application name | `macmini-agent-api` |
+| Application name | `agentstation-api` |
 | Session Duration | 既定のままでよい（Service Auth ではリクエストごとに検証される） |
 | Public hostname | Domain `example.com`、Subdomain `mac`、**Path `api/agent`**（要確認：Path 欄が UI にあること。公式ページの記述は Domain のみ） |
 | Identity providers | 何も選ばない（人は入れない） |
@@ -153,7 +153,7 @@ Zero Trust › Access controls › Applications › **Create new application** �
 
 | Policy name | Action | Rule | Selector | Value |
 | --- | --- | --- | --- | --- |
-| `agents` | Service Auth | Include | Service Token | `macmini-agent-host`、`macmini-agent-vm1`、`macmini-agent-vm2` |
+| `agents` | Service Auth | Include | Service Token | `agentstation-host`、`agentstation-vm1`、`agentstation-vm2` |
 
 公式（Service Auth と Service Token セレクタ）：https://developers.cloudflare.com/cloudflare-one/access-controls/policies/
 
@@ -167,8 +167,8 @@ curl -si -X POST https://workstation.example.com/api/agent/heartbeat -H 'Content
 
 # host のトークンで → Worker に届く（ペイロードが空なので Worker の 400 が返るのが正常。Access は通過）
 curl -si -X POST https://workstation.example.com/api/agent/heartbeat \
-  -H "CF-Access-Client-Id: $(jq -r .client_id ~/.config/macmini-agent/token.json)" \
-  -H "CF-Access-Client-Secret: $(jq -r .client_secret ~/.config/macmini-agent/token.json)" \
+  -H "CF-Access-Client-Id: $(jq -r .client_id ~/.config/agentstation/token.json)" \
+  -H "CF-Access-Client-Secret: $(jq -r .client_secret ~/.config/agentstation/token.json)" \
   -H 'Content-Type: application/json' -d '{}' | head -1
 ```
 
@@ -329,10 +329,10 @@ Zero Trust › Insights › Logs › **Access authentication logs**（旧：Logs
 
 | 見たいこと | フィルタ | 期待 |
 | --- | --- | --- |
-| ダッシュボードに誰が入ったか | Application = `macmini-dashboard` | メール、Allowed、Login method = Google |
+| ダッシュボードに誰が入ったか | Application = `agentstation` | メール、Allowed、Login method = Google |
 | 一覧外のメールが拒否されたか | Action = Blocked / Failed | 該当メールの行 |
-| エージェントが Service Auth で通っているか | Application = `macmini-agent-api` | 1 分ごとに 3 本のトークン名（`macmini-agent-host` など）で Allowed |
-| 失効したトークンが拒否されているか | Application = `macmini-agent-api`、Failed | トークン名で Failed（不正な Client ID や壊れたヘッダは記録されない） |
+| エージェントが Service Auth で通っているか | Application = `agentstation-api` | 1 分ごとに 3 本のトークン名（`agentstation-host` など）で Allowed |
+| 失効したトークンが拒否されているか | Application = `agentstation-api`、Failed | トークン名で Failed（不正な Client ID や壊れたヘッダは記録されない） |
 | SSH/VNC に誰が入ったか | Application = `ssh-vm1` など | Allow ポリシーの人だけ |
 
 - ログは認証イベントだけ。SSH のコマンド内容は（Gateway の SSH コマンドログを有効にしない限り）残らない。本プロジェクトではコマンドログを**使わない**（会話内容・ファイル名を Cloudflare に送らないため。CLAUDE.md 3）

@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="referrer" content="same-origin" />
+    <title>普段の使い方 · 使い方ガイド</title>
+    <link rel="icon" href="/logo.png" />
+    <meta name="theme-color" content="#f5f5f7" />
+    <link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Mac mini" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body data-page="guide">
+    <nav class="nav" aria-label="グローバル">
+      <div class="wrap">
+        <a class="nav-brand" href="/">
+          <img src="/logo.png" alt="Example" />
+          <span>Mac mini 監視ダッシュボード</span>
+        </a>
+        <div class="nav-links">
+          <a href="/">一覧</a>
+          <a href="/host.html">Taro</a>
+          <a href="/vm1.html">Hanako</a>
+          <a href="/vm2.html">Jiro</a>
+          <a href="/guide/" aria-current="page">使い方ガイド</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="wrap guide-layout guide">
+      <aside class="gnav" aria-label="ガイドの目次">
+        <a class="gnav-home" href="/guide/">使い方ガイド</a>
+        <nav>
+          <div class="gnav-sec"><a href="/guide/start.html">はじめての設定</a></div>
+          <div class="gnav-sec current">
+            <a href="/guide/daily.html" aria-current="page">普段の使い方</a>
+            <ul>
+              <li><a href="#d-app">Claude アプリからつなぐ</a></li>
+              <li><a href="#d-remote">Remote Control の遠隔起動・停止</a></li>
+              <li><a href="#d-dash">ダッシュボードの見方</a></li>
+              <li><a href="#d-ops">操作ボタン</a></li>
+              <li><a href="#d-folders">プロジェクトごとの Remote Control</a></li>
+              <li><a href="#d-relogin">ログインが切れたとき</a></li>
+              <li><a href="#d-home">スマホのホーム画面に追加</a></li>
+              <li><a href="#d-dont">やらないでほしいこと</a></li>
+            </ul>
+          </div>
+          <div class="gnav-sec"><a href="/guide/connect.html">入り方（画面共有・SSH・ファイル）</a></div>
+          <div class="gnav-sec"><a href="/guide/trouble.html">困ったとき</a></div>
+        </nav>
+        <a class="gnav-back" href="/">← ダッシュボードへ</a>
+      </aside>
+
+      <main class="guide-main">
+        <header class="guide-head">
+          <p class="eyebrow">使い方ガイド · 毎日</p>
+          <h1>普段の使い方</h1>
+          <p class="lead-p">
+            <a href="/guide/start.html">はじめての設定</a>が済んでいれば、普段はスマホや PC の Claude アプリから使います。
+            ダッシュボードでは、動いているかを確かめ、止まったときに直すボタンを押します。
+          </p>
+        </header>
+
+        <section class="sec" id="d-app" aria-labelledby="app-h">
+          <h2 id="app-h">Claude アプリからつなぐ</h2>
+          <ol class="steps">
+            <li>
+              <div class="pic">
+                <div class="mock-app" aria-hidden="true">
+                  <div class="hd">Remote Control</div>
+                  <div class="row on"><span class="dot"></span>vm1-breezy-lynx<small>接続中</small></div>
+                  <div class="row"><span class="dot off"></span>my-project<small>フォルダごとの Remote Control</small></div>
+                </div>
+              </div>
+              <div class="txt">
+                <span class="n">1</span>
+                <div>
+                  <strong>Claude アプリ › Remote Control › 自分の環境を選びます</strong>
+                  <span class="d">名前は <code>vm1-…</code>（Jiro さんは <code>vm2-…</code>）です。あとは普通に会話します。Claude は自分の Mac の中のファイルを読み書きしながら作業します。作業フォルダは <code>~/workspace</code> で、その下のプロジェクトがすべて対象です。</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="sec" id="d-remote" aria-labelledby="remote-h">
+          <h2 id="remote-h">Remote Control を遠隔で起動・停止する</h2>
+          <p class="lead-p">
+            Remote Control の起動と停止は、スマホや PC のダッシュボードからできます。自分の Mac の画面を開く必要はありません。
+            ボタンを押してから実際に動くまで最大 1 分かかります。Mac 側が 1 分ごとに指示を取りに来る仕組みのためです。
+          </p>
+          <ol class="steps">
+            <li>
+              <div class="pic">
+                <div class="mock-dialog" aria-hidden="true">
+                  <div class="t">Remote Control を立て直す</div>
+                  <div class="r">止めて、同じ作業フォルダで起動し直します。</div>
+                  <div class="b"><span>キャンセル</span><span class="on">立て直す</span></div>
+                </div>
+              </div>
+              <div class="txt">
+                <span class="n">1</span>
+                <div>
+                  <strong>メインの Remote Control は「操作」タブ › 「Remote Control を立て直す」で起動します</strong>
+                  <span class="d">普段は自動で動き続けています。止まったときや返事が無いときに押します。1 分ほどで Claude アプリに <code>vm1-…</code> が戻ります。</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="pic">
+                <div class="mock-dialog" aria-hidden="true">
+                  <div class="t">フォルダごとの Remote Control</div>
+                  <div class="f">my-project　未起動</div>
+                  <div class="b"><span class="on">起動</span></div>
+                </div>
+              </div>
+              <div class="txt">
+                <span class="n">2</span>
+                <div>
+                  <strong>プロジェクトごとの Remote Control は、フォルダを選んで「起動」します</strong>
+                  <span class="d">「Remote Control」タブ（開いたときに最初に出るタブ）にあります。<code>~/workspace</code> 直下のフォルダの行で「起動」を押すと、そのフォルダだけを対象にした Remote Control がもう 1 つ立ち上がり、Claude アプリにフォルダ名で出ます。使い終わったら「停止」を押します。</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="pic">
+                <div class="mock-app" aria-hidden="true">
+                  <div class="hd">Remote Control</div>
+                  <div class="row on"><span class="dot"></span>vm1-breezy-lynx<small>メイン · ~/workspace 全体</small></div>
+                  <div class="row on"><span class="dot"></span>my-project<small>フォルダごと · ~/workspace/my-project</small></div>
+                </div>
+              </div>
+              <div class="txt">
+                <span class="n">3</span>
+                <div>
+                  <strong>Claude アプリで確かめます</strong>
+                  <span class="d">メインとフォルダごとの Remote Control が並んで表示され、どちらからでも会話できます。Remote Control の許可は Mac 側が記録済みなので、遠隔起動のたびに許可を求められることはありません。</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="sec" id="d-dash" aria-labelledby="dash-h">
+          <h2 id="dash-h">ダッシュボードの見方</h2>
+          <ol class="steps">
+            <li>
+              <div class="pic"><img src="/guide/dashboard-overview.jpg" alt="ダッシュボードの一覧。3 つの環境と状態が表になっている" width="1400" height="867" loading="lazy" /></div>
+              <div class="txt">
+                <span class="n">1</span>
+                <div>
+                  <strong>一覧には 3 人分の状態が出ます</strong>
+                  <span class="d">「正常」なら何もしなくて済みます。「要確認」のときは上に理由が出ます。右の CPU・メモリ・ディスクは、Mac mini 全体のうち自分が使っている割合です。開いている間は 5 秒ごとに自動で更新します。</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="pic"><img src="/guide/env-tabs.jpg" alt="自分の環境の見出しとタブ。概要・Remote Control・接続・操作・基礎設定・履歴" width="1068" height="187" loading="lazy" /></div>
+              <div class="txt">
+                <span class="n">2</span>
+                <div>
+                  <strong>自分の環境のページには 6 つのタブがあります</strong>
+                  <span class="d">概要（Claude と Remote Control の状態）、Remote Control（フォルダごとの起動・停止。開いたときに最初に出ます）、接続（画面共有・SSH・ファイルアプリの入り口）、操作（直すボタン）、基礎設定（Taro が見る管理項目）、履歴（誰がいつ何を押したか）。普段見るのは Remote Control と操作です。</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+          <div class="tips">
+            <div>
+              <strong>Claude Code：稼働中 / 停止中</strong>
+              <span class="d">Claude 本体が動いているかどうかです。停止中でも Mac 側の仕組みが自動で起動し直します。</span>
+            </div>
+            <div>
+              <strong>Remote Control：接続中 / 再接続待ち</strong>
+              <span class="d">Claude アプリからつなげる状態かどうかです。「再接続待ち」が数分続いたら「立て直す」を押します。</span>
+            </div>
+            <div>
+              <strong>要ログイン</strong>
+              <span class="d">Claude のログインが切れています。<a href="#d-relogin">ログインが切れたとき</a>の手順でログインし直します。</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="sec" id="d-ops" aria-labelledby="ops-h">
+          <h2 id="ops-h">操作ボタン（「操作」タブ）</h2>
+          <figure class="shot">
+            <img src="/guide/ops-tab.jpg" alt="操作タブ。権限の確認を省く（Remote Control 用と Claude Code の既定）、Remote Control を立て直す、前のセッションを戻す、Claude Code を更新、Codex を再起動、VM を再起動・停止・起動のボタンが並ぶ" width="1060" height="511" loading="lazy" />
+          </figure>
+          <div class="tips">
+            <div>
+              <strong>Remote Control を立て直す</strong>
+              <span class="d">アプリからつながらないときや、返事が止まったときに押します。1 分ほどで直ります。進行中の会話は切れますが、「前のセッションを戻す」で戻せます。</span>
+            </div>
+            <div>
+              <strong>前のセッションを戻す</strong>
+              <span class="d">立て直しや再起動で切れた会話を、約 4 時間以内なら元に戻します。一覧から会話の名前を選びます。</span>
+            </div>
+            <div>
+              <strong>Claude Code を更新</strong>
+              <span class="d">Claude 本体を最新版にして立て直します。自分で <code>claude update</code> を実行する必要はありません。</span>
+            </div>
+            <div>
+              <strong>VM を再起動 / 停止 / 起動</strong>
+              <span class="d">自分の Mac そのものを再起動します。「立て直す」で直らないときに使います。数分かかります。</span>
+            </div>
+            <div>
+              <strong>Codex を再起動</strong>
+              <span class="d">ChatGPT アプリを使っている人向けです。アプリを終了して開き直します。</span>
+            </div>
+            <div>
+              <strong>権限の確認を省く（オン / オフ）</strong>
+              <span class="d">オンのとき、Claude アプリでファイルの書き込みやコマンド実行のたびに許可を求めません。この Mac は Claude 専用なので既定はオンです。毎回確認したい人はオフにします。切り替えると Remote Control を立て直します。</span>
+            </div>
+            <div>
+              <strong>Claude Code の既定で権限の確認を省く（オン / オフ）</strong>
+              <span class="d">ターミナルで <code>claude</code> を起動したときの既定です。上の Remote Control 用とは別の設定で、切り替えても Remote Control は切れません。</span>
+            </div>
+          </div>
+          <div class="callout">
+            どのボタンも、押すと「履歴」タブに受付・実行中・完了の順で残ります。押してから実際に動くまで最大 1 分かかります。
+          </div>
+        </section>
+
+        <section class="sec" id="d-folders" aria-labelledby="folders-h">
+          <h2 id="folders-h">プロジェクトごとの Remote Control</h2>
+          <p class="lead-p">
+            メインの Remote Control は <code>~/workspace</code> 全体が対象です。特定のプロジェクトだけを対象にした Remote Control をもう 1 つ立ち上げることもできます。Claude アプリにはフォルダ名で表示されます。
+          </p>
+          <p class="lead-p">
+            <strong>候補になるのは、そのマシンの作業フォルダ <code>~/workspace</code> の中（直下）にあるフォルダだけです。</strong>ほかの場所にあるフォルダは一覧に出ません。プロジェクトは <code>~/workspace</code> の中に置いてください（git clone もそこで行います）。
+          </p>
+          <ol class="steps">
+            <li>
+              <div class="pic">
+                <div class="mock-dialog" aria-hidden="true">
+                  <div class="t">フォルダごとの Remote Control</div>
+                  <div class="f">my-project　未起動</div>
+                  <div class="b"><span class="on">起動</span></div>
+                </div>
+              </div>
+              <div class="txt">
+                <span class="n">1</span>
+                <div>
+                  <strong>「Remote Control」タブで、フォルダの行の「起動」を押します</strong>
+                  <span class="d">一覧は <code>~/workspace</code> の直下にあるフォルダです（サブフォルダは出ません）。数秒〜1 分ほどで「稼働中」になり、Claude アプリに <code>my-project</code> のような名前で出ます。止めるときは「停止」を押します。</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="pic">
+                <div class="mock-dialog" aria-hidden="true">
+                  <div class="t">新しいフォルダ</div>
+                  <div class="f">my-project</div>
+                  <div class="r"><span class="radio on"></span>作成後に Remote Control を起動</div>
+                  <div class="b"><span class="on">作成</span></div>
+                </div>
+              </div>
+              <div class="txt">
+                <span class="n">2</span>
+                <div>
+                  <strong>「新しいフォルダ」で作って、そのまま起動できます</strong>
+                  <span class="d">名前は英数字で始め、英数字・空白・<code>. _ -</code> だけで 64 文字までです。「作成後に Remote Control を起動」にチェックを入れると、作成と起動が一度に済みます。フォルダは <code>~/workspace</code> の中に作られます。</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="pic">
+                <div class="mock-dialog" aria-hidden="true">
+                  <div class="t">Remote Control を起動</div>
+                  <div class="f">「my-project」を信頼済みフォルダとして記録し、起動します</div>
+                  <div class="b"><span class="on">起動</span><span>やめる</span></div>
+                </div>
+              </div>
+              <div class="txt">
+                <span class="n">3</span>
+                <div>
+                  <strong>起動＝そのフォルダを信頼する、です</strong>
+                  <span class="d">Claude Code はフォルダ単位で信頼を求めます（git リポジトリは特に）。「起動」を押すと、そのフォルダを信頼済みとして記録してから立ち上げるので、別の手順はありません。信頼すると、そのフォルダの CLAUDE.md・フック・設定が読み込まれます。中身を知っているフォルダだけ起動してください。</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="sec" id="d-relogin" aria-labelledby="relogin-h">
+          <h2 id="relogin-h">ログインが切れたとき（「要ログイン」）</h2>
+          <ol class="steps">
+            <li>
+              <div class="pic">
+                <pre class="term" aria-label="ターミナルの例"><span class="p">hanako@vm1 ~ %</span> claude auth login
+<span class="o">Opening browser to sign in…</span>
+<span class="o">✓ Logged in</span></pre>
+              </div>
+              <div class="txt">
+                <span class="n">1</span>
+                <div>
+                  <strong>画面共有で入り、ターミナルでログインし直します</strong>
+                  <span class="d"><a href="/guide/connect.html#c-browser-vnc">画面共有（ブラウザ）</a>で自分の Mac の画面を出し、ターミナルで次の 1 行を入力します。ブラウザが開くので、自分の Claude アカウントでログインします。Remote Control は自動で戻ります。</span>
+                  <code class="cmd-line">claude auth login</code>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="sec" id="d-home" aria-labelledby="home-h">
+          <h2 id="home-h">スマホのホーム画面に追加する</h2>
+          <div class="tips">
+            <div>
+              <strong>iPhone（Safari）</strong>
+              <span class="d">ダッシュボードを開き、共有ボタン › 「ホーム画面に追加」を選びます。アプリのように全画面で開き、下にタブが出ます。</span>
+            </div>
+            <div>
+              <strong>Android（Chrome）</strong>
+              <span class="d">メニュー（⋮）› 「ホーム画面に追加」または「アプリをインストール」を選びます。</span>
+            </div>
+            <div>
+              <strong>ログインの期限</strong>
+              <span class="d">Cloudflare のログインは 24 時間で切れます。切れたら Google でログインし直します。</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="sec" id="d-dont" aria-labelledby="dont-h">
+          <h2 id="dont-h">やらないでほしいこと</h2>
+          <div class="tips">
+            <div>
+              <strong>ログアウトしない</strong>
+              <span class="d">画面共有は閉じるだけにしてください。macOS からログアウトすると Remote Control が止まり、Taro の作業が必要になります。</span>
+            </div>
+            <div>
+              <strong>再起動・シャットダウンしない</strong>
+              <span class="d">必要なときはダッシュボードの「VM を再起動」を使ってください。</span>
+            </div>
+            <div>
+              <strong>設定を変えない</strong>
+              <span class="d">スリープ・省電力・ソフトウェアアップデートの設定と、Claude Code の自動更新は Taro が管理しています。</span>
+            </div>
+            <div>
+              <strong>パスワードを変えたら伝える</strong>
+              <span class="d">Mac のログインパスワードを変えたら Taro に伝えてください。自動ログインの設定を直さないと、次の再起動でログイン画面のまま止まります。</span>
+            </div>
+          </div>
+          <div class="callout">
+            会話の内容やファイル名はダッシュボードに送りません。送るのは状態（動いている・止まっている）、作業フォルダ直下のフォルダ名、セッションの名前です。
+          </div>
+        </section>
+
+        <div class="guide-next"><a href="/guide/connect.html">入り方（画面共有・SSH・ファイル）へ →</a></div>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <div class="wrap">
+        <span>Example Inc.</span>
+        <span>Cloudflare Access で保護されています</span>
+      </div>
+    </footer>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

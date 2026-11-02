@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Tart の VM「vm1」を起動し続ける（docs/spec.md 3.1 / 3.5）。host の LaunchAgent（Taro の GUI セッション）。
+  ラベルはエージェントの既定値（agent/src/config.ts の DEFAULT_LABELS）に合わせて com.example.tart-vm1。
+  変える場合は config.json の labels.vm1 と vm_plists.vm1 も合わせる。
+  プレースホルダ: __USER__（host のユーザー名。通常は taro）
+  tart のパスは実機に合わせる（Homebrew なら /opt/homebrew/bin/tart、公式リリースを ~/Applications に置いたなら
+  /Users/__USER__/Applications/tart.app/Contents/MacOS/tart。config.json の tart_path と同じにする）
+  配置先: ~/Library/LaunchAgents/com.example.tart-vm1.plist
+  ログ  : ~/Library/Logs/macmini-vm/（先に mkdir -p しておく）
+  起動  : launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.tart-vm1.plist
+  再起動（vm_restart）: tart stop vm1 → KeepAlive が起動し直す
+  停止（vm_stop）     : launchctl disable gui/$(id -u)/com.example.tart-vm1 → launchctl bootout gui/$(id -u)/com.example.tart-vm1 → tart stop vm1
+  起動（vm_start）    : launchctl enable gui/$(id -u)/com.example.tart-vm1 → launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.tart-vm1.plist
+  IP をブリッジで固定する場合（docs/verify.md B-2 (b)）は ProgramArguments に <string>--net-bridged=en0</string> を足す。
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.example.tart-vm1</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/homebrew/bin/tart</string>
+    <string>run</string>
+    <string>--no-graphics</string>
+    <string>vm1</string>
+  </array>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>HOME</key>
+    <string>/Users/__USER__</string>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    <key>LANG</key>
+    <string>en_US.UTF-8</string>
+  </dict>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>30</integer>
+  <key>StandardOutPath</key>
+  <string>/Users/__USER__/Library/Logs/macmini-vm/vm1.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/__USER__/Library/Logs/macmini-vm/vm1.err.log</string>
+</dict>
+</plist>

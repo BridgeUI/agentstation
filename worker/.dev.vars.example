@@ -1,0 +1,8 @@
+# ローカル開発用。コピーして .dev.vars にする（.gitignore 済み）。本番には設定しない。
+# wrangler dev で http://localhost:8787 を開いたとき、このメールでログインしたことにする。
+LOCAL_DEV_EMAIL=taro@example.com
+# エージェントのサービストークン（Client ID）と環境の対応。本番は wrangler secret put AGENT_TOKEN_NAMES
+AGENT_TOKEN_NAMES={"host":"dev-host","vm1":"dev-vm1","vm2":"dev-vm2"}
+
+# VNC パスワード（押したときだけ表示。本番は wrangler secret）
+VNC_PASSWORDS_JSON='{"host":"example","vm1":"example","vm2":"example"}'

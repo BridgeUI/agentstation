@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="referrer" content="same-origin" />
+    <title>困ったとき · 使い方ガイド</title>
+    <link rel="icon" href="/logo.png" />
+    <meta name="theme-color" content="#f5f5f7" />
+    <link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Mac mini" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body data-page="guide">
+    <nav class="nav" aria-label="グローバル">
+      <div class="wrap">
+        <a class="nav-brand" href="/">
+          <img src="/logo.png" alt="Example" />
+          <span>Mac mini 監視ダッシュボード</span>
+        </a>
+        <div class="nav-links">
+          <a href="/">一覧</a>
+          <a href="/host.html">Taro</a>
+          <a href="/vm1.html">Hanako</a>
+          <a href="/vm2.html">Jiro</a>
+          <a href="/guide/" aria-current="page">使い方ガイド</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="wrap guide-layout guide">
+      <aside class="gnav" aria-label="ガイドの目次">
+        <a class="gnav-home" href="/guide/">使い方ガイド</a>
+        <nav>
+          <div class="gnav-sec"><a href="/guide/start.html">はじめての設定</a></div>
+          <div class="gnav-sec"><a href="/guide/daily.html">普段の使い方</a></div>
+          <div class="gnav-sec"><a href="/guide/connect.html">入り方（画面共有・SSH・ファイル）</a></div>
+          <div class="gnav-sec current">
+            <a href="/guide/trouble.html" aria-current="page">困ったとき</a>
+            <ul>
+              <li><a href="#t-claude">Claude アプリからつながらない</a></li>
+              <li><a href="#t-connect">画面共有・SSH・ファイルアプリで入れない</a></li>
+              <li><a href="#t-password">パスワードが通らない</a></li>
+              <li><a href="#t-taro">Taro に連絡するとき</a></li>
+            </ul>
+          </div>
+        </nav>
+        <a class="gnav-back" href="/">← ダッシュボードへ</a>
+      </aside>
+
+      <main class="guide-main">
+        <header class="guide-head">
+          <p class="eyebrow">使い方ガイド · うまくいかないとき</p>
+          <h1>困ったとき</h1>
+          <p class="lead-p">まずダッシュボードの一覧を見てください。「応答なし」なら Mac mini 側の問題なので、Taro に連絡します。それ以外はここから探します。</p>
+        </header>
+
+        <section class="sec" id="t-claude" aria-labelledby="claude-h">
+          <h2 id="claude-h">Claude アプリからつながらない</h2>
+          <div class="tips">
+            <div>
+              <strong>「要ログイン」と出ている</strong>
+              <span class="d">Claude のログインが切れています。<a href="/guide/connect.html#c-browser-vnc">画面共有</a>で入り、ターミナルで <code>claude auth login</code> を実行します。手順は<a href="/guide/daily.html#d-relogin">普段の使い方</a>にあります。</span>
+            </div>
+            <div>
+              <strong>「再接続待ち」「停止中」が数分続く</strong>
+              <span class="d">自分の環境 › 「操作」タブ › 「Remote Control を立て直す」を押します。1 分ほどで直ります。切れた会話は「前のセッションを戻す」で戻せます（約 4 時間以内）。</span>
+            </div>
+            <div>
+              <strong>立て直しても直らない</strong>
+              <span class="d">「操作」タブ › 「VM を再起動」を押します。自分の Mac を再起動するので数分かかります。そのあと一覧を確かめます。</span>
+            </div>
+            <div>
+              <strong>Claude アプリに自分の環境が出ない</strong>
+              <span class="d">アプリ側のアカウントが、自分の Mac でログインしたアカウント（B / C）と同じかを確かめてください。別のアカウントだと表示されません。</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="sec" id="t-connect" aria-labelledby="connect-h">
+          <h2 id="connect-h">画面共有・SSH・ファイルアプリで入れない</h2>
+          <div class="tips">
+            <div>
+              <strong>ブラウザで開いたら Cloudflare のログイン画面に戻った</strong>
+              <span class="d">ログインの期限（24 時間）が切れています。Google でログインし直します。</span>
+            </div>
+            <div>
+              <strong>「アプリで入る」・ファイルアプリがつながらない</strong>
+              <span class="d">Cloudflare One（WARP）がオン（接続済み）かを確かめてください。オフだと 192.168.64.〜 には届きません。ファイルアプリ（<code>smb://192.168.64.〜</code>）も同じで、WARP がオフだとエラーも出ずにしばらく待って失敗します。<a href="/guide/connect.html#c-warp">WARP の準備</a>を見てください。</span>
+            </div>
+            <div>
+              <strong>スマホで、Wi‑Fi のときだけつながらない（タイムアウトする）</strong>
+              <span class="d">iPhone の 設定 › プライバシーとセキュリティ › ローカルネットワーク で、SSH アプリと画面共有アプリ（ファイルアプリで止まるときは、一覧に「ファイル」があればそれも）をオンにします。モバイル回線に切り替えるとつながるなら、ほぼこれです。</span>
+            </div>
+            <div>
+              <strong>ファイルアプリで「ユーザ名またはパスワードが正しくありません」</strong>
+              <span class="d">接続方法を「登録ユーザ」にし、名前は自分のユーザー名、パスワードは Mac のログインパスワードです（画面共有の 8 文字ではありません）。「ゲスト」では入れません。</span>
+            </div>
+            <div>
+              <strong>マウスの矢印が見えない</strong>
+              <span class="d">ブラウザ版の画面共有ではよく起きます。クリックは効きます。見えにくいときは <a href="/guide/connect.html#c-app-vnc">Mac の画面共有アプリ</a>から入ります。</span>
+            </div>
+            <div>
+              <strong>一覧で「応答なし」になっている</strong>
+              <span class="d">接続ではなく Mac mini 側の問題です。Taro に連絡してください。</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="sec" id="t-password" aria-labelledby="password-h">
+          <h2 id="password-h">パスワードが通らない</h2>
+          <div class="tips">
+            <div>
+              <strong>画面共有の「Password」欄</strong>
+              <span class="d">ダッシュボードの「パスワードを表示」で出る 8 文字（画面共有 / VNC 用）を入れます。Mac のログインパスワードではありません。</span>
+            </div>
+            <div>
+              <strong>ロック画面（名前の下の欄）</strong>
+              <span class="d">Mac のログインパスワード（Taro から受け取ったもの）を入れます。日本語入力がオンになっていると通らないので、英数に切り替えてください。</span>
+            </div>
+            <div>
+              <strong>Mac のパスワードを変えた</strong>
+              <span class="d">Taro に伝えてください。自動ログインの設定を直さないと、次の再起動でログイン画面のまま止まります。</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="sec" id="t-taro" aria-labelledby="taro-h">
+          <h2 id="taro-h">Taro に連絡するとき</h2>
+          <div class="callout">
+            一覧に何と出ているか、どのボタンを押したか、何分前からかを添えてください。「履歴」タブ（誰がいつ何を押したか）は Taro 側でも見えます。
+          </div>
+          <div class="callout">
+            <b>やらないでほしいこと：</b>ログアウト、macOS の再起動・シャットダウン（ダッシュボードの「VM を再起動」は使ってよい）、スリープや自動アップデートの設定変更、Claude Code の自動更新をオンにすること。
+          </div>
+        </section>
+
+        <div class="guide-next"><a href="/guide/">目次へ →</a></div>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <div class="wrap">
+        <span>Example Inc.</span>
+        <span>Cloudflare Access で保護されています</span>
+      </div>
+    </footer>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

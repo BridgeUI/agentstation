@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Hanako の環境</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&amp;display=swap">
+<style>
+body{margin:0;background:#FFFFFF}
+a{color:#000000}a:hover{color:#5C5C5C}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #FFFFFF; color: #000000; font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Yu Gothic', sans-serif; -webkit-font-smoothing: antialiased; display: flex; flex-direction: column">
+
+<nav style="background: #FFFFFF; border-bottom: 0.5px solid #000000" aria-label="グローバル">
+<div style="max-width: 1200px; margin: 0 auto; padding: 0 32px; box-sizing: border-box; min-height: 64px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; align-items: center; gap: 16px">
+<img src="/_blob/c89d05faa3591c6e605b71368dde6848" alt="Example" style="height: 30px; width: auto; display: block">
+<span style="font-size: 15px; font-weight: 500">Mac mini 監視ダッシュボード</span>
+</div>
+<div style="display: flex; align-items: center; gap: 4px; font-size: 14px; flex-wrap: wrap">
+<a href="Main.dc.html" style="padding: 10px 12px; text-decoration: none">一覧</a>
+<a href="Host.dc.html" style="{{tabHost}}; padding: 10px 12px">Taro</a>
+<a href="Vm1.dc.html" style="{{tabVm1}}; padding: 10px 12px">Hanako</a>
+<a href="Vm2.dc.html" style="{{tabVm2}}; padding: 10px 12px">Jiro</a>
+<a href="Guide.dc.html" style="padding: 10px 12px; text-decoration: none">接続ガイド</a>
+</div>
+</div>
+</nav>
+
+<header style="background: #F2F2F2">
+<div style="max-width: 1200px; margin: 0 auto; padding: 32px 32px 40px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px">
+<a href="Main.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: 14px; color: #000000; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>一覧に戻る</a>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+<h1 style="margin: 0; font-size: 32px; font-weight: 500; letter-spacing: 0.02em">{{m.title}}</h1>
+<span style="font-size: 12px; color: #5C5C5C; border: 0.5px solid #5C5C5C; border-radius: 4px; padding: 2px 8px">サンプルデータ</span>
+</div>
+<p style="margin: 0; font-size: 15px; color: #5C5C5C">{{m.name}} · {{m.sub}} · 最終受信 12秒前</p>
+</div>
+<span style="display: inline-flex; align-items: center; gap: 10px; border: 0.5px solid #000000; border-radius: 4px; padding: 10px 16px; font-size: 15px; font-weight: 500; background: #FFFFFF">
+<span style="width: 8px; height: 8px; border-radius: 50%; display: inline-block; background: #2E9B4F" aria-hidden="true"></span>正常</span>
+</div>
+</div>
+</header>
+
+<main style="flex: 1; max-width: 1200px; width: 100%; margin: 0 auto; padding: 40px 32px 64px; box-sizing: border-box; display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start">
+
+<div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 40px">
+
+<section style="display: flex; flex-direction: column; gap: 16px" aria-labelledby="conn-h">
+<h2 id="conn-h" style="margin: 0; font-size: 24px; font-weight: 500; letter-spacing: 0.02em">接続</h2>
+<sc-if value="{{canUse}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; align-items: center; gap: 10px"><span style="flex: none; width: 26px; height: 26px; border-radius: 50%; border: 0.5px solid #000000; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500" aria-hidden="true">A</span><span style="font-size: 15px; font-weight: 500">ブラウザで入る</span><span style="font-size: 13px; color: #5C5C5C">何も入れずに使えます</span></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px">
+<a href="{{m.sshUrl}}" style="display: flex; flex-direction: column; gap: 8px; padding: 20px; border: 0.5px solid #000000; border-radius: 4px; color: #000000; text-decoration: none">
+<span style="display: inline-flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 500"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>SSH（ブラウザ）</span>
+<span style="font-size: 13px; color: #5C5C5C; word-break: break-all">{{m.sshHost}}</span>
+</a>
+<a href="{{m.vncUrl}}" style="display: flex; flex-direction: column; gap: 8px; padding: 20px; border: 0.5px solid #000000; border-radius: 4px; color: #000000; text-decoration: none">
+<span style="display: inline-flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 500"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="1"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>画面共有（ブラウザ）</span>
+<span style="font-size: 13px; color: #5C5C5C; word-break: break-all">{{m.vncHost}}</span>
+</a>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; margin-top: 8px"><span style="flex: none; width: 26px; height: 26px; border-radius: 50%; background: #000000; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500" aria-hidden="true">B</span><span style="font-size: 15px; font-weight: 500">アプリで入る（WARPをオンにして）</span></div>
+<div style="display: flex; flex-direction: column; padding: 4px 20px; background: #F2F2F2; border-radius: 4px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 12px 0; border-bottom: 0.5px solid #CCCCCC">
+<span style="font-size: 13px; color: #5C5C5C; min-width: 96px">SSHアプリ</span>
+<code style="flex: 1 1 200px; font-family: SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px; word-break: break-all">{{m.sshCmd}}</code>
+<button type="button" onClick="{{copyCmd}}" style="min-height: 44px; padding: 0 16px; border: 0.5px solid #000000; border-radius: 4px; background: #FFFFFF; color: #000000; font-size: 14px; font-family: inherit; cursor: pointer">{{copyLabel}}</button>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 12px 0">
+<span style="font-size: 13px; color: #5C5C5C; min-width: 96px">VNCアプリ</span>
+<code style="flex: 1 1 200px; font-family: SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px; word-break: break-all">{{m.vncAddr}}</code>
+</div>
+</div>
+<a href="Guide.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: 14px">はじめての人は接続ガイド（図解）へ<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+</sc-if>
+<sc-if value="{{viewOnly}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; padding: 16px 20px; background: #F2F2F2; border-radius: 4px; font-size: 14px; line-height: 1.6; color: #5C5C5C">閲覧のみの権限のため、接続ボタンは表示されません。必要なときは、この環境を使っている本人に連絡してください。</p>
+</sc-if>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 16px" aria-labelledby="keys-h">
+<div style="display: flex; align-items: center; gap: 4px">
+<h2 id="keys-h" style="margin: 0; font-size: 24px; font-weight: 500; letter-spacing: 0.02em">SSHの認証</h2>
+<button type="button" onClick="{{tg.ssh}}" aria-expanded="{{ex.ssh}}" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 10px; border: none; background: transparent; color: #5C5C5C; font-size: 13px; font-family: inherit; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>{{lb.ssh}}</button>
+</div>
+<div style="display: flex; gap: 14px; align-items: flex-start; padding: 20px; border: 0.5px solid #000000; border-radius: 4px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<strong style="font-size: 16px; font-weight: 500">Cloudflare Access の短期証明書でログイン</strong>
+<sc-if value="{{open.ssh}}" hint-placeholder-val="{{ false }}">
+<span style="font-size: 14px; line-height: 1.7; color: #5C5C5C">SSH鍵の登録は不要です。Accessにログインするたびに、短時間だけ有効な証明書が発行されます。使う人が替わるときは、Accessの許可を外すだけで入れなくなります。</span>
+</sc-if>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h3 style="margin: 0; font-size: 16px; font-weight: 500">このマシンに入れる人</h3>
+<div style="display: flex; flex-direction: column; border-top: 0.5px solid #000000">
+<sc-for list="{{m.sshUsers}}" as="u" hint-placeholder-count="2">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; padding: 14px 0; border-bottom: 0.5px solid #CCCCCC; font-size: 15px">
+<span style="display: inline-flex; align-items: center; gap: 10px"><span style="width: 28px; height: 28px; border-radius: 50%; border: 0.5px solid #000000; display: inline-flex; align-items: center; justify-content: center; font-size: 12px" aria-hidden="true">{{u.initial}}</span>{{u.name}}</span>
+<span style="font-size: 13px; color: #5C5C5C">{{u.note}}</span>
+</div>
+</sc-for>
+</div>
+</div>
+<sc-if value="{{canUse}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+<sc-if value="{{open.ssh}}" hint-placeholder-val="{{ false }}">
+<span style="font-size: 12px; line-height: 1.6; color: #5C5C5C; flex: 1 1 260px">入れる人の追加・削除は、Cloudflare Access のポリシーで行います。</span>
+</sc-if>
+<a href="https://one.dash.cloudflare.com/" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; border: 0.5px solid #000000; border-radius: 4px; color: #000000; font-size: 14px; text-decoration: none; box-sizing: border-box">Accessのポリシーを開く<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
+</div>
+</sc-if>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 16px" aria-labelledby="acct-h">
+<div style="display: flex; align-items: center; gap: 4px">
+<h2 id="acct-h" style="margin: 0; font-size: 24px; font-weight: 500; letter-spacing: 0.02em">ログイン情報</h2>
+<button type="button" onClick="{{tg.login}}" aria-expanded="{{ex.login}}" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 10px; border: none; background: transparent; color: #5C5C5C; font-size: 13px; font-family: inherit; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>{{lb.login}}</button>
+</div>
+<dl style="margin: 0; display: flex; flex-direction: column; border-top: 0.5px solid #000000">
+<sc-for list="{{m.logins}}" as="l" hint-placeholder-count="6">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; padding: 14px 0; border-bottom: 0.5px solid #CCCCCC; font-size: 15px">
+<dt style="color: #5C5C5C; min-width: 200px">{{l.label}}</dt>
+<dd style="margin: 0; text-align: right; display: flex; flex-direction: column; gap: 2px"><span>{{l.value}}</span><sc-if value="{{open.login}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #5C5C5C">{{l.note}}</span></sc-if></dd>
+</div>
+</sc-for>
+</dl>
+<sc-if value="{{open.login}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.6; color: #5C5C5C">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><rect x="3" y="11" width="18" height="11" rx="1"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+<span>パスワード・SSH鍵・APIキーはこの画面に表示しません。パスワードマネージャーで管理してください。</span>
+</div>
+</sc-if>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 16px" aria-labelledby="ops-h">
+<div style="display: flex; align-items: center; gap: 4px">
+<h2 id="ops-h" style="margin: 0; font-size: 24px; font-weight: 500; letter-spacing: 0.02em">操作</h2>
+<button type="button" onClick="{{tg.ops}}" aria-expanded="{{ex.ops}}" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 10px; border: none; background: transparent; color: #5C5C5C; font-size: 13px; font-family: inherit; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>{{lb.ops}}</button>
+</div>
+<div style="display: flex; flex-direction: column; border-top: 0.5px solid #000000">
+<sc-for list="{{m.ops}}" as="op" hint-placeholder-count="4">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding: 16px 0; border-bottom: 0.5px solid #CCCCCC">
+<div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 280px">
+<span style="{{op.nameStyle}}; font-size: 16px; font-weight: 500">{{op.name}}</span>
+<sc-if value="{{open.ops}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; line-height: 1.6; color: #5C5C5C">{{op.desc}}</span></sc-if>
+</div>
+<sc-if value="{{canUse}}" hint-placeholder-val="{{ true }}">
+<button type="button" style="{{op.btnStyle}}; min-height: 44px; min-width: 120px; padding: 0 16px; border-radius: 4px; background: #FFFFFF; font-size: 14px; font-family: inherit; cursor: pointer">{{op.button}}</button>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</section>
+
+</div>
+
+<aside style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 40px">
+
+<section style="display: flex; flex-direction: column; gap: 16px" aria-labelledby="st-h">
+<div style="display: flex; align-items: center; gap: 4px">
+<h2 id="st-h" style="margin: 0; font-size: 20px; font-weight: 500; letter-spacing: 0.02em">状態</h2>
+<button type="button" onClick="{{tg.state}}" aria-expanded="{{ex.state}}" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 10px; border: none; background: transparent; color: #5C5C5C; font-size: 13px; font-family: inherit; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>{{lb.state}}</button>
+</div>
+<dl style="margin: 0; display: flex; flex-direction: column">
+<sc-for list="{{m.rows}}" as="row" hint-placeholder-count="3">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-top: 0.5px solid #CCCCCC; font-size: 15px">
+<dt>{{row.label}}</dt>
+<dd style="margin: 0; display: inline-flex; align-items: center; gap: 8px"><span style="width: 7px; height: 7px; border-radius: 50%; display: inline-block; background: #2E9B4F" aria-hidden="true"></span>{{row.value}}</dd>
+</div>
+</sc-for>
+</dl>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<sc-for list="{{m.metrics}}" as="mt" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: #5C5C5C"><span>{{mt.label}}</span><span style="color: #000000; font-variant-numeric: tabular-nums">{{mt.value}}%</span></div>
+<div style="height: 4px; background: #E6E6E6; overflow: hidden" role="img" aria-label="{{mt.aria}}"><div style="{{mt.barStyle}}; height: 100%; background: #000000"></div></div>
+</div>
+</sc-for>
+<sc-if value="{{open.state}}" hint-placeholder-val="{{ false }}">
+<span style="font-size: 12px; line-height: 1.6; color: #5C5C5C">{{m.metricNote}}</span>
+</sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 16px; background: #F2F2F2; border-radius: 4px">
+<span style="font-size: 13px; color: #5C5C5C">割り当て</span>
+<span style="font-size: 15px; font-variant-numeric: tabular-nums">{{m.alloc}}</span>
+<span style="font-size: 13px; color: #5C5C5C; margin-top: 10px">Claude Code のバージョン</span>
+<span style="font-size: 15px">{{m.version}}</span>
+<span style="font-size: 13px; color: #5C5C5C; margin-top: 10px">最終再起動</span>
+<span style="font-size: 15px">{{m.lastRestart}}</span>
+<a href="Main.dc.html#total-h" style="align-self: flex-start; font-size: 13px; min-height: 44px; display: inline-flex; align-items: center">全体の配分を見る</a>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column" aria-labelledby="hist-h">
+<h2 id="hist-h" style="margin: 0 0 16px; font-size: 20px; font-weight: 500; letter-spacing: 0.02em">このマシンの履歴</h2>
+<sc-for list="{{m.history}}" as="h" hint-placeholder-count="3">
+<div style="display: flex; gap: 14px; padding: 12px 0; border-top: 0.5px solid #CCCCCC; font-size: 14px; line-height: 1.5"><span style="color: #5C5C5C; font-variant-numeric: tabular-nums; flex: none">{{h.time}}</span><span>{{h.text}}</span></div>
+</sc-for>
+</section>
+
+</aside>
+</main>
+
+<footer style="background: #F2F2F2">
+<div style="max-width: 1200px; margin: 0 auto; padding: 28px 32px; box-sizing: border-box; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-size: 13px; color: #5C5C5C">
+<span>Example Inc.</span>
+<span>Cloudflare Access で保護されています</span>
+</div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"role":{"editor":"enum","options":["本人","閲覧者"],"default":"本人"},"$preview":{"width":1280,"height":2160}}'>
+class Component extends DCLogic {
+renderVals() {
+var MACHINE = 'vm1';
+var base = {
+host: { name: 'host', sub: 'アカウントA', owner: 'Taro', account: 'アカウントA', third: ['エージェント', '60秒ごとに報告'], cpu: 12, mem: 18, disk: 14, alloc: 'CPU 全10コアを共有 · メモリ 約12GB · ディスク 約230GB' },
+vm1: { name: 'vm1', sub: 'アカウントB', owner: 'Hanako', account: 'アカウントB', third: ['VM', '起動中'], cpu: 20, mem: 24, disk: 16, alloc: 'CPU 4コア · メモリ 6GB · ディスク 90GB' },
+vm2: { name: 'vm2', sub: 'アカウントC', owner: 'Jiro', account: 'アカウントC', third: ['VM', '起動中'], cpu: 6, mem: 14, disk: 10, alloc: 'CPU 4コア · メモリ 6GB · ディスク 90GB' }
+}[MACHINE];
+var isHost = MACHINE === 'host';
+var n = base.name;
+var normal = 'border: 0.5px solid #000000; color: #000000';
+var danger = 'border: 0.5px solid #C4291C; color: #C4291C';
+var ops = [
+{ name: 'Remote Controlを立て直す', desc: 'claude remote-control を止めて、同じフォルダで起動し直します。止まってから約4時間以内なら、前のセッションも戻ります。', button: '立て直す', btnStyle: normal, nameStyle: 'color: #000000' },
+{ name: '前のセッションを戻す', desc: '記録しておいたセッションIDを選んで、そのセッションだけを戻します（止まってから約4時間以内）。', button: '選ぶ', btnStyle: normal, nameStyle: 'color: #000000' },
+{ name: 'Claude Codeを更新', desc: 'claude update を実行し、Remote Controlを立て直して接続を確認します。普段は毎晩4時の夜間メンテナンスで自動で行います。', button: '更新', btnStyle: normal, nameStyle: 'color: #000000' },
+{ name: 'Codexを再起動', desc: '常駐できる構成の場合のみ有効です。確認は1回です。', button: '再起動', btnStyle: normal, nameStyle: 'color: #000000' }
+];
+if (isHost) {
+ops.push({ name: 'エージェントを更新', desc: '新しい版に入れ替えて、エージェント自身を再起動します。', button: '更新', btnStyle: normal, nameStyle: 'color: #000000' });
+ops.push({ name: 'ホストを再起動', desc: 'オーナーのみ。VMを止めてから再起動します。ホスト名の入力と、1分間の取り消し猶予があります。', button: '再起動…', btnStyle: danger, nameStyle: 'color: #C4291C' });
+} else {
+ops.push({ name: 'VMを再起動', desc: 'tart stop のあと、launchd が自動で起動し直します。', button: '再起動', btnStyle: normal, nameStyle: 'color: #000000' });
+ops.push({ name: 'VMを停止', desc: '自動起動も止めます。再開は「VMを起動」から行います。', button: '停止', btnStyle: normal, nameStyle: 'color: #000000' });
+}
+var mt = function (label, v) { return { label: label, value: v, aria: label + ' ' + v + '%', barStyle: 'width: ' + v + '%' }; };
+var cmd = 'ssh [ユーザー名]@[' + n + 'の内部IP]';
+var self = this;
+var role = this.props.role ?? '本人';
+var tab = function (k) { return k === MACHINE ? 'text-decoration: underline; text-underline-offset: 6px; font-weight: 500' : 'text-decoration: none'; };
+var me = this;
+var st = this.state || {};
+var tg = {}, ex = {}, lb = {}, open = {};
+['state', 'ssh', 'login', 'ops'].forEach(function (k) {
+var o = !!(st.open && st.open[k]);
+open[k] = o;
+ex[k] = o ? 'true' : 'false';
+lb[k] = o ? '説明を閉じる' : '説明';
+tg[k] = function () {
+var cur = (me.state && me.state.open) || {};
+var n = {};
+Object.keys(cur).forEach(function (x) { n[x] = cur[x]; });
+n[k] = !cur[k];
+me.setState({ open: n });
+};
+});
+return {
+tg: tg, ex: ex, lb: lb, open: open,
+tabHost: tab('host'), tabVm1: tab('vm1'), tabVm2: tab('vm2'),
+canUse: role === '本人',
+viewOnly: role !== '本人',
+copyLabel: this.state && this.state.copied ? 'コピーしました' : 'コピー',
+copyCmd: function () {
+try { if (navigator.clipboard) { navigator.clipboard.writeText(cmd); } } catch (e) {}
+self.setState({ copied: true });
+},
+m: {
+alloc: base.alloc,
+metricNote: isHost ? 'Mac mini 全体の使用量のうち、VM 2台の分を除いた本体の分です。' : 'Mac mini 全体の使用量のうち、このVMの分です。',
+name: n, title: base.owner + ' の環境', sub: base.sub, owner: base.owner,
+sshUrl: 'https://ssh-' + n + '.example.com', sshHost: 'ssh-' + n + '.example.com',
+vncUrl: 'https://vnc-' + n + '.example.com', vncHost: 'vnc-' + n + '.example.com',
+sshCmd: cmd,
+vncAddr: '[' + n + 'の内部IP]:5900',
+logins: [
+{ label: 'macOSユーザー名', value: '[ユーザー名]', note: 'Accessのメールの@より前と同じにする' },
+{ label: 'Cloudflare Access', value: '[本人のメールアドレス]', note: 'ダッシュボード・SSH・画面共有で共通' },
+{ label: 'Claude（' + base.account + '）', value: '[Claudeのメールアドレス]', note: 'このマシン専用のアカウント' },
+{ label: 'Codex（ChatGPT）', value: '[ChatGPTのメールアドレス]', note: 'このマシン専用のアカウント' },
+{ label: 'Remote Control', value: n + '-[セッション名]', note: 'Claudeアプリのセッション一覧に出る名前' },
+{ label: '作業フォルダ', value: '[作業フォルダのパス]', note: 'ホーム直下は不可（信頼設定が保存されないため）' }
+],
+sshUsers: [
+{ name: 'Hanako', initial: 'K', note: '本人' },
+{ name: 'Taro', initial: 'Y', note: 'オーナー' }
+],
+ops: ops,
+version: '[バージョン]（stable・自動更新オフ）',
+lastRestart: '今日 04:00（夜間メンテナンス）',
+rows: [{ label: 'Claude Code', value: '稼働中' }, { label: 'Remote Control', value: '接続中' }, { label: 'Codex', value: '稼働中' }, { label: base.third[0], value: base.third[1] }],
+metrics: [mt('CPU', base.cpu), mt('メモリ', base.mem), mt('ディスク', base.disk)],
+history: [
+{ time: '15:12', text: 'サンプル：Claude Codeを再起動（完了）' },
+{ time: '11:05', text: 'サンプル：設定を変更' },
+{ time: '03:41', text: 'サンプル：応答が復旧' }
+]
+}
+};
+}
+}
+</script>
+</body>
+</html>

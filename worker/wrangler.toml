@@ -1,0 +1,55 @@
+# macmini-dashboard: 静的UI＋API＋Cron を1つの Worker で配信（docs/spec.md 2章）
+name = "macmini-dashboard"
+main = "src/index.ts"
+compatibility_date = "2026-04-01"
+compatibility_flags = ["nodejs_compat"]
+
+# 既定ドメイン（*.workers.dev）とプレビューURLは使わない。カスタムドメインだけで配信する。
+workers_dev = false
+preview_urls = false
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+# /api/* は Worker が先に処理する。それ以外は静的ファイル。
+run_worker_first = ["/api/*"]
+not_found_handling = "404-page"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "macmini-dashboard"
+# TODO(導入時): `wrangler d1 create macmini-dashboard` の出力の database_id に置き換える
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+migrations_dir = "../db/migrations"
+
+[triggers]
+crons = ["* * * * *"]
+
+# カスタムドメイン（example.com の DNS が Cloudflare にあることが前提。docs/spec.md 11章）
+[[routes]]
+pattern = "workstation.example.com"
+custom_domain = true
+
+[vars]
+# メンバーとロール。形は shared/src/members.ts。本番は Cloudflare のダッシュボードか `wrangler deploy --var` で上書きする。
+MEMBERS_JSON = '{"owner":"taro@example.com","envs":{"host":"taro@example.com","vm1":"hanako@example.com","vm2":"jiro@example.com"},"viewers":[]}'
+# Access のチームドメインと、ダッシュボード用 Access アプリの Audience タグ（JWT の aud）
+ACCESS_TEAM_DOMAIN = "example.cloudflareaccess.com"
+ACCESS_AUD_DASHBOARD = "REPLACE_WITH_DASHBOARD_AUD"
+# /api/agent/* 用 Access アプリの Audience タグ
+ACCESS_AUD_AGENT = "REPLACE_WITH_AGENT_AUD"
+# サービストークンと環境の対応は AGENT_TOKEN_NAMES（secret。下記）。JWT の common_name に入るのは
+# トークン名ではなく Client ID なので、値は各トークンの Client ID にする（docs/spec.md 3.6）。
+# 表示用タイムゾーン
+TZ_DISPLAY = "Asia/Tokyo"
+# Mac mini の電源ケーブルに挟んだ SwitchBot プラグミニの deviceId（docs/spec.md 6.1）。SwitchBot アプリの機器の設定、
+# または GET /v1.1/devices で確認する。空のままならプラグの表示・操作は出ない（token/secret と 3 つ揃って有効）。
+SWITCHBOT_PLUG_DEVICE_ID = ""
+
+# 秘密情報は `wrangler secret put` で入れる（リポジトリには書かない）:
+#   SLACK_WEBHOOK_URL   Example の Slack の Incoming Webhook
+#   AGENT_TOKEN_NAMES   '{"host":"<host用トークンのClient ID>","vm1":"<…>","vm2":"<…>"}'
+#   VNC_PASSWORDS_JSON  '{"host":"<VNC パスワード>","vm1":"<…>","vm2":"<…>"}'（押したときだけ本人・オーナーに表示。13章 #16）
+#   SWITCHBOT_TOKEN     SwitchBot アプリの開発者オプションの token（docs/spec.md 6.1。アカウント内の全機器を操作できるので厳重に）
+#   SWITCHBOT_SECRET    同じ画面の secret（署名用）
+# ローカル開発では worker/.dev.vars に同じキーを書く（.dev.vars.example 参照）。

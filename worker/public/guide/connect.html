@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="referrer" content="same-origin" />
+    <title>入り方（画面共有・SSH・ファイル） · 使い方ガイド</title>
+    <link rel="icon" href="/logo.png" />
+    <meta name="theme-color" content="#f5f5f7" />
+    <link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Mac mini" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body data-page="guide">
+    <nav class="nav" aria-label="グローバル">
+      <div class="wrap">
+        <a class="nav-brand" href="/">
+          <img src="/logo.png" alt="Example" />
+          <span>Mac mini 監視ダッシュボード</span>
+        </a>
+        <div class="nav-links">
+          <a href="/">一覧</a>
+          <a href="/host.html">Taro</a>
+          <a href="/vm1.html">Hanako</a>
+          <a href="/vm2.html">Jiro</a>
+          <a href="/guide/" aria-current="page">使い方ガイド</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="wrap guide-layout guide">
+      <aside class="gnav" aria-label="ガイドの目次">
+        <a class="gnav-home" href="/guide/">使い方ガイド</a>
+        <nav>
+          <div class="gnav-sec"><a href="/guide/start.html">はじめての設定</a></div>
+          <div class="gnav-sec"><a href="/guide/daily.html">普段の使い方</a></div>
+          <div class="gnav-sec current">
+            <a href="/guide/connect.html" aria-current="page">入り方（画面共有・SSH・ファイル）</a>
+            <ul>
+              <li><a href="#c-which">2 つの入り方</a></li>
+              <li><a href="#c-browser-vnc">A. 画面共有（ブラウザ）</a></li>
+              <li><a href="#c-browser-ssh">A. SSH（ブラウザ）</a></li>
+              <li><a href="#c-warp">B. WARP の準備</a></li>
+              <li><a href="#c-app-vnc">B. PC の画面共有アプリ</a></li>
+              <li><a href="#c-app-ssh">B. PC のターミナルから SSH</a></li>
+              <li><a href="#c-phone">B. スマホ（WebSSH・DualMac）</a></li>
+              <li><a href="#c-files">B. スマホの「ファイル」アプリ</a></li>
+              <li><a href="#c-list">接続先の一覧</a></li>
+            </ul>
+          </div>
+          <div class="gnav-sec"><a href="/guide/trouble.html">困ったとき</a></div>
+        </nav>
+        <a class="gnav-back" href="/">← ダッシュボードへ</a>
+      </aside>
+
+      <main class="guide-main">
+        <header class="guide-head">
+          <p class="eyebrow">使い方ガイド · 必要なとき</p>
+          <h1>入り方（画面共有・SSH・ファイル）</h1>
+          <p class="lead-p">
+            自分の Mac の画面を見る方法（画面共有）、文字だけで入る方法（SSH）、スマホの「ファイル」アプリで作業フォルダを開く方法です。画面共有と SSH には、A. ブラウザで入る方法と、B. WARP をオンにしてアプリで入る方法があります。ファイルアプリは B だけで、WARP が必ず要ります。どれも鍵の登録や設定ファイルは要りません。
+          </p>
+        </header>
+
+        <section class="sec" id="c-which" aria-labelledby="which-h">
+          <h2 id="which-h">2 つの入り方</h2>
+          <div class="route-cards">
+            <a class="route-card" href="#c-browser-vnc">
+              <span class="badge-letter">A</span>
+              <span>
+                <span class="t">ブラウザで入る</span>
+                <span class="d">追加のアプリは要りません。はじめての設定と、急ぎのときはこちらです。ダッシュボードの「接続」タブのボタンから開きます。</span>
+              </span>
+            </a>
+            <a class="route-card" href="#c-warp">
+              <span class="badge-letter fill">B</span>
+              <span>
+                <span class="t">アプリで入る（WARP をオンにして）</span>
+                <span class="d">普段使うスマホや PC に Cloudflare One（WARP）アプリを入れている人向けです。使い慣れた画面共有アプリや SSH、スマホの「ファイル」アプリで入れます。WARP がオフだとどれもつながりません。</span>
+              </span>
+            </a>
+          </div>
+        </section>
+
+        <section class="sec" id="c-browser-vnc" aria-labelledby="bvnc-h">
+          <h2 id="bvnc-h"><span class="badge-letter">A</span>画面共有（ブラウザ）</h2>
+          <ol class="steps">
+            <li>
+              <div class="pic"><img src="/guide/connect-tab.jpg" alt="自分の環境の「接続」タブ。左に「ブラウザで入る」、右に「アプリで入る」（SSH アプリ・VNC アプリ・ファイルアプリ）" width="1060" height="467" loading="lazy" /></div>
+              <div class="txt">
+                <span class="n">1</span>
+                <div>
+                  <strong>自分の環境 › 「接続」タブ › 「画面共有（ブラウザ）」を押します</strong>
+                  <span class="d">新しいタブで vnc-vm1.example.com（Jiro さんは vm2）が開きます。</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="pic"><img src="/guide/vnc-password.jpg" alt="vnc-vm1.example.com の Password 入力欄" width="640" height="300" loading="lazy" /></div>
+              <div class="txt">
+                <span class="n">2</span>
+                <div>
+                  <strong>「Password」に画面共有（VNC）のパスワードを入れます</strong>
+                  <span class="d">「接続」タブの「VNC アプリ」の行にある「パスワードを表示」を押すと、8 文字が 60 秒だけ出ます。Mac のログインパスワードとは別のものです。</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="pic"><img src="/guide/vm-desktop.jpg" alt="仮想マシンの macOS デスクトップ" width="1000" height="750" loading="lazy" /></div>
+              <div class="txt">
+                <span class="n">3</span>
+                <div>
+                  <strong>画面が出ます</strong>
+                  <span class="d">ロック画面が出たら Mac のログインパスワードを入れます。</span>
+                  <span class="d warn">ブラウザ版ではマウスの矢印が表示されないことがあります。クリックは効きます。見えにくいときは B の画面共有アプリを使ってください。</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="sec" id="c-browser-ssh" aria-labelledby="bssh-h">
+          <h2 id="bssh-h"><span class="badge-letter">A</span>SSH（ブラウザ）</h2>
+          <ol class="steps">
+            <li>
+              <div class="pic">
+                <pre class="term" aria-label="ブラウザの中に開いたターミナルの例"><span class="o">Last login: Sun Nov  1 01:00:50 2026</span>
+<span class="p">hanako@vm1 ~ %</span> <span class="k">▌</span></pre>
+              </div>
+              <div class="txt">
+                <span class="n">1</span>
+                <div>
+                  <strong>自分の環境 › 「接続」タブ › 「SSH（ブラウザ）」を押します</strong>
+                  <span class="d">パスワードは聞かれません。Google でログインした本人として、Cloudflare が短時間だけ有効な証明書を発行して接続します。ターミナルに慣れている人向けの方法で、使わなくても困りません。</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="sec" id="c-warp" aria-labelledby="warp-h">
+          <h2 id="warp-h"><span class="badge-letter fill">B</span>WARP の準備（最初に 1 回）</h2>
+          <div class="callout warp">
+            <b>B の方法は、Cloudflare One（WARP）アプリがオンの状態で使います。</b>
+            オフのままだと 192.168.64.〜 の宛先には届きません。
+          </div>
+          <ol class="steps">
+            <li>
+              <div class="pic">
+                <div class="mock-dialog" aria-hidden="true">
+                  <div class="t">Cloudflare One</div>
+                  <div class="f">チーム名：example</div>
+                  <div class="b"><span class="on">次へ</span></div>
+                </div>
+              </div>
+              <div class="txt">
+                <span class="n">1</span>
+                <div>
+                  <strong>アプリを入れて、チーム名「example」でログインします</strong>
+                  <span class="d">Mac は <a href="https://one.one.one.one/" rel="noopener">Cloudflare One のダウンロードページ</a>から、iPhone と Android は App Store / Play ストアで「Cloudflare One」（旧 WARP）を入れます。初回に「Zero Trust にログイン」を選び、チーム名に <code>example</code> と入力して、Google で会社のアカウントを選びます。</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="pic">
+                <div class="mock-toggle" aria-hidden="true">
+                  <div class="sw"><i></i></div>
+                  <div class="lbl">接続済み<small>Zero Trust · example</small></div>
+                </div>
+              </div>
+              <div class="txt">
+                <span class="n">2</span>
+                <div>
+                  <strong>スイッチをオンにして、「接続済み」になったことを確かめます</strong>
+                  <span class="d">Mac はメニューバー、スマホは通知領域のアイコンから切り替えます。使い終わったらオフにして構いません。次に使うときはオンに戻します。</span>
+                  <span class="d">「証明書がないため接続が制限されています」と表示されることがあります。ここで使う機能には影響しません。</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="sec" id="c-app-vnc" aria-labelledby="avnc-h">
+          <h2 id="avnc-h"><span class="badge-letter fill">B</span>PC（Mac）の「画面共有」アプリで入る（WARP をオンにして）</h2>
+          <ol class="steps">
+            <li>
+              <div class="pic">
+                <div class="mock-dialog" aria-hidden="true">
+                  <div class="t">サーバへ接続</div>
+                  <div class="f">vnc://192.168.64.10</div>
+                  <div class="b"><span>ブラウズ</span><span class="on">接続</span></div>
+                </div>
+              </div>
+              <div class="txt">
+                <span class="n">1</span>
+                <div>
+                  <strong>Finder › 移動 › サーバへ接続 で、宛先を入力します</strong>
+                  <span class="d">Hanako さんは <code>vnc://192.168.64.10</code>、Jiro さんは <code>vnc://192.168.64.11</code> です。ダッシュボードの「接続」タブ › 「VNC アプリ」の行にも書いてあります。</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="pic">
+                <div class="mock-dialog" aria-hidden="true">
+                  <div class="t">画面共有</div>
+                  <div class="r"><span class="radio"></span>ユーザ名とパスワードで接続</div>
+                  <div class="r"><span class="radio on"></span>パスワードを使用</div>
+                  <div class="f">••••••••</div>
+                </div>
+              </div>
+              <div class="txt">
+                <span class="n">2</span>
+                <div>
+                  <strong>「パスワードを使用」を選び、画面共有（VNC）のパスワードを入れます</strong>
+                  <span class="d">ブラウザ版と同じ 8 文字です。この方法ではマウスの矢印も表示されます。</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="sec" id="c-app-ssh" aria-labelledby="assh-h">
+          <h2 id="assh-h"><span class="badge-letter fill">B</span>PC のターミナルから SSH（WARP をオンにして）</h2>
+          <ol class="steps">
+            <li>
+              <div class="pic">
+                <pre class="term" aria-label="ターミナルの例"><span class="p">mac ~ %</span> ssh hanako@192.168.64.10
+<span class="o">Last login: Sun Nov  1 01:00:50 2026</span>
+<span class="p">hanako@vm1 ~ %</span></pre>
+              </div>
+              <div class="txt">
+                <span class="n">1</span>
+                <div>
+                  <strong>ターミナル（Mac は「ターミナル」、Windows は「Windows ターミナル」か PowerShell）を開き、次の 1 行を入力して Enter を押します</strong>
+                  <code class="cmd-line">ssh hanako@192.168.64.10</code>
+                  <span class="d">Jiro さんは <code>ssh jiro@192.168.64.11</code> です。ダッシュボードの「接続」タブ › 「SSH アプリ」の行の「コピー」でも同じコマンドをコピーできます。パスワードも鍵も要りません。WARP でログインした本人に証明書が渡されます。初回だけホスト鍵の確認が出るので yes と入力します。</span>
+                  <span class="d warn">WARP がオフだと 192.168.64.〜 には届かず、つながりません。</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="sec" id="c-phone" aria-labelledby="phone-h">
+          <h2 id="phone-h"><span class="badge-letter fill">B</span>スマホから入る（WebSSH と DualMac。WARP をオンにして）</h2>
+          <p class="lead-p">
+            スマホでは、SSH は WebSSH、画面共有は DualMac を使います。どちらも App Store / Play ストアから入れます。Termius は Cloudflare の SSH 中継と相性が悪く、つながりません。スマホ側の Cloudflare One（WARP）アプリをオンにしてから接続します。
+          </p>
+          <ol class="steps">
+            <li>
+              <div class="pic">
+                <div class="mock-dialog" aria-hidden="true">
+                  <div class="t">WebSSH · 新しい接続</div>
+                  <div class="f">ホスト: 192.168.64.10</div>
+                  <div class="f">ポート: 22</div>
+                  <div class="f">ユーザー名: hanako</div>
+                  <div class="r"><span class="radio"></span>パスワード / 鍵: 空のまま</div>
+                  <div class="b"><span class="on">保存</span></div>
+                </div>
+              </div>
+              <div class="txt">
+                <span class="n">1</span>
+                <div>
+                  <strong>WebSSH（SSH）：接続先を 1 つ登録します</strong>
+                  <span class="d">新しい接続で、ホストに <code>192.168.64.10</code>（Jiro さんは <code>192.168.64.11</code>）、ポートに <code>22</code>、ユーザー名に <code>hanako</code>（Jiro さんは <code>jiro</code>）を入れます。パスワードと鍵は空のまま保存します。WARP でログインした本人に証明書が渡されるので、パスワードも鍵も要りません。</span>
+                  <span class="d">接続すると、初回だけ「ホスト鍵を信頼するか」と聞かれるので「Continue」を選びます。</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="pic">
+                <div class="mock-dialog" aria-hidden="true">
+                  <div class="t">DualMac · 新規接続</div>
+                  <div class="f">ホスト: 192.168.64.10</div>
+                  <div class="f">ポート: 5900</div>
+                  <div class="f">パスワード: ••••••••</div>
+                  <div class="b"><span class="on">接続</span></div>
+                </div>
+              </div>
+              <div class="txt">
+                <span class="n">2</span>
+                <div>
+                  <strong>DualMac（画面共有）：接続先を 1 つ登録します</strong>
+                  <span class="d">新規接続で、ホストに <code>192.168.64.10</code>（Jiro さんは <code>192.168.64.11</code>）、ポートに <code>5900</code> を入れます。認証は「VNC パスワード」で、ダッシュボードの「パスワードを表示」で出る 8 文字を入れます。ユーザー名の欄があれば空のままにします。</span>
+                  <span class="d">ロック画面が出たら Mac のログインパスワードを入れます。画面の向きや拡大はアプリ側で調整します。</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="pic">
+                <div class="mock-toggle" aria-hidden="true">
+                  <div class="sw"><i></i></div>
+                  <div class="lbl">接続済み<small>Cloudflare One · example</small></div>
+                </div>
+              </div>
+              <div class="txt">
+                <span class="n">3</span>
+                <div>
+                  <strong>つながらないときは、先に WARP を確かめます</strong>
+                  <span class="d">Cloudflare One アプリが「接続済み」になっているかを見ます。オフだと WebSSH も DualMac も 192.168.64.〜 に届きません。Wi‑Fi でもモバイル回線でも使えます。</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="txt">
+                <span class="n">4</span>
+                <div>
+                  <strong>Wi‑Fi では「ローカルネットワーク」の許可が要ります</strong>
+                  <span class="d">192.168.64.〜 は iPhone から見ると自宅の機器と同じ種類のアドレスなので、Wi‑Fi につないでいるときは、アプリの初回起動で出る「ローカルネットワーク上のデバイスの検索と接続を許可」を許可してください。許可していないと、エラーも出ずに 15 秒ほどでタイムアウトします。あとから直すときは iPhone の 設定 › プライバシーとセキュリティ › ローカルネットワーク でそのアプリをオンにします。モバイル回線ではこの許可は要りません。</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="sec" id="c-files" aria-labelledby="files-h">
+          <h2 id="files-h"><span class="badge-letter fill">B</span>スマホの「ファイル」アプリで作業フォルダを開く（WARP をオンにして）</h2>
+          <p class="lead-p">
+            自分の Mac の <code>~/workspace</code> は、iPhone / iPad の「ファイル」アプリからそのまま開けます（SMB という Mac のファイル共有）。アプリを追加で入れる必要はありません。Cloudflare One（WARP）アプリをオンにしてから、最初に 1 回だけ接続先を登録します。
+          </p>
+          <ol class="steps">
+            <li>
+              <div class="pic">
+                <div class="mock-dialog" aria-hidden="true">
+                  <div class="t">ファイル · サーバへ接続</div>
+                  <div class="f">サーバ: smb://192.168.64.10</div>
+                  <div class="b"><span class="on">接続</span></div>
+                </div>
+              </div>
+              <div class="txt">
+                <span class="n">1</span>
+                <div>
+                  <strong>「ファイル」を開き、右上の「…」から「サーバへ接続」</strong>
+                  <span class="d">サーバに <code>smb://192.168.64.10</code>（Jiro さんは <code>smb://192.168.64.11</code>）を入れて「接続」。アドレスはダッシュボードの「接続」にも出ています（「ファイルアプリ」の行）。</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="pic">
+                <div class="mock-dialog" aria-hidden="true">
+                  <div class="t">ファイル · 接続方法</div>
+                  <div class="r"><span class="radio"></span>ゲスト</div>
+                  <div class="r"><span class="radio on"></span>登録ユーザ</div>
+                  <div class="f">名前: hanako</div>
+                  <div class="f">パスワード: ••••••••</div>
+                  <div class="b"><span class="on">次へ</span></div>
+                </div>
+              </div>
+              <div class="txt">
+                <span class="n">2</span>
+                <div>
+                  <strong>「登録ユーザ」を選び、Mac のユーザー名とログインパスワード</strong>
+                  <span class="d">名前に <code>hanako</code>（Jiro さんは <code>jiro</code>）、パスワードは画面共有のロック画面で使う Mac のログインパスワードです（画面共有の 8 文字ではありません）。「ゲスト」では入れません。</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="txt">
+                <span class="n">3</span>
+                <div>
+                  <strong><code>workspace</code> を開く</strong>
+                  <span class="d">共有の一覧に <code>workspace</code> が出るので開きます。自分の Mac の <code>~/workspace</code> と同じ中身で、ファイルの閲覧・コピー・編集ができます。登録した接続先はサイドバーの「共有」に残るので、次回からはタップするだけです。</span>
+                  <span class="d">つながらないときは、スマホ章の 3（WARP が接続済みか）と 4（Wi‑Fi の「ローカルネットワーク」の許可。対象は「ファイル」アプリ）を確かめます。</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="sec" id="c-list" aria-labelledby="list-h">
+          <h2 id="list-h">接続先の一覧</h2>
+          <table class="addr-table">
+            <thead>
+              <tr><th>だれの Mac</th><th>A. ブラウザ（画面共有 / SSH）</th><th>B. アプリ（WARP オン）</th><th>B. ファイルアプリ</th><th>入れる人</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Hanako（vm1）</td>
+                <td><code>vnc-vm1.example.com</code><br /><code>ssh-vm1.example.com</code></td>
+                <td><code>vnc://192.168.64.10</code><br /><code>ssh hanako@192.168.64.10</code></td>
+                <td><code>smb://192.168.64.10/workspace</code></td>
+                <td>Hanako</td>
+              </tr>
+              <tr>
+                <td>Jiro（vm2）</td>
+                <td><code>vnc-vm2.example.com</code><br /><code>ssh-vm2.example.com</code></td>
+                <td><code>vnc://192.168.64.11</code><br /><code>ssh jiro@192.168.64.11</code></td>
+                <td><code>smb://192.168.64.11/workspace</code></td>
+                <td>Jiro</td>
+              </tr>
+              <tr>
+                <td>Taro（本体）</td>
+                <td><code>vnc-host.example.com</code><br /><code>ssh-host.example.com</code></td>
+                <td><code>vnc://192.168.64.1</code><br /><code>ssh taro@192.168.64.1</code></td>
+                <td><code>smb://192.168.64.1/workspace</code></td>
+                <td>Taro</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="lead-p">SSH とファイルアプリのユーザー名は、その Mac を使う人のメールの @ より前と同じです。自分以外の Mac には入れません。</p>
+        </section>
+
+        <div class="guide-next"><a href="/guide/trouble.html">困ったときへ →</a></div>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <div class="wrap">
+        <span>Example Inc.</span>
+        <span>Cloudflare Access で保護されています</span>
+      </div>
+    </footer>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

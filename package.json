@@ -1,0 +1,33 @@
+{
+  "name": "macmini-ops",
+  "private": true,
+  "description": "Mac mini 3環境の監視・操作ダッシュボード（Workers + D1 + エージェント）",
+  "workspaces": [
+    "shared",
+    "worker",
+    "agent"
+  ],
+  "scripts": {
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:migrate:local": "npm run db:migrate:local --workspace worker",
+    "dev": "npm run dev --workspace worker"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.5.0",
+    "typescript-eslint": "^8.0.0"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "workerd@1.20261023.1": true,
+    "fsevents@2.3.3": true
+  }
+}

@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Mac mini 一覧</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&amp;display=swap">
+<style>
+body{margin:0;background:#FFFFFF}
+a{color:#000000}a:hover{color:#5C5C5C}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #FFFFFF; color: #000000; font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Yu Gothic', sans-serif; -webkit-font-smoothing: antialiased; display: flex; flex-direction: column">
+
+<nav style="background: #FFFFFF; border-bottom: 0.5px solid #000000" aria-label="グローバル">
+<div style="max-width: 1200px; margin: 0 auto; padding: 0 32px; box-sizing: border-box; min-height: 64px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; align-items: center; gap: 16px">
+<img src="/_blob/c89d05faa3591c6e605b71368dde6848" alt="Example" style="height: 30px; width: auto; display: block">
+<span style="font-size: 15px; font-weight: 500">Mac mini 監視ダッシュボード</span>
+</div>
+<div style="display: flex; align-items: center; gap: 4px; font-size: 14px; flex-wrap: wrap">
+<a href="Main.dc.html" aria-current="page" style="padding: 10px 12px; text-decoration: underline; text-underline-offset: 6px; font-weight: 500">一覧</a>
+<a href="Host.dc.html" style="padding: 10px 12px; text-decoration: none">Taro</a>
+<a href="Vm1.dc.html" style="padding: 10px 12px; text-decoration: none">Hanako</a>
+<a href="Vm2.dc.html" style="padding: 10px 12px; text-decoration: none">Jiro</a>
+<a href="Guide.dc.html" style="padding: 10px 12px; text-decoration: none">接続ガイド</a>
+</div>
+</div>
+</nav>
+
+<header style="background: #F2F2F2">
+<div style="max-width: 1200px; margin: 0 auto; padding: 48px 32px 40px; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+<h1 style="margin: 0; font-size: 32px; font-weight: 500; letter-spacing: 0.02em">一覧</h1>
+<span style="font-size: 12px; color: #5C5C5C; border: 0.5px solid #5C5C5C; border-radius: 4px; padding: 2px 8px">サンプルデータ</span>
+</div>
+<p style="margin: 0; font-size: 15px; color: #5C5C5C">Mac mini · 3環境 · 最終受信 {{lastSeen}}</p>
+</div>
+<span style="{{overall.textStyle}}; display: inline-flex; align-items: center; gap: 10px; border: 0.5px solid #000000; border-radius: 4px; padding: 10px 16px; font-size: 15px; font-weight: 500; background: #FFFFFF">
+<span style="{{overall.dotStyle}}; width: 8px; height: 8px; border-radius: 50%; display: inline-block" aria-hidden="true"></span>{{overall.label}}</span>
+</div>
+</header>
+
+<main style="flex: 1; max-width: 1200px; width: 100%; margin: 0 auto; padding: 40px 32px 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 40px">
+
+<sc-if value="{{showBanner}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="background: #F2F2F2; border-radius: 4px; padding: 18px 20px; display: flex; gap: 12px; align-items: flex-start; font-size: 15px; line-height: 1.6">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{bannerIconStyle}}; flex: none; margin-top: 3px"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+<div style="display: flex; flex-direction: column; gap: 2px"><strong style="{{bannerTitleStyle}}; font-weight: 700">{{bannerTitle}}</strong><span>{{bannerBody}}</span></div>
+</div>
+</sc-if>
+
+<section style="display: flex; flex-direction: column; gap: 16px" aria-labelledby="total-h">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 24px">
+<div style="display: flex; align-items: center; gap: 4px">
+<h2 id="total-h" style="margin: 0; font-size: 24px; font-weight: 500; letter-spacing: 0.02em">Mac mini 全体</h2>
+<button type="button" onClick="{{tg.total}}" aria-expanded="{{ex.total}}" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 10px; border: none; background: transparent; color: #5C5C5C; font-size: 13px; font-family: inherit; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>{{lb.total}}</button>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px">
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #000000; display: inline-block" aria-hidden="true"></span>Taro（本体）</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #5C5C5C; display: inline-block" aria-hidden="true"></span>Hanako</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #AAAAAA; display: inline-block" aria-hidden="true"></span>Jiro</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; background: #E6E6E6; display: inline-block" aria-hidden="true"></span>空き</span>
+</div>
+</div>
+<div style="border: 0.5px solid #000000; border-radius: 4px; padding: 24px; display: flex; flex-direction: column; gap: 20px">
+<sc-for list="{{usage}}" as="u" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; font-size: 15px"><span style="font-weight: 500">{{u.label}}</span><span style="font-variant-numeric: tabular-nums">{{u.total}}</span></div>
+<div style="display: flex; height: 14px; background: #E6E6E6; overflow: hidden" role="img" aria-label="{{u.aria}}">
+<sc-for list="{{u.segs}}" as="s" hint-placeholder-count="3"><div style="{{s.style}}; height: 100%; flex: none"></div></sc-for>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 13px; color: #5C5C5C; font-variant-numeric: tabular-nums"><sc-for list="{{u.segs}}" as="s" hint-placeholder-count="3"><span>{{s.text}}</span></sc-for></div>
+</div>
+</sc-for>
+<sc-if value="{{open.total}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; font-size: 12px; line-height: 1.7; color: #5C5C5C">VMはMac miniの上で動くため、そのままではhostの値にVMの分が混ざります。Taro（本体）は、全体からVM 2台の分を引いた値です。</p>
+</sc-if>
+</div>
+
+<div style="border: 0.5px solid #000000; border-radius: 4px; padding: 24px; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px">
+<h3 style="margin: 0; font-size: 18px; font-weight: 500">リソース配分（設定）</h3>
+<span style="font-size: 13px; color: #5C5C5C">Mac mini：{{spec}}</span>
+</div>
+<sc-for list="{{alloc}}" as="a" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; font-size: 15px"><span style="font-weight: 500">{{a.label}}</span><span style="font-size: 13px; color: #5C5C5C">{{a.total}}</span></div>
+<div style="display: flex; height: 14px; background: #E6E6E6; overflow: hidden" role="img" aria-label="{{a.aria}}">
+<sc-for list="{{a.segs}}" as="s" hint-placeholder-count="3"><div style="{{s.style}}; height: 100%; flex: none"></div></sc-for>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 13px; color: #5C5C5C; font-variant-numeric: tabular-nums"><sc-for list="{{a.segs}}" as="s" hint-placeholder-count="3"><span>{{s.text}}</span></sc-for></div>
+</div>
+</sc-for>
+<sc-if value="{{open.total}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; line-height: 1.7; color: #5C5C5C">
+<span>CPUはVMに割り当てたコア数の上限まで使えますが、専有ではありません。VMが空いているときは、本体が全コアを使えます。</span>
+<span>VMのメモリは使った分だけ本体から消費し、使い終わっても戻りません。vm1・vm2は毎晩4時に再起動してリセットします（作業中の晩は見送り）。</span>
+<span>ディスクは、macOSを安定させるため約100GBを空けておきます。配分の変更はVMを止めて行います。</span>
+</div>
+</sc-if>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 20px" aria-labelledby="envs-h">
+<div style="display: flex; align-items: center; gap: 4px">
+<h2 id="envs-h" style="margin: 0; font-size: 24px; font-weight: 500; letter-spacing: 0.02em">それぞれの環境</h2>
+<button type="button" onClick="{{tg.envs}}" aria-expanded="{{ex.envs}}" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 10px; border: none; background: transparent; color: #5C5C5C; font-size: 13px; font-family: inherit; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>{{lb.envs}}</button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px">
+<sc-for list="{{envs}}" as="env" hint-placeholder-count="3">
+<article style="background: #FFFFFF; border: 0.5px solid #000000; border-radius: 4px; padding: 24px; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="flex: none; width: 40px; height: 40px; border-radius: 50%; border: 0.5px solid #000000; display: inline-flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 500" aria-hidden="true">{{env.ownerInitial}}</span>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h3 style="margin: 0; font-size: 22px; font-weight: 500; letter-spacing: 0.02em">{{env.title}}</h3>
+<span style="font-size: 13px; color: #5C5C5C">{{env.sub}}</span>
+</div>
+</div>
+<span style="{{env.textStyle}}; display: inline-flex; align-items: center; gap: 6px; border: 0.5px solid currentColor; border-radius: 4px; padding: 4px 10px; font-size: 13px; font-weight: 500; white-space: nowrap">
+<span style="{{env.dotStyle}}; width: 7px; height: 7px; border-radius: 50%; display: inline-block" aria-hidden="true"></span>{{env.statusLabel}}</span>
+</div>
+
+<dl style="margin: 0; display: flex; flex-direction: column">
+<sc-for list="{{env.rows}}" as="row" hint-placeholder-count="3">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-top: 0.5px solid #CCCCCC; font-size: 15px">
+<dt>{{row.label}}</dt>
+<dd style="{{row.textStyle}}; margin: 0; display: inline-flex; align-items: center; gap: 8px"><span style="{{row.dotStyle}}; width: 7px; height: 7px; border-radius: 50%; display: inline-block" aria-hidden="true"></span>{{row.value}}</dd>
+</div>
+</sc-for>
+</dl>
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<sc-for list="{{env.metrics}}" as="m" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: #5C5C5C"><span>{{m.label}}</span><span style="color: #000000; font-variant-numeric: tabular-nums">{{m.value}}</span></div>
+<div style="height: 4px; background: #E6E6E6; overflow: hidden" role="img" aria-label="{{m.aria}}"><div style="{{m.barStyle}}; height: 100%"></div></div>
+</div>
+</sc-for>
+<sc-if value="{{open.envs}}" hint-placeholder-val="{{ false }}">
+<span style="font-size: 12px; line-height: 1.6; color: #5C5C5C">{{env.metricNote}}</span>
+</sc-if>
+</div>
+
+<a href="{{env.href}}" style="display: inline-flex; align-items: center; justify-content: space-between; min-height: 48px; padding: 0 16px; border: 0.5px solid #000000; border-radius: 4px; color: #000000; font-size: 15px; text-decoration: none; box-sizing: border-box">操作・接続情報を開く<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+</article>
+</sc-for>
+</div>
+</section>
+
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+
+<section style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 16px" aria-labelledby="log-h">
+<h2 id="log-h" style="margin: 0; font-size: 24px; font-weight: 500; letter-spacing: 0.02em">操作履歴（全員分）</h2>
+<div style="overflow-x: auto; border-top: 0.5px solid #000000">
+<table style="width: 100%; border-collapse: collapse; font-size: 14px; min-width: 520px">
+<thead>
+<tr style="color: #5C5C5C; text-align: left">
+<th style="font-weight: 400; padding: 12px 0; border-bottom: 0.5px solid #CCCCCC">時刻</th>
+<th style="font-weight: 400; padding: 12px 0; border-bottom: 0.5px solid #CCCCCC">操作</th>
+<th style="font-weight: 400; padding: 12px 0; border-bottom: 0.5px solid #CCCCCC">対象</th>
+<th style="font-weight: 400; padding: 12px 0; border-bottom: 0.5px solid #CCCCCC">実行者</th>
+<th style="font-weight: 400; padding: 12px 0; border-bottom: 0.5px solid #CCCCCC; text-align: right">結果</th>
+</tr>
+</thead>
+<tbody>
+<tr><td style="padding: 14px 0; border-bottom: 0.5px solid #E6E6E6; color: #5C5C5C; font-variant-numeric: tabular-nums">15:12</td><td style="padding: 14px 0; border-bottom: 0.5px solid #E6E6E6">Claudeを再起動</td><td style="padding: 14px 0; border-bottom: 0.5px solid #E6E6E6">Hanako（vm1）</td><td style="padding: 14px 0; border-bottom: 0.5px solid #E6E6E6">Hanako</td><td style="padding: 14px 0; border-bottom: 0.5px solid #E6E6E6; text-align: right">完了</td></tr>
+<tr><td style="padding: 14px 0; border-bottom: 0.5px solid #E6E6E6; color: #5C5C5C; font-variant-numeric: tabular-nums">14:48</td><td style="padding: 14px 0; border-bottom: 0.5px solid #E6E6E6">VMを再起動</td><td style="padding: 14px 0; border-bottom: 0.5px solid #E6E6E6">Jiro（vm2）</td><td style="padding: 14px 0; border-bottom: 0.5px solid #E6E6E6">Jiro</td><td style="padding: 14px 0; border-bottom: 0.5px solid #E6E6E6; text-align: right">完了</td></tr>
+<tr><td style="padding: 14px 0; border-bottom: 0.5px solid #E6E6E6; color: #5C5C5C; font-variant-numeric: tabular-nums">11:05</td><td style="padding: 14px 0; border-bottom: 0.5px solid #E6E6E6">エージェントを更新</td><td style="padding: 14px 0; border-bottom: 0.5px solid #E6E6E6">Taro（host）</td><td style="padding: 14px 0; border-bottom: 0.5px solid #E6E6E6">Taro</td><td style="padding: 14px 0; border-bottom: 0.5px solid #E6E6E6; text-align: right; color: #C4291C">失敗</td></tr>
+<tr><td style="padding: 14px 0; color: #5C5C5C; font-variant-numeric: tabular-nums">09:30</td><td style="padding: 14px 0">Claudeを再起動</td><td style="padding: 14px 0">Taro（host）</td><td style="padding: 14px 0">Taro</td><td style="padding: 14px 0; text-align: right; color: #5C5C5C">期限切れ</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column" aria-labelledby="ev-h">
+<h2 id="ev-h" style="margin: 0 0 16px; font-size: 24px; font-weight: 500; letter-spacing: 0.02em">最近のイベント</h2>
+<div style="display: flex; gap: 14px; padding: 12px 0; border-top: 0.5px solid #000000; font-size: 14px; line-height: 1.5"><span style="color: #5C5C5C; font-variant-numeric: tabular-nums; flex: none">15:02</span><span>Jiro の環境（vm2）のClaudeをlaunchdが自動再起動</span></div>
+<div style="display: flex; gap: 14px; padding: 12px 0; border-top: 0.5px solid #CCCCCC; font-size: 14px; line-height: 1.5"><span style="color: #5C5C5C; font-variant-numeric: tabular-nums; flex: none">03:41</span><span>Mac miniの応答が復旧（停止 12分）</span></div>
+<div style="display: flex; gap: 14px; padding: 12px 0; border-top: 0.5px solid #CCCCCC; border-bottom: 0.5px solid #CCCCCC; font-size: 14px; line-height: 1.5"><span style="color: #5C5C5C; font-variant-numeric: tabular-nums; flex: none">03:29</span><span>応答なしをDiscordに通知</span></div>
+</section>
+
+</div>
+</main>
+
+<footer style="background: #F2F2F2">
+<div style="max-width: 1200px; margin: 0 auto; padding: 28px 32px; box-sizing: border-box; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-size: 13px; color: #5C5C5C">
+<span>Example Inc.</span>
+<span>Cloudflare Access で保護されています</span>
+</div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"scenario":{"editor":"enum","options":["正常","vm2のClaude停止","vm1の再ログインが必要","応答なし"],"default":"正常"},"$preview":{"width":1280,"height":2100}}'>
+class Component extends DCLogic {
+renderVals() {
+var sc = this.props.scenario ?? '正常';
+var down = sc === '応答なし';
+var vmIssue = sc === 'vm2のClaude停止';
+var loginIssue = sc === 'vm1の再ログインが必要';
+var C = {
+ok: { text: '#000000', dot: '#2E9B4F' },
+warn: { text: '#8A4B00', dot: '#E8890C' },
+bad: { text: '#C4291C', dot: '#D93025' },
+none: { text: '#5C5C5C', dot: '#AAAAAA' }
+};
+var row = function (label, value, k) {
+var c = C[k];
+return { label: label, value: value, textStyle: 'color: ' + c.text, dotStyle: 'background: ' + c.dot };
+};
+var metric = function (label, v) {
+return {
+label: label,
+value: down ? '—' : v + '%',
+aria: label + (down ? ' 不明' : ' ' + v + '%'),
+barStyle: 'width: ' + (down ? 0 : v) + '%; background: ' + (v >= 85 ? '#E8890C' : '#000000')
+};
+};
+var make = function (o) {
+var k = down ? 'none' : (o.login ? 'bad' : (o.issue ? 'warn' : 'ok'));
+var c = C[k];
+var claude = down ? row('Claude Code', '不明', 'none') : (o.issue ? row('Claude Code', '停止中・再起動待ち', 'warn') : row('Claude Code', '稼働中', 'ok'));
+var codex = down ? row('Codex', '不明', 'none') : row('Codex', '稼働中', 'ok');
+var rc = down ? row('Remote Control', '不明', 'none') : (o.login ? row('Remote Control', '要ログイン', 'bad') : (o.issue ? row('Remote Control', '再接続待ち', 'warn') : row('Remote Control', '接続中', 'ok')));
+var third = down ? row(o.thirdLabel, '不明', 'none') : row(o.thirdLabel, o.thirdValue, 'ok');
+return {
+metricNote: o.name === 'host' ? 'Mac mini 全体の使用量のうち、VM 2台の分を除いた本体の分' : 'Mac mini 全体の使用量のうち、このVMの分',
+name: o.name, title: o.owner + ' の環境', sub: o.name + ' · ' + o.sub, owner: o.owner, ownerInitial: o.ownerInitial, href: o.href,
+statusLabel: down ? '応答なし' : (o.login ? '要ログイン' : (o.issue ? '要確認' : '正常')),
+textStyle: 'color: ' + c.text,
+dotStyle: 'background: ' + c.dot,
+rows: [claude, rc, codex, third],
+metrics: [metric('CPU', o.cpu), metric('メモリ', o.mem), metric('ディスク', o.disk)]
+};
+};
+var envs = [
+make({ name: 'host', sub: 'アカウントA', owner: 'Taro', ownerInitial: 'Y', href: 'Host.dc.html', thirdLabel: 'エージェント', thirdValue: '60秒ごとに報告', cpu: 12, mem: 18, disk: 14 }),
+make({ name: 'vm1', login: loginIssue, sub: 'アカウントB', owner: 'Hanako', ownerInitial: 'K', href: 'Vm1.dc.html', thirdLabel: 'VM', thirdValue: '起動中', cpu: 20, mem: 24, disk: 16 }),
+make({ name: 'vm2', sub: 'アカウントC', owner: 'Jiro', ownerInitial: 'Y', href: 'Vm2.dc.html', issue: vmIssue, thirdLabel: 'VM', thirdValue: '起動中', cpu: 6, mem: 14, disk: 10 })
+];
+var shares = { cpu: [12, 20, 6], mem: [18, 24, 14], disk: [14, 16, 10] };
+var shade = ['#000000', '#5C5C5C', '#AAAAAA'];
+var who = ['Taro（本体）', 'Hanako', 'Jiro'];
+var usage = [['CPU', 'cpu'], ['メモリ', 'mem'], ['ディスク', 'disk']].map(function (p) {
+var v = shares[p[1]];
+var t = v[0] + v[1] + v[2];
+return {
+label: p[0],
+total: down ? '—' : '合計 ' + t + '% · 空き ' + (100 - t) + '%',
+aria: p[0] + (down ? ' 不明' : ' 合計' + t + '%、' + who.map(function (w, i) { return w + ' ' + v[i] + '%'; }).join('、')),
+segs: v.map(function (x, i) {
+return {
+style: 'width: ' + (down ? 0 : x) + '%; background: ' + shade[i] + '; border-right: 2px solid #FFFFFF; box-sizing: border-box',
+text: who[i] + ' ' + (down ? '—' : x + '%')
+};
+})
+};
+});
+var ov = (down || loginIssue) ? C.bad : (vmIssue ? C.warn : C.ok);
+var SPEC = { cpu: 10, mem: 24, disk: 512 };
+var VMS = { cpu: [4, 4], mem: [6, 6], disk: [90, 90] };
+var unit = { cpu: 'コア', mem: 'GB', disk: 'GB' };
+var alloc = [['CPU', 'cpu'], ['メモリ', 'mem'], ['ディスク', 'disk']].map(function (p) {
+var k = p[1], u = unit[k], all = SPEC[k], v1 = VMS[k][0], v2 = VMS[k][1];
+var res = k === 'disk' ? 100 : 0;
+var hostV = all - v1 - v2 - res;
+var hostText = k === 'cpu' ? 'Taro（本体）残り ' + hostV + u + '（全' + all + u + 'を共有）' : 'Taro（本体）' + hostV + u;
+var seg = function (val, i) { return 'width: ' + (val / all * 100) + '%; background: ' + shade[i] + '; border-right: 2px solid #FFFFFF; box-sizing: border-box'; };
+return {
+label: p[0],
+total: '合計 ' + all + u,
+aria: p[0] + ' 合計' + all + u + '、' + hostText + '、Hanako ' + v1 + u + '、Jiro ' + v2 + u,
+segs: [
+{ style: seg(hostV, 0), text: hostText },
+{ style: seg(v1, 1), text: 'Hanako ' + v1 + u },
+{ style: seg(v2, 2), text: 'Jiro ' + v2 + u },
+{ style: 'width: 0', text: res ? '空けておく分 ' + res + u : '' }
+]
+};
+});
+var self = this;
+var st = this.state || {};
+var tg = {}, ex = {}, lb = {}, open = {};
+['total', 'envs'].forEach(function (k) {
+var o = !!(st.open && st.open[k]);
+open[k] = o;
+ex[k] = o ? 'true' : 'false';
+lb[k] = o ? '説明を閉じる' : '説明';
+tg[k] = function () {
+var cur = (self.state && self.state.open) || {};
+var n = {};
+Object.keys(cur).forEach(function (x) { n[x] = cur[x]; });
+n[k] = !cur[k];
+self.setState({ open: n });
+};
+});
+return {
+tg: tg, ex: ex, lb: lb, open: open,
+envs: envs,
+usage: usage,
+alloc: alloc,
+spec: 'CPU ' + SPEC.cpu + 'コア（想定） · メモリ ' + SPEC.mem + 'GB · SSD ' + SPEC.disk + 'GB',
+lastSeen: down ? '14分前' : '12秒前',
+overall: {
+label: down ? '応答なし' : ((vmIssue || loginIssue) ? '1件の問題' : 'すべて正常'),
+textStyle: 'color: ' + ov.text,
+dotStyle: 'background: ' + ov.dot
+},
+showBanner: down || vmIssue || loginIssue,
+bannerIconStyle: 'color: ' + ((down || loginIssue) ? '#C4291C' : '#8A4B00'),
+bannerTitleStyle: 'color: ' + ((down || loginIssue) ? '#C4291C' : '#8A4B00'),
+bannerTitle: down ? 'Mac miniから14分間応答がありません' : loginIssue ? 'Hanako の環境（vm1）で再ログインが必要です' :'Jiro の環境（vm2）のClaude Codeが停止しています',
+bannerBody: down ? 'Discordに通知済みです。SSHで入れるか確認し、入れなければスマートプラグで電源を入れ直してください。' : loginIssue ? 'Claude Codeのログインが切れ、Remote Controlにつながりません。SSHで入り、claude auth login をし直してください（Discordに通知済み）。' :'launchdが自動で再起動を試みています。続く場合はJiro の環境の画面から「Claudeを再起動」を押してください。'
+};
+}
+}
+</script>
+</body>
+</html>

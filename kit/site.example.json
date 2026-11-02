@@ -1,0 +1,34 @@
+{
+  "_comment": "kit/site.json にコピーして埋める。秘密情報（パスワード・トークン・Webhook URL）はここに書かない。メールアドレスと cloudflare の値は秘密ではない（cloudflare は分かった段階で埋める。空なら wrangler.toml の今の値のまま）。",
+  "org_name": "Example",
+  "org_footer": "Example Inc.",
+  "domain": "example.com",
+  "dashboard_host": "workstation.example.com",
+  "access_team": "example",
+  "label_prefix": "com.example",
+  "timezone": "Asia/Tokyo",
+  "people": {
+    "host": {
+      "name": "Taro",
+      "login": "taro",
+      "email": "taro@example.com"
+    },
+    "vm1": {
+      "name": "Hanako",
+      "login": "hanako",
+      "email": "hanako@example.com"
+    },
+    "vm2": {
+      "name": "Jiro",
+      "login": "jiro",
+      "email": "jiro@example.com"
+    }
+  },
+  "viewers": [],
+  "cloudflare": {
+    "d1_database_id": "",
+    "access_aud_dashboard": "",
+    "access_aud_agent": "",
+    "switchbot_plug_device_id": ""
+  }
+}

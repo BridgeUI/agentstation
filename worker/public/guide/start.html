@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="referrer" content="same-origin" />
+    <title>はじめての設定 · 使い方ガイド</title>
+    <link rel="icon" href="/logo.png" />
+    <meta name="theme-color" content="#f5f5f7" />
+    <link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Mac mini" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body data-page="guide">
+    <nav class="nav" aria-label="グローバル">
+      <div class="wrap">
+        <a class="nav-brand" href="/">
+          <img src="/logo.png" alt="Example" />
+          <span>Mac mini 監視ダッシュボード</span>
+        </a>
+        <div class="nav-links">
+          <a href="/">一覧</a>
+          <a href="/host.html">Taro</a>
+          <a href="/vm1.html">Hanako</a>
+          <a href="/vm2.html">Jiro</a>
+          <a href="/guide/" aria-current="page">使い方ガイド</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="wrap guide-layout guide">
+      <aside class="gnav" aria-label="ガイドの目次">
+        <a class="gnav-home" href="/guide/">使い方ガイド</a>
+        <nav>
+          <div class="gnav-sec current">
+            <a href="/guide/start.html" aria-current="page">はじめての設定</a>
+            <ul>
+              <li><a href="#s-account">ユーザー名とパスワード</a></li>
+              <li><a href="#s-login">1. ログイン</a></li>
+              <li><a href="#s-screen">2. 自分の Mac の画面を出す</a></li>
+              <li><a href="#s-finish">3. 残っている設定画面を閉じる</a></li>
+              <li><a href="#s-terminal">4. ターミナルを開く</a></li>
+              <li><a href="#s-claude">5. Claude にログイン</a></li>
+              <li><a href="#s-check">6. できたか確かめる</a></li>
+            </ul>
+          </div>
+          <div class="gnav-sec"><a href="/guide/daily.html">普段の使い方</a></div>
+          <div class="gnav-sec"><a href="/guide/connect.html">入り方（画面共有・SSH・ファイル）</a></div>
+          <div class="gnav-sec"><a href="/guide/trouble.html">困ったとき</a></div>
+        </nav>
+        <a class="gnav-back" href="/">← ダッシュボードへ</a>
+      </aside>
+
+      <main class="guide-main">
+        <header class="guide-head">
+          <p class="eyebrow">使い方ガイド · 最初の 1 回だけ</p>
+          <h1>はじめての設定</h1>
+          <p class="lead-p">
+            自分の Mac で Claude を使えるようにする手順です。上から順に進めると 10 分ほどで終わります。
+            コマンドはコピーして貼り付けて構いません。
+          </p>
+        </header>
+
+        <section class="sec" id="s-account" aria-labelledby="account-h">
+          <h2 id="account-h">あなたのユーザー名と、2 つのパスワード</h2>
+          <div class="account-box">
+            <div>
+              <span class="k">Mac のユーザー名</span>
+              <span class="v">Hanako さん → <code>hanako</code></span>
+              <span class="v">Jiro さん → <code>jiro</code></span>
+              <span class="d">メールアドレスの @ より前と同じです。SSH のユーザー名もこれです。</span>
+            </div>
+            <div>
+              <span class="k">① Mac のログインパスワード</span>
+              <span class="v">Taro から受け取ります</span>
+              <span class="d">ロック画面（名前の下にパスワード欄がある画面）で使います。変えたときは Taro に伝えてください。</span>
+            </div>
+            <div>
+              <span class="k">② 画面共有（VNC）のパスワード</span>
+              <span class="v">ダッシュボードで表示します</span>
+              <span class="d">8 文字です。自分の環境 › 「接続」タブ › 「パスワードを表示」を押すと 60 秒だけ出ます。①とは別のパスワードです。</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="sec" id="s-login" aria-labelledby="login-h">
+          <h2 id="login-h"><span class="num">1</span>ダッシュボードにログインする</h2>
+          <ol class="steps">
+            <li>
+              <div class="pic"><img src="/guide/login.jpg" alt="Cloudflare Access のログイン画面。Google のボタンとメール欄がある" width="784" height="567" loading="lazy" /></div>
+              <div class="txt">
+                <span class="n">1</span>
+                <div>
+                  <strong><a href="https://workstation.example.com/">workstation.example.com</a> を開き、「Google」を押します</strong>
+                  <span class="d">会社の Google アカウント（@example.com）を選びます。下の「Send login code」は、メールに届く番号で入る方法です。どちらでも入れます。</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="pic"><img src="/guide/dashboard-overview.jpg" alt="ダッシュボードの一覧。3 つの環境が表になっている" width="1400" height="867" loading="lazy" /></div>
+              <div class="txt">
+                <span class="n">2</span>
+                <div>
+                  <strong>一覧が出たら、上のメニューで自分の名前を押します</strong>
+                  <span class="d">「Hanako」または「Jiro」です。自分の環境のページが開きます。</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="sec" id="s-screen" aria-labelledby="screen-h">
+          <h2 id="screen-h"><span class="num">2</span>自分の Mac の画面を出す</h2>
+          <ol class="steps">
+            <li>
+              <div class="pic"><img src="/guide/connect-tab.jpg" alt="自分の環境の「接続」タブ。左に「ブラウザで入る」、右に「アプリで入る」（SSH アプリ・VNC アプリ・ファイルアプリ）" width="1060" height="467" loading="lazy" /></div>
+              <div class="txt">
+                <span class="n">1</span>
+                <div>
+                  <strong>「接続」タブ › 「画面共有（ブラウザ）」を押します</strong>
+                  <span class="d">新しいタブで vnc-vm1.example.com（Jiro さんは vm2）が開きます。右側の「アプリで入る」はここでは使いません。</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="pic"><img src="/guide/vnc-password.jpg" alt="vnc-vm1.example.com の Password 入力欄" width="640" height="300" loading="lazy" /></div>
+              <div class="txt">
+                <span class="n">2</span>
+                <div>
+                  <strong>「Password」に画面共有（VNC）のパスワードを入れます</strong>
+                  <span class="d">ダッシュボードの「接続」タブに戻り、「VNC アプリ」の行の「パスワードを表示」を押すと 8 文字が 60 秒だけ出ます。それを入れて Submit を押します。</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="pic"><img src="/guide/vm-desktop.jpg" alt="仮想マシンの macOS デスクトップ" width="1000" height="750" loading="lazy" /></div>
+              <div class="txt">
+                <span class="n">3</span>
+                <div>
+                  <strong>自分の Mac の画面が出ます</strong>
+                  <span class="d">ロック画面が出たら、Mac のログインパスワード（①）を入れます。</span>
+                  <span class="d warn">ブラウザ版ではマウスの矢印が表示されないことがあります。クリックは効いているので、ボタンの上で止めて色が変わるのを目安にしてください。見えにくいときは <a href="/guide/connect.html#c-app-vnc">Mac の画面共有アプリ</a>からも入れます。</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="sec" id="s-finish" aria-labelledby="finish-h">
+          <h2 id="finish-h"><span class="num">3</span>残っている設定画面を閉じる</h2>
+          <ol class="steps">
+            <li>
+              <div class="pic"><img src="/guide/vm-setup-assistant.jpg" alt="Update Mac Automatically という設定画面" width="900" height="675" loading="lazy" /></div>
+              <div class="txt">
+                <span class="n">1</span>
+                <div>
+                  <strong>「Only Download Automatically」→「Continue」の順に押します</strong>
+                  <span class="d">初回は「Update Mac Automatically」という画面が出ています。Apple ID などを聞かれたら「あとで」か「スキップ」を選びます。デスクトップが出たら次へ進みます。</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="sec" id="s-terminal" aria-labelledby="terminal-h">
+          <h2 id="terminal-h"><span class="num">4</span>ターミナルを開く</h2>
+          <ol class="steps">
+            <li>
+              <div class="pic">
+                <div class="mock-launchpad" aria-hidden="true">
+                  <span>🧭</span><span>📷</span><span>🗓</span><span class="on">⬛<em>ターミナル</em></span><span>⚙️</span><span>📝</span>
+                </div>
+              </div>
+              <div class="txt">
+                <span class="n">1</span>
+                <div>
+                  <strong>Launchpad で「ターミナル」を検索して開きます</strong>
+                  <span class="d">画面下の Dock にある Launchpad（9 つの点のアイコン）を押し、上の検索欄に「ターミナル」と入力します。文字だけの画面が開きます。ここから先のコマンドは、この画面に 1 行ずつ入力します。</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="sec" id="s-claude" aria-labelledby="claude-h">
+          <h2 id="claude-h"><span class="num">5</span>Claude にログインする</h2>
+          <ol class="steps">
+            <li>
+              <div class="pic">
+                <pre class="term" aria-label="ターミナルの例"><span class="p">hanako@vm1 ~ %</span> claude auth login
+<span class="o">Opening browser to sign in…</span>
+<span class="o">✓ Logged in as hanako@example.com</span></pre>
+              </div>
+              <div class="txt">
+                <span class="n">1</span>
+                <div>
+                  <strong>次の 1 行を入力して Enter を押します</strong>
+                  <code class="cmd-line">claude auth login</code>
+                  <span class="d">ブラウザが開くので、自分の Claude アカウント（Hanako さんはアカウント B、Jiro さんはアカウント C）でログインします。Taro のアカウントは使いません。「Logged in」と出たらターミナルは閉じて構いません。手で起動するものはありません。</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="sec" id="s-check" aria-labelledby="check-h">
+          <h2 id="check-h"><span class="num">6</span>できたか確かめる</h2>
+          <ol class="steps">
+            <li>
+              <div class="pic">
+                <div class="mock-app" aria-hidden="true">
+                  <div class="hd">Remote Control</div>
+                  <div class="row on"><span class="dot"></span>vm1-breezy-lynx<small>接続中</small></div>
+                  <div class="row"><span class="dot off"></span>macmini-dashboard<small>フォルダごとの Remote Control</small></div>
+                </div>
+              </div>
+              <div class="txt">
+                <span class="n">1</span>
+                <div>
+                  <strong>ダッシュボードで「接続中」になり、Claude アプリに名前が出ます</strong>
+                  <span class="d">ログインが済むと、Mac 側の仕組みが Remote Control を自動で起動します（作業フォルダの信頼と Remote Control の許可は、Mac 側があなたの代わりに記録済みです）。1〜2 分後、自分の環境の Remote Control が「接続中」に変わります。スマホや PC の Claude アプリの Remote Control に <code>vm1-…</code>（Jiro さんは <code>vm2-…</code>）が出れば完了です。画面共有のタブは閉じて構いません。macOS からはログアウトしないでください。</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+          <div class="callout">
+            うまくいかないときは<a href="/guide/trouble.html">困ったとき</a>を見てください。ここまで済めば、あとは<a href="/guide/daily.html">普段の使い方</a>だけで足ります。
+          </div>
+        </section>
+
+        <div class="guide-next"><a href="/guide/daily.html">普段の使い方へ →</a></div>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <div class="wrap">
+        <span>Example Inc.</span>
+        <span>Cloudflare Access で保護されています</span>
+      </div>
+    </footer>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

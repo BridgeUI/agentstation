@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  claude remote-control（docs/spec.md 3.1 / 7章）。各環境（host / vm1 / vm2）の LaunchAgent。
+  docs/verify.md C-1 の plist を正とする。違いは ProgramArguments だけ：claude を直接ではなくラッパー
+  claude-rc.sh を指す（session_restore のため。agent/src/actions/rc.ts）。ラッパーは
+  ~/.local/bin/claude remote-control --debug-file ~/Library/Logs/claude-rc.log を exec する。
+  claude の場所が違うときは EnvironmentVariables に CLAUDE_BIN を足す。
+  プレースホルダ: __USER__（その環境のユーザー名: taro / hanako / jiro）
+  前提  : 作業フォルダ /Users/__USER__/workspace を作り、一度 claude を対話的に起動して信頼しておく（ホーム直下・Desktop・Documents は不可）
+  配置先: ~/Library/LaunchAgents/com.example.claude-rc.plist
+  ログ  : ~/Library/Logs/claude-rc.log（--debug-file）、claude-rc.out.log、claude-rc.err.log
+  起動  : launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.claude-rc.plist
+  rc_restart: launchctl kickstart -k gui/$(id -u)/com.example.claude-rc
+  注意  : --no-create-session-in-dir は付けない（セッションが復元できなくなる。spec 3.1）
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.example.claude-rc</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/__USER__/workspace/macmini-dashboard/mac/launchd/claude-rc.sh</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/Users/__USER__/workspace</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>HOME</key>
+    <string>/Users/__USER__</string>
+    <key>PATH</key>
+    <string>/Users/__USER__/.local/bin:/Users/__USER__/.nodebrew/current/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+    <key>LANG</key>
+    <string>en_US.UTF-8</string>
+  </dict>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>30</integer>
+  <key>StandardOutPath</key>
+  <string>/Users/__USER__/Library/Logs/claude-rc.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/__USER__/Library/Logs/claude-rc.err.log</string>
+</dict>
+</plist>

@@ -1,0 +1,13 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "worker-dev",
+      "runtimeExecutable": "/bin/zsh",
+      "runtimeArgs": [
+        ".claude/dev.sh"
+      ],
+      "port": 8787
+    }
+  ]
+}

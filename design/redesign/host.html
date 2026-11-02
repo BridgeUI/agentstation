@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Taro の環境 · 改善案モック</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav class="nav" aria-label="グローバル">
+      <div class="wrap">
+        <a class="nav-brand" href="index.html">
+          <img src="../logo.png" alt="Example" />
+          <span>Mac mini 監視ダッシュボード</span>
+        </a>
+        <div class="nav-links">
+          <a href="index.html">一覧</a>
+          <a href="host.html" aria-current="page">Taro</a>
+          <a href="host.html">Hanako</a>
+          <a href="host.html">Jiro</a>
+          <a href="#">接続ガイド</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="wrap">
+      <a class="back" href="index.html">← 一覧</a>
+
+      <!-- 見出し：人の名前＋状態。右にいちばん使う操作を 1 つ -->
+      <div class="page-head" style="padding-top: 8px">
+        <div>
+          <div class="title">
+            <span class="avatar lg">Y</span>
+            <h1>Taro の環境</h1>
+            <span class="pill s-ok"><span class="dot"></span>正常</span>
+          </div>
+          <p class="meta">
+            <span>host · アカウントA</span><span>Claude Code 2.1.0（stable）</span
+            ><span>最終受信 1分前</span>
+          </p>
+        </div>
+        <div class="right">
+          <a class="btn" href="https://ssh-host.example.com">SSH（ブラウザ）</a>
+          <a class="btn primary" href="https://vnc-host.example.com">画面共有（ブラウザ）</a>
+        </div>
+      </div>
+
+      <!-- タブ：長い 1 ページ → 5 タブ。URL のハッシュで深いリンクも可 -->
+      <nav class="tabs" role="tablist" aria-label="セクション">
+        <a href="#overview" role="tab" aria-selected="true">概要</a>
+        <a href="#connect" role="tab" aria-selected="false">接続</a>
+        <a href="#ops" role="tab" aria-selected="false">操作</a>
+        <a href="#setup" role="tab" aria-selected="false"
+          >基礎設定 <span class="count warn">4</span></a
+        >
+        <a href="#history" role="tab" aria-selected="false">履歴</a>
+      </nav>
+
+      <!-- ===== 概要 ===== -->
+      <section class="tabpanel" id="overview" role="tabpanel">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="t">
+              <h2>状態</h2>
+              <button type="button" class="explain">ⓘ 説明</button>
+            </div>
+          </div>
+          <div class="panel-body flush tiles">
+            <div class="tile">
+              <span class="k">Claude Code</span>
+              <span class="status s-ok"><span class="dot"></span>稼働中</span>
+              <span class="sub">最終再起動 10/30 13:53</span>
+            </div>
+            <div class="tile">
+              <span class="k">Remote Control</span>
+              <span class="status s-ok"><span class="dot"></span>接続中</span>
+              <span class="sub">フォルダ別 1 稼働 · 1 エラー</span>
+            </div>
+            <div class="tile">
+              <span class="k">Codex</span>
+              <span class="status s-ok"><span class="dot"></span>稼働中</span>
+              <span class="sub">&nbsp;</span>
+            </div>
+            <div class="tile">
+              <span class="k">エージェント</span>
+              <span class="status s-ok"><span class="dot"></span>60秒ごとに報告</span>
+              <span class="sub">v0.1.0 · 起動 10/30 13:53</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cols">
+          <div class="panel">
+            <div class="panel-head">
+              <div class="t">
+                <h2>使用量</h2>
+                <button type="button" class="explain">ⓘ 説明</button>
+              </div>
+              <div class="tools">
+                <span class="small muted">Mac mini 全体のうち、VM 2台を除いた本体の分</span>
+              </div>
+            </div>
+            <div class="panel-body flush tiles">
+              <div class="tile">
+                <span class="k">CPU</span>
+                <span class="v">12%</span>
+                <div class="bar"><div class="p1" style="width: 12%"></div></div>
+                <span class="sub">全 10 コアを共有</span>
+              </div>
+              <div class="tile">
+                <span class="k">メモリ</span>
+                <span class="v">18%</span>
+                <div class="bar"><div class="p1" style="width: 18%"></div></div>
+                <span class="sub">約 12GB 使える</span>
+              </div>
+              <div class="tile">
+                <span class="k">ディスク</span>
+                <span class="v">14%</span>
+                <div class="bar"><div class="p1" style="width: 14%"></div></div>
+                <span class="sub">約 232GB 使える</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div class="t"><h2>要対応</h2></div>
+            </div>
+            <div class="panel-body flush">
+              <table>
+                <tbody>
+                  <tr class="clickable" onclick="location.hash = '#setup'">
+                    <td>
+                      <span class="status s-warn"
+                        ><span class="dot"></span>基礎設定 4 件未完了</span
+                      >
+                    </td>
+                    <td class="r"><span class="link muted">手動 2 件 →</span></td>
+                  </tr>
+                  <tr class="clickable" onclick="location.hash = '#ops'">
+                    <td>
+                      <span class="status s-bad"
+                        ><span class="dot"></span>example-site の RC がエラー</span
+                      >
+                    </td>
+                    <td class="r"><span class="link muted">操作 →</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div class="t"><h2>詳細</h2></div>
+            <div class="tools">
+              <a class="link muted" href="index.html#total-h">全体の配分を見る →</a>
+            </div>
+          </div>
+          <div class="panel-body flush table-wrap">
+            <table class="kv">
+              <tbody>
+                <tr>
+                  <td>割り当て</td>
+                  <td class="num">CPU 全10コアを共有 · メモリ 約12GB · ディスク 約232GB</td>
+                </tr>
+                <tr>
+                  <td>macOS</td>
+                  <td>26.1</td>
+                </tr>
+                <tr>
+                  <td>Tart</td>
+                  <td>2.27.0</td>
+                </tr>
+                <tr>
+                  <td>起動</td>
+                  <td>10/30 13:53</td>
+                </tr>
+                <tr>
+                  <td>夜間メンテナンス</td>
+                  <td>10/30 04:00（正常）</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 接続 ===== -->
+      <section class="tabpanel" id="connect" role="tabpanel" hidden>
+        <div class="cols-2">
+          <div class="panel">
+            <div class="panel-head">
+              <div class="t">
+                <span class="badge">A</span>
+                <h2>ブラウザで入る</h2>
+                <span class="small muted">何も入れずに使えます</span>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="routes">
+                <a class="route" href="https://ssh-host.example.com"
+                  ><b>▸ SSH（ブラウザ）</b><span>ssh-host.example.com</span></a
+                >
+                <a class="route" href="https://vnc-host.example.com"
+                  ><b>▭ 画面共有（ブラウザ）</b><span>vnc-host.example.com</span></a
+                >
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <div class="t">
+                <span class="badge fill">B</span>
+                <h2>アプリで入る</h2>
+                <span class="small muted">WARP をオンにして</span>
+              </div>
+            </div>
+            <div class="panel-body" style="padding-top: 6px">
+              <div class="cmd" style="border-top: none">
+                <span class="k">SSHアプリ</span><code>ssh taro@192.168.64.1</code>
+                <button type="button" class="btn">コピー</button>
+              </div>
+              <div class="cmd"><span class="k">VNCアプリ</span><code>192.168.64.1:5900</code></div>
+            </div>
+            <div class="panel-foot">
+              <a class="link muted" href="#">はじめての人は接続ガイド（図解）へ →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- SSHの認証 ＋ ログイン情報 → 「アカウント」表 1 つ -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="t">
+              <h2>アカウント</h2>
+              <button type="button" class="explain">ⓘ 説明</button>
+            </div>
+            <div class="tools">
+              <span class="small muted">パスワード・鍵・APIキーは表示しません</span>
+            </div>
+          </div>
+          <div class="panel-body flush table-wrap">
+            <table class="kv">
+              <tbody>
+                <tr>
+                  <td>Cloudflare Access</td>
+                  <td>
+                    taro@example.com<span class="small muted" style="margin-left: 12px"
+                      >ダッシュボード・SSH・画面共有で共通</span
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td>macOSユーザー名</td>
+                  <td>taro</td>
+                </tr>
+                <tr>
+                  <td>SSHの認証</td>
+                  <td>Access の短期証明書（鍵の登録は不要）</td>
+                </tr>
+                <tr>
+                  <td>このマシンに入れる人</td>
+                  <td>
+                    <span class="who"
+                      ><span class="avatar" style="width: 24px; height: 24px; font-size: 11px"
+                        >Y</span
+                      >Taro<span class="small muted">本人・オーナー</span></span
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td>Claude（アカウントA）</td>
+                  <td>このマシン専用のアカウント</td>
+                </tr>
+                <tr>
+                  <td>Codex（ChatGPT）</td>
+                  <td>このマシン専用のアカウント</td>
+                </tr>
+                <tr>
+                  <td>Remote Control の名前</td>
+                  <td class="mono">host-（セッション名）</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel-foot">
+            <a class="link muted" href="https://one.dash.cloudflare.com/"
+              >入れる人の追加・削除は Access のポリシーで →</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 操作 ===== -->
+      <section class="tabpanel" id="ops" role="tabpanel" hidden>
+        <div class="active" role="status">
+          <span class="status"
+            ><span class="dot" style="background: #000"></span>「VMを再起動」を実行中 · 昨日 23:15
+            から</span
+          >
+          <button type="button" class="btn">取り消す</button>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div class="t">
+              <h2>操作</h2>
+              <button type="button" class="explain">ⓘ 説明</button>
+            </div>
+          </div>
+          <div class="panel-body flush table-wrap">
+            <table class="ops">
+              <tbody>
+                <tr>
+                  <td class="name">
+                    Remote Controlを立て直す<span class="d"
+                      >Claude Code を止めて起動し直します（会話は残ります）</span
+                    >
+                  </td>
+                  <td class="r"><button type="button" class="btn">立て直す</button></td>
+                </tr>
+                <tr>
+                  <td class="name">
+                    前のセッションを戻す<span class="d">最近のセッションから選んで再開します</span>
+                  </td>
+                  <td class="r"><button type="button" class="btn">選ぶ</button></td>
+                </tr>
+                <tr>
+                  <td class="name">
+                    Claude Codeを更新<span class="d"
+                      >最新版にして Remote Control を立て直します</span
+                    >
+                  </td>
+                  <td class="r"><button type="button" class="btn">更新</button></td>
+                </tr>
+                <tr>
+                  <td class="name">Codexを再起動</td>
+                  <td class="r"><button type="button" class="btn">再起動</button></td>
+                </tr>
+                <tr class="group-row">
+                  <td colspan="2">危険な操作（オーナーだけ・最終確認あり）</td>
+                </tr>
+                <tr class="danger">
+                  <td class="name">
+                    ホストを再起動<span class="d"
+                      >VM 2台も止まります。ホスト名の入力で確認します</span
+                    >
+                  </td>
+                  <td class="r"><button type="button" class="btn danger">再起動…</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div class="t">
+              <h2>フォルダごとの Remote Control</h2>
+              <button type="button" class="explain">ⓘ 説明</button>
+            </div>
+            <div class="tools">
+              <select class="btn" aria-label="起動するフォルダ">
+                <option>notes</option>
+              </select>
+              <button type="button" class="btn">起動</button>
+            </div>
+          </div>
+          <div class="panel-body flush table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>フォルダ</th>
+                  <th>状態</th>
+                  <th>Claude アプリでの名前</th>
+                  <th>起動</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="mono">macmini-dashboard</td>
+                  <td>
+                    <span class="status s-ok"><span class="dot"></span>稼働中</span>
+                  </td>
+                  <td class="mono muted">host-macmini-dashboard</td>
+                  <td class="time">昨日 18:46</td>
+                  <td class="r"><button type="button" class="btn">停止</button></td>
+                </tr>
+                <tr>
+                  <td class="mono">example-site</td>
+                  <td>
+                    <span class="status s-bad"><span class="dot"></span>エラー</span>
+                  </td>
+                  <td colspan="2" class="s-bad" style="white-space: normal; font-size: 13px">
+                    一度 SSH で入り、そのフォルダで claude を起動して信頼する必要があります
+                  </td>
+                  <td class="r"><button type="button" class="btn">停止</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 基礎設定 ===== -->
+      <section class="tabpanel" id="setup" role="tabpanel" hidden>
+        <div class="panel">
+          <div class="panel-head">
+            <div class="t">
+              <h2>基礎設定</h2>
+              <button type="button" class="explain">ⓘ 説明</button>
+            </div>
+            <div class="tools">
+              <span class="status s-warn"
+                ><span class="dot"></span>18 / 23 OK · 要対応 4（手動 2）</span
+              >
+            </div>
+          </div>
+          <div class="panel-body flush">
+            <!-- 未完了だけ常に見せる -->
+            <div class="check s-bad">
+              <span class="dot"></span>
+              <span class="label">FileVault オフ <span class="tag">手動</span></span>
+              <span class="detail">FileVault: On</span>
+              <span class="how"
+                ><b>直し方</b>システム設定 › プライバシーとセキュリティ › FileVault</span
+              >
+            </div>
+            <div class="check s-bad">
+              <span class="dot"></span>
+              <span class="label">画面共有（VNC）オン <span class="tag">手動</span></span>
+              <span class="detail">port 5900 closed</span>
+              <span class="how"
+                ><b>直し方</b>システム設定 › 一般 › 共有 › 画面共有（VNC パスワードも）</span
+              >
+            </div>
+            <div class="check s-bad">
+              <span class="dot"></span>
+              <span class="label">Power Nap オフ</span>
+              <span class="detail">powernap=1</span>
+              <span class="how"><b>直し方</b><code>sudo pmset -a powernap 0</code></span>
+            </div>
+            <div class="check s-bad">
+              <span class="dot"></span>
+              <span class="label">ホスト再起動の sudoers</span>
+              <span class="detail"></span>
+              <span class="how"
+                ><b>直し方</b><code>mac/sudoers/macmini-ops</code> を
+                <code>/etc/sudoers.d/</code> に置く</span
+              >
+            </div>
+            <div class="check s-none">
+              <span class="dot"></span>
+              <span class="label">App Store 自動更新 オフ</span>
+              <span class="detail muted">未確認</span>
+            </div>
+            <!-- 完了した項目は畳む -->
+            <details class="fold">
+              <summary>完了した項目 18 件</summary>
+              <div class="check ok s-ok">
+                <span class="dot"></span><span class="label">スリープしない</span
+                ><span class="detail">sleep=0</span>
+              </div>
+              <div class="check ok s-ok">
+                <span class="dot"></span><span class="label">ディスクをスリープしない</span
+                ><span class="detail"></span>
+              </div>
+              <div class="check ok s-ok">
+                <span class="dot"></span><span class="label">停電後に自動起動</span
+                ><span class="detail"></span>
+              </div>
+              <div class="check ok s-ok">
+                <span class="dot"></span
+                ><span class="label">自動ログイン <span class="tag">手動</span></span
+                ><span class="detail"></span>
+              </div>
+              <div class="check ok s-ok">
+                <span class="dot"></span><span class="label">macOS 自動インストール オフ</span
+                ><span class="detail"></span>
+              </div>
+              <div class="check ok s-ok">
+                <span class="dot"></span
+                ><span class="label">リモートログイン（SSH）オン <span class="tag">手動</span></span
+                ><span class="detail"></span>
+              </div>
+              <div class="check ok s-ok">
+                <span class="dot"></span
+                ><span class="label">有線 LAN で接続 <span class="tag">手動</span></span
+                ><span class="detail"></span>
+              </div>
+              <div class="check ok s-ok">
+                <span class="dot"></span
+                ><span class="label">タイムゾーン Asia/Tokyo <span class="tag">手動</span></span
+                ><span class="detail">Asia/Tokyo</span>
+              </div>
+              <div class="check ok s-ok">
+                <span class="dot"></span
+                ><span class="label">Claude Code にログイン済み <span class="tag">手動</span></span
+                ><span class="detail"></span>
+              </div>
+              <div class="check ok s-ok">
+                <span class="dot"></span><span class="label">Claude の自動更新 オフ</span
+                ><span class="detail"></span>
+              </div>
+              <div class="check ok s-ok">
+                <span class="dot"></span
+                ><span class="label">作業フォルダが適切 <span class="tag">手動</span></span
+                ><span class="detail"></span>
+              </div>
+              <div class="check ok s-ok">
+                <span class="dot"></span><span class="label">Remote Control の常駐（launchd）</span
+                ><span class="detail"></span>
+              </div>
+              <div class="check ok s-ok">
+                <span class="dot"></span><span class="label">vm1 の自動起動（launchd）</span
+                ><span class="detail"></span>
+              </div>
+              <div class="check ok s-ok">
+                <span class="dot"></span><span class="label">vm2 の自動起動（launchd）</span
+                ><span class="detail"></span>
+              </div>
+              <div class="check ok s-ok">
+                <span class="dot"></span><span class="label">cloudflared（Tunnel）が動作中</span
+                ><span class="detail"></span>
+              </div>
+              <div class="check ok s-ok">
+                <span class="dot"></span
+                ><span class="label">VM イメージを Time Machine から除外</span
+                ><span class="detail"></span>
+              </div>
+              <div class="check ok s-ok">
+                <span class="dot"></span><span class="label">ディスクの空き（15% 以上）</span
+                ><span class="detail">60% free</span>
+              </div>
+              <div class="check ok s-ok">
+                <span class="dot"></span
+                ><span class="label"
+                  >ユーザー名がメールの @ 前と一致 <span class="tag">手動</span></span
+                ><span class="detail"></span>
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 履歴 ===== -->
+      <section class="tabpanel" id="history" role="tabpanel" hidden>
+        <div class="panel">
+          <div class="panel-head">
+            <div class="t"><h2>このマシンの履歴</h2></div>
+            <div class="tools">
+              <div class="seg" role="group">
+                <button type="button" aria-pressed="true">操作</button
+                ><button type="button" aria-pressed="false">イベント</button>
+              </div>
+            </div>
+          </div>
+          <div class="panel-body flush table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>時刻</th>
+                  <th>操作</th>
+                  <th>実行者</th>
+                  <th class="r">結果</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="time">昨日 23:16</td>
+                  <td>指示 22222222</td>
+                  <td>エージェント（host）</td>
+                  <td class="r s-bad">失敗</td>
+                </tr>
+                <tr>
+                  <td class="time">10/30 23:31</td>
+                  <td>Claude Codeを更新</td>
+                  <td>Taro</td>
+                  <td class="r">取り消し</td>
+                </tr>
+                <tr>
+                  <td class="time">10/30 23:15</td>
+                  <td>Claude Codeを更新</td>
+                  <td>Taro</td>
+                  <td class="r">受付</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="wrap">
+        <span>Example Inc.</span>
+        <span>Cloudflare Access で保護されています</span>
+      </div>
+    </footer>
+
+    <script>
+      // モック用：ハッシュでタブを切り替える（本番も同じ方式でよい。深いリンク #setup が使える）
+      const tabs = [...document.querySelectorAll('.tabs a')];
+      const panels = [...document.querySelectorAll('.tabpanel')];
+      function select() {
+        const id = (location.hash || '#overview').slice(1);
+        const ok = panels.some((p) => p.id === id) ? id : 'overview';
+        for (const p of panels) p.hidden = p.id !== ok;
+        for (const t of tabs)
+          t.setAttribute('aria-selected', String(t.getAttribute('href') === '#' + ok));
+      }
+      addEventListener('hashchange', select);
+      select();
+    </script>
+  </body>
+</html>

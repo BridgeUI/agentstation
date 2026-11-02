@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="referrer" content="same-origin" />
+    <title>一覧 · Mac mini 監視ダッシュボード</title>
+    <link rel="icon" href="/logo.png" />
+    <meta name="theme-color" content="#f5f5f7" />
+    <link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Mac mini" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body data-page="index">
+    <nav class="nav" aria-label="グローバル">
+      <div class="wrap">
+        <a class="nav-brand" href="/">
+          <img src="/logo.png" alt="Example" />
+          <span>Mac mini 監視ダッシュボード</span>
+        </a>
+        <div class="nav-links">
+          <a href="/" aria-current="page">一覧</a>
+          <a href="/host.html">Taro</a>
+          <a href="/vm1.html">Hanako</a>
+          <a href="/vm2.html">Jiro</a>
+          <a href="/guide/">使い方ガイド</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="wrap">
+      <div class="page-head">
+        <div>
+          <div class="title">
+            <h1>一覧</h1>
+            <span class="pill s-none" id="overall"><span class="dot"></span>読み込み中</span>
+          </div>
+          <p class="meta" id="hero-sub"><span>Mac mini · 3環境</span><span>最終受信 —</span></p>
+        </div>
+        <div class="right">
+          <span class="small muted">5秒ごとに自動更新</span>
+          <!-- オーナーだけ。Slack の Webhook を登録したあと、届くことを確かめる -->
+          <button type="button" class="btn" id="notify-test" data-notify-test hidden>
+            Slack にテスト通知
+          </button>
+          <span class="small muted" id="notify-test-result" role="status"></span>
+        </div>
+      </div>
+
+      <div id="banners" class="banners" hidden></div>
+      <div id="load-error" class="err" role="alert" hidden></div>
+
+      <!-- 環境：1 行 1 環境。行をクリックで各環境の画面へ -->
+      <section class="panel" aria-labelledby="envs-h">
+        <div class="panel-head">
+          <div class="t">
+            <h2 id="envs-h">環境</h2>
+            <button type="button" class="explain" data-explain="envs" aria-expanded="false">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line></svg
+              ><span>説明</span>
+            </button>
+          </div>
+          <div class="tools">
+            <span class="small muted">使用量は Mac mini 全体に対する割合</span>
+          </div>
+        </div>
+        <div class="panel-body flush table-wrap">
+          <table class="env-table">
+            <thead>
+              <tr>
+                <th>環境</th>
+                <th>状態</th>
+                <th class="hide-sm">Claude Code</th>
+                <th class="hide-sm">Remote Control</th>
+                <th class="hide-sm">Codex</th>
+                <th class="hide-sm">VM / エージェント</th>
+                <th class="r">CPU</th>
+                <th class="r">メモリ</th>
+                <th class="r">ディスク</th>
+              </tr>
+            </thead>
+            <tbody id="env-body">
+              <tr>
+                <td colspan="9" class="empty">読み込み中…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel-note" data-explain-body="envs" hidden>
+          VM は Mac mini の上で動くため、そのままでは host の値に VM
+          の分が混ざります。Taro（本体）は、全体から VM
+          2台の分を引いた値です。基礎設定に未完了があるときは、状態の下に件数を出します。
+        </div>
+      </section>
+
+      <!-- Mac mini 全体：使用量はタイル、配分（設定）は表。セグメントで切り替え -->
+      <section class="panel" aria-labelledby="total-h">
+        <div class="panel-head">
+          <div class="t">
+            <h2 id="total-h">Mac mini 全体</h2>
+            <button type="button" class="explain" data-explain="total" aria-expanded="false">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line></svg
+              ><span>説明</span>
+            </button>
+          </div>
+          <div class="tools">
+            <span class="legend" aria-hidden="true">
+              <span><i class="p1"></i>Taro（本体）</span>
+              <span><i class="p2"></i>Hanako</span>
+              <span><i class="p3"></i>Jiro</span>
+              <span><i class="free"></i>空き</span>
+            </span>
+            <div class="seg" role="group" aria-label="表示" data-seg="total">
+              <button type="button" aria-pressed="true" data-seg-value="usage">使用量</button>
+              <button type="button" aria-pressed="false" data-seg-value="alloc">
+                配分（設定）
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body flush" id="usage-card" data-seg-panel="total:usage">
+          <p class="empty">読み込み中…</p>
+        </div>
+        <div
+          class="panel-body flush table-wrap"
+          id="alloc-card"
+          data-seg-panel="total:alloc"
+          hidden
+        ></div>
+        <div class="panel-note" data-explain-body="total" hidden>
+          CPU は VM に割り当てたコア数の上限まで使えますが、専有ではありません。VM
+          が空いているときは、本体が全コアを使えます。 VM
+          のメモリは使った分だけ本体から消費し、使い終わっても戻りません。vm1・vm2 は毎晩 4
+          時に再起動してリセットします（作業中の晩は見送り）。 ディスクは、macOS を安定させるため約
+          100GB を空けておきます。配分の変更は VM を止めて行います。
+        </div>
+      </section>
+
+      <!-- 最近の動き：操作履歴とイベント。最新 5 件、「すべて表示」で全件 -->
+      <section class="panel" aria-labelledby="log-h">
+        <div class="panel-head">
+          <div class="t"><h2 id="log-h">最近の動き</h2></div>
+          <div class="tools">
+            <div class="seg" role="group" aria-label="種類" data-seg="log">
+              <button type="button" aria-pressed="true" data-seg-value="audit">操作履歴</button>
+              <button type="button" aria-pressed="false" data-seg-value="events">イベント</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body flush table-wrap" data-seg-panel="log:audit">
+          <table>
+            <thead>
+              <tr>
+                <th>時刻</th>
+                <th>操作</th>
+                <th>対象</th>
+                <th>実行者</th>
+                <th class="r">結果</th>
+              </tr>
+            </thead>
+            <tbody id="audit-body">
+              <tr>
+                <td colspan="5" class="empty">読み込み中…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel-body flush events" id="events" data-seg-panel="log:events" hidden></div>
+        <div class="panel-foot" id="audit-foot" data-seg-panel="log:audit" hidden>
+          <button
+            type="button"
+            class="link muted"
+            id="audit-more"
+            data-audit-more
+            style="border: none; background: none; cursor: pointer; font: inherit; font-size: 13px"
+          ></button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="wrap">
+        <span>Example Inc.</span>
+        <span>Cloudflare Access で保護されています</span>
+      </div>
+    </footer>
+
+    <dialog id="dlg"></dialog>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

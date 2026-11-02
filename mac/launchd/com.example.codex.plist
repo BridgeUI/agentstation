@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  TODO（要確認: docs/verify.md C-5）: Codex CLI に常駐向けのサブコマンドがあるか、画面なしの CLI だけで
+  ChatGPT アプリから接続できるかが未確認。確認が取れるまで、この plist は配置しない（bootstrap しない）。
+  確認後に __CODEX_ARGS__ を実際の引数（例: remote など）に置き換え、不要なら ProgramArguments を直す。
+
+  プレースホルダ: __USER__（その環境のユーザー名）、__CODEX_ARGS__（常駐用のサブコマンド。要確認）
+  想定する実行ファイル: npm -g で入れた場合 /Users/__USER__/.nodebrew/current/bin/codex（`which codex` で確認する）
+  配置先: ~/Library/LaunchAgents/com.example.codex.plist
+  ログ  : ~/Library/Logs/codex.out.log、codex.err.log
+  codex_restart: launchctl kickstart -k gui/$(id -u)/com.example.codex
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.example.codex</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/__USER__/.nodebrew/current/bin/codex</string>
+    <string>__CODEX_ARGS__</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/Users/__USER__/work/codex</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>HOME</key>
+    <string>/Users/__USER__</string>
+    <key>PATH</key>
+    <string>/Users/__USER__/.nodebrew/current/bin:/Users/__USER__/.local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+    <key>LANG</key>
+    <string>en_US.UTF-8</string>
+  </dict>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>30</integer>
+  <key>StandardOutPath</key>
+  <string>/Users/__USER__/Library/Logs/codex.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/__USER__/Library/Logs/codex.err.log</string>
+</dict>
+</plist>

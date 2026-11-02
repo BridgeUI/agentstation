@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>一覧 · 改善案モック</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav class="nav" aria-label="グローバル">
+      <div class="wrap">
+        <a class="nav-brand" href="index.html">
+          <img src="../logo.png" alt="Example" />
+          <span>Mac mini 監視ダッシュボード</span>
+        </a>
+        <div class="nav-links">
+          <a href="index.html" aria-current="page">一覧</a>
+          <a href="host.html">Taro</a>
+          <a href="host.html">Hanako</a>
+          <a href="host.html">Jiro</a>
+          <a href="#">接続ガイド</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="wrap">
+      <!-- 見出し：ヒーロー帯をやめ、1行目に状態、2行目にメタ情報 -->
+      <div class="page-head">
+        <div>
+          <div class="title">
+            <h1>一覧</h1>
+            <span class="pill s-ok"><span class="dot"></span>すべて正常</span>
+          </div>
+          <p class="meta">
+            <span>Mac mini · 3環境</span><span>最終受信 1分前</span
+            ><span>CPU 10コア · メモリ 24GB · SSD 512GB</span>
+          </p>
+        </div>
+        <div class="right">
+          <span class="small muted">60秒ごとに自動更新</span>
+        </div>
+      </div>
+
+      <!-- 注意は 1 行。本文は飛び先で読む -->
+      <div class="alert warn" role="status">
+        <span class="status s-warn"><span class="dot"></span></span>
+        <strong>Taro の環境：手動の基礎設定が 2 件未完了</strong>
+        <a class="link" href="host.html#setup">基礎設定を開く →</a>
+      </div>
+
+      <!-- 環境：カード3枚 → 表1つ。1行で状態・4プロセス・使用量が揃う -->
+      <section class="panel" aria-labelledby="envs-h">
+        <div class="panel-head">
+          <div class="t">
+            <h2 id="envs-h">環境</h2>
+            <button type="button" class="explain">ⓘ 説明</button>
+          </div>
+          <div class="tools">
+            <span class="small muted">使用量は Mac mini 全体に対する割合</span>
+          </div>
+        </div>
+        <div class="panel-body flush table-wrap">
+          <table class="env-table">
+            <thead>
+              <tr>
+                <th>環境</th>
+                <th>状態</th>
+                <th class="hide-sm">Claude Code</th>
+                <th class="hide-sm">Remote Control</th>
+                <th class="hide-sm">Codex</th>
+                <th class="hide-sm">VM / エージェント</th>
+                <th class="r">CPU</th>
+                <th class="r">メモリ</th>
+                <th class="r">ディスク</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="clickable" onclick="location.href = 'host.html'">
+                <td>
+                  <span class="who"
+                    ><span class="avatar">Y</span>
+                    <span class="n"><b>Taro</b><span>host · アカウントA · 1分前</span></span></span
+                  >
+                </td>
+                <td>
+                  <span class="status s-ok"><span class="dot"></span>正常</span>
+                </td>
+                <td class="hide-sm">稼働中</td>
+                <td class="hide-sm">接続中</td>
+                <td class="hide-sm">稼働中</td>
+                <td class="hide-sm">60秒ごとに報告</td>
+                <td class="r num">12%</td>
+                <td class="r num">18%</td>
+                <td class="r num">14%</td>
+              </tr>
+              <tr class="clickable" onclick="location.href = 'host.html'">
+                <td>
+                  <span class="who"
+                    ><span class="avatar">K</span>
+                    <span class="n"
+                      ><b>Hanako</b><span>vm1 · アカウントB · 1分前</span></span
+                    ></span
+                  >
+                </td>
+                <td>
+                  <span class="status s-ok"><span class="dot"></span>正常</span>
+                </td>
+                <td class="hide-sm">稼働中</td>
+                <td class="hide-sm">接続中</td>
+                <td class="hide-sm">稼働中</td>
+                <td class="hide-sm">VM 稼働中</td>
+                <td class="r num">20%</td>
+                <td class="r num">24%</td>
+                <td class="r num">16%</td>
+              </tr>
+              <tr class="clickable" onclick="location.href = 'host.html'">
+                <td>
+                  <span class="who"
+                    ><span class="avatar">Y</span>
+                    <span class="n"><b>Jiro</b><span>vm2 · アカウントC · 1分前</span></span></span
+                  >
+                </td>
+                <td>
+                  <span class="status s-warn"><span class="dot"></span>要確認</span>
+                </td>
+                <td class="hide-sm s-warn">停止中・再起動待ち</td>
+                <td class="hide-sm s-warn">再接続待ち</td>
+                <td class="hide-sm">稼働中</td>
+                <td class="hide-sm">VM 稼働中</td>
+                <td class="r num">6%</td>
+                <td class="r num">14%</td>
+                <td class="r num">10%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Mac mini 全体：棒グラフ 6 本 → タイル 3 枚。配分はセグメントで切り替え -->
+      <section class="panel" aria-labelledby="total-h">
+        <div class="panel-head">
+          <div class="t">
+            <h2 id="total-h">Mac mini 全体</h2>
+            <button type="button" class="explain">ⓘ 説明</button>
+          </div>
+          <div class="tools">
+            <span class="legend" aria-hidden="true">
+              <span><i style="background: #000"></i>Taro（本体）</span>
+              <span><i style="background: #5c5c5c"></i>Hanako</span>
+              <span><i style="background: #aaa"></i>Jiro</span>
+              <span><i style="background: #e6e6e6"></i>空き</span>
+            </span>
+            <div class="seg" role="group" aria-label="表示">
+              <button type="button" aria-pressed="true" data-view="usage">使用量</button>
+              <button type="button" aria-pressed="false" data-view="alloc">配分（設定）</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body flush" id="view-usage">
+          <div class="tiles">
+            <div class="tile">
+              <span class="k">CPU</span>
+              <span class="v">38%<small>使用</small></span>
+              <div class="bar" role="img" aria-label="CPU 合計38%">
+                <div class="p1" style="width: 12%"></div>
+                <div class="p2" style="width: 20%"></div>
+                <div class="p3" style="width: 6%"></div>
+              </div>
+              <span class="sub num">Taro 12 · Hanako 20 · Jiro 6 · 空き 62</span>
+            </div>
+            <div class="tile">
+              <span class="k">メモリ</span>
+              <span class="v">56%<small>13.4 / 24 GB</small></span>
+              <div class="bar" role="img" aria-label="メモリ 合計56%">
+                <div class="p1" style="width: 18%"></div>
+                <div class="p2" style="width: 24%"></div>
+                <div class="p3" style="width: 14%"></div>
+              </div>
+              <span class="sub num">Taro 18 · Hanako 24 · Jiro 14 · 空き 44</span>
+            </div>
+            <div class="tile">
+              <span class="k">ディスク</span>
+              <span class="v">40%<small>205 / 512 GB</small></span>
+              <div class="bar" role="img" aria-label="ディスク 合計40%">
+                <div class="p1" style="width: 14%"></div>
+                <div class="p2" style="width: 16%"></div>
+                <div class="p3" style="width: 10%"></div>
+              </div>
+              <span class="sub num">Taro 14 · Hanako 16 · Jiro 10 · 空き 60</span>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body flush table-wrap" id="view-alloc" hidden>
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th class="r">CPU</th>
+                <th class="r">メモリ</th>
+                <th class="r">ディスク</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mac mini 全体</td>
+                <td class="r num">10コア</td>
+                <td class="r num">24GB</td>
+                <td class="r num">512GB</td>
+              </tr>
+              <tr>
+                <td>Taro（本体）</td>
+                <td class="r num">全コアを共有（残り 2）</td>
+                <td class="r num">12GB</td>
+                <td class="r num">232GB</td>
+              </tr>
+              <tr>
+                <td>Hanako（vm1）</td>
+                <td class="r num">4コア</td>
+                <td class="r num">6GB</td>
+                <td class="r num">90GB</td>
+              </tr>
+              <tr>
+                <td>Jiro（vm2）</td>
+                <td class="r num">4コア</td>
+                <td class="r num">6GB</td>
+                <td class="r num">90GB</td>
+              </tr>
+              <tr>
+                <td class="muted">空けておく分（macOS 用）</td>
+                <td class="r num muted">—</td>
+                <td class="r num muted">—</td>
+                <td class="r num muted">100GB</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 最近の動き：操作履歴とイベントを 1 パネルに。最新 5 件だけ -->
+      <section class="panel" aria-labelledby="log-h">
+        <div class="panel-head">
+          <div class="t"><h2 id="log-h">最近の動き</h2></div>
+          <div class="tools">
+            <div class="seg" role="group" aria-label="種類">
+              <button type="button" aria-pressed="true">操作履歴</button>
+              <button type="button" aria-pressed="false">イベント</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body flush table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>時刻</th>
+                <th>操作</th>
+                <th>対象</th>
+                <th>実行者</th>
+                <th class="r">結果</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="time">昨日 23:16</td>
+                <td>指示 22222222</td>
+                <td>Taro（host）</td>
+                <td>エージェント（host）</td>
+                <td class="r s-bad">失敗</td>
+              </tr>
+              <tr>
+                <td class="time">昨日 23:15</td>
+                <td>VMを再起動</td>
+                <td>Jiro（vm2）</td>
+                <td>エージェント（host）</td>
+                <td class="r">実行中</td>
+              </tr>
+              <tr>
+                <td class="time">昨日 23:15</td>
+                <td>VMを再起動</td>
+                <td>Jiro（vm2）</td>
+                <td>Jiro</td>
+                <td class="r">受付</td>
+              </tr>
+              <tr>
+                <td class="time">昨日 22:48</td>
+                <td>指示 11111111</td>
+                <td>Hanako（vm1）</td>
+                <td>エージェント（vm1）</td>
+                <td class="r">完了</td>
+              </tr>
+              <tr>
+                <td class="time">昨日 22:46</td>
+                <td>Remote Controlを立て直す</td>
+                <td>Hanako（vm1）</td>
+                <td>エージェント（vm1）</td>
+                <td class="r">実行中</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel-foot"><a class="link muted" href="#">すべての履歴を表示（32件）→</a></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="wrap">
+        <span>Example Inc.</span>
+        <span>Cloudflare Access で保護されています</span>
+      </div>
+    </footer>
+
+    <script>
+      // モック用：使用量／配分の切り替え
+      for (const b of document.querySelectorAll('[data-view]')) {
+        b.addEventListener('click', () => {
+          for (const x of document.querySelectorAll('[data-view]'))
+            x.setAttribute('aria-pressed', String(x === b));
+          document.getElementById('view-usage').hidden = b.dataset.view !== 'usage';
+          document.getElementById('view-alloc').hidden = b.dataset.view !== 'alloc';
+        });
+      }
+    </script>
+  </body>
+</html>

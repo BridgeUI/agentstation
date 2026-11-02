@@ -1,0 +1,31 @@
+# 秘密情報
+.env
+.env.*
+*.pem
+*.key
+*.p12
+id_*
+*.token
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+
+# 依存・ビルド
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+
+# wrangler / D1 ローカル
+.wrangler/
+
+# macOS
+.DS_Store
+
+# ログ
+*.log
+.claude/settings.local.json
+worker/public/version.json
+
+# 導入先の値（deploy ブランチでだけ git add -f でコミットする。kit/START.md 2 章）
+kit/site.json

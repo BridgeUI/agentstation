@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="referrer" content="same-origin" />
+    <title>Taro の環境 · Mac mini 監視ダッシュボード</title>
+    <link rel="icon" href="/logo.png" />
+    <meta name="theme-color" content="#f5f5f7" />
+    <link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Mac mini" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body data-page="env" data-env="host">
+    <nav class="nav" aria-label="グローバル">
+      <div class="wrap">
+        <a class="nav-brand" href="/">
+          <img src="/logo.png" alt="Example" />
+          <span>Mac mini 監視ダッシュボード</span>
+        </a>
+        <div class="nav-links">
+          <a href="/">一覧</a>
+          <a href="/host.html" aria-current="page">Taro</a>
+          <a href="/vm1.html">Hanako</a>
+          <a href="/vm2.html">Jiro</a>
+          <a href="/guide/">使い方ガイド</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="wrap">
+      <a class="back" href="/"
+        ><svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        一覧</a
+      >
+
+      <div class="page-head" style="padding-top: 8px">
+        <div>
+          <div class="title">
+            <span class="avatar lg" aria-hidden="true">Y</span>
+            <h1 id="env-title">Taro の環境</h1>
+            <span class="pill s-none" id="overall"><span class="dot"></span>読み込み中</span>
+          </div>
+          <p class="meta" id="hero-sub"><span>host · アカウントA</span><span>最終受信 —</span></p>
+        </div>
+        <div class="right" id="head-actions"></div>
+      </div>
+
+      <div id="banners" class="banners" hidden></div>
+      <div id="load-error" class="err" role="alert" hidden></div>
+
+      <!-- タブ：URL のハッシュで切り替える。閲覧者には接続・操作を出さない -->
+      <nav class="tabs" role="tablist" aria-label="セクション">
+        <a href="#overview" role="tab" aria-selected="true" data-tab="overview">概要</a>
+        <a href="#rc" role="tab" aria-selected="false" data-tab="rc" data-needs-use
+          >Remote Control</a
+        >
+        <a href="#connect" role="tab" aria-selected="false" data-tab="connect" data-needs-use
+          >接続</a
+        >
+        <a href="#ops" role="tab" aria-selected="false" data-tab="ops" data-needs-use>操作</a>
+        <a href="#setup" role="tab" aria-selected="false" data-tab="setup"
+          >基礎設定 <span class="count" id="setup-count" hidden></span
+        ></a>
+        <a href="#history" role="tab" aria-selected="false" data-tab="history">履歴</a>
+      </nav>
+
+      <!-- ===== 概要 ===== -->
+      <section class="tabpanel" id="overview" role="tabpanel">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="t">
+              <h2>状態</h2>
+              <button type="button" class="explain" data-explain="state" aria-expanded="false">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line></svg
+                ><span>説明</span>
+              </button>
+            </div>
+          </div>
+          <div class="panel-body flush tiles" id="state-rows"></div>
+          <div class="panel-note" data-explain-body="state" hidden>
+            Claude Code はプロセスの有無、Remote Control は Claude アプリとの接続、エージェントは 60
+            秒ごとの報告が届いているかを見ています。VM は host のエージェントが Tart
+            から取った状態です。
+          </div>
+        </div>
+
+        <div class="cols">
+          <div class="panel">
+            <div class="panel-head">
+              <div class="t"><h2>使用量</h2></div>
+              <div class="tools"><span class="small muted" id="metric-note"></span></div>
+            </div>
+            <div class="panel-body flush tiles" id="state-metrics"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <div class="t"><h2>要対応</h2></div>
+            </div>
+            <div class="panel-body flush table-wrap">
+              <table>
+                <tbody id="todo-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div class="t"><h2>詳細</h2></div>
+            <div class="tools"><a class="link muted" href="/#total-h">全体の配分を見る →</a></div>
+          </div>
+          <div class="panel-body flush table-wrap">
+            <table class="kv">
+              <tbody id="facts"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 接続 ===== -->
+      <section class="tabpanel" id="connect" role="tabpanel" hidden>
+        <div id="conn-body"></div>
+
+        <div class="panel" id="login-sec">
+          <div class="panel-head">
+            <div class="t">
+              <h2>アカウント</h2>
+              <button type="button" class="explain" data-explain="login" aria-expanded="false">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line></svg
+                ><span>説明</span>
+              </button>
+            </div>
+            <div class="tools">
+              <span class="small muted">パスワード・鍵・API キーは表示しません</span>
+            </div>
+          </div>
+          <div class="panel-body flush table-wrap">
+            <table class="kv">
+              <tbody id="login-body"></tbody>
+            </table>
+          </div>
+          <div class="panel-note" data-explain-body="login" hidden>
+            SSH 鍵の登録は不要です。Cloudflare Access
+            にログインするたびに、短時間だけ有効な証明書が発行されます。
+            使う人が替わるときは、Access
+            の許可を外すだけで入れなくなります。パスワードはパスワードマネージャーで管理してください。
+          </div>
+          <div class="panel-foot" id="ssh-policy" hidden>
+            <span class="small muted" style="margin-right: auto"
+              >入れる人の追加・削除は Cloudflare Access のポリシーで行います</span
+            >
+            <a class="btn" href="https://one.dash.cloudflare.com/" rel="noopener"
+              >Access のポリシーを開く</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Remote Control（フォルダごと。いちばんよく使うので専用タブ） ===== -->
+      <section class="tabpanel" id="rc" role="tabpanel" hidden>
+        <div id="rc-active"></div>
+
+        <div class="panel" id="rcdir-sec">
+          <div class="panel-head">
+            <div class="t">
+              <h2>フォルダごとの Remote Control</h2>
+              <button type="button" class="explain" data-explain="rcdir" aria-expanded="false">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line></svg
+                ><span>説明</span>
+              </button>
+            </div>
+          </div>
+          <div
+            class="panel-note"
+            data-explain-body="rcdir"
+            id="rcdir-explain"
+            hidden
+            style="border-top: none"
+          ></div>
+          <div id="rcdir-error" class="err" role="alert" hidden style="margin: 12px 20px"></div>
+          <div class="panel-body flush" id="rcdir-body"></div>
+        </div>
+      </section>
+
+      <!-- ===== 操作 ===== -->
+      <section class="tabpanel" id="ops" role="tabpanel" hidden>
+        <div id="active-cmd"></div>
+        <div id="op-error" class="err" role="alert" hidden></div>
+
+        <div class="panel" id="ops-sec">
+          <div class="panel-head">
+            <div class="t">
+              <h2>操作</h2>
+              <button type="button" class="explain" data-explain="ops" aria-expanded="false">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line></svg
+                ><span>説明</span>
+              </button>
+            </div>
+          </div>
+          <div class="panel-body flush table-wrap">
+            <table class="ops">
+              <tbody id="ops-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 基礎設定 ===== -->
+      <section class="tabpanel" id="setup" role="tabpanel" hidden>
+        <div class="panel" id="setup-sec">
+          <div class="panel-head">
+            <div class="t">
+              <h2>基礎設定</h2>
+              <button type="button" class="explain" data-explain="setup" aria-expanded="false">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line></svg
+                ><span>説明</span>
+              </button>
+            </div>
+            <div class="tools"><span class="status" id="setup-sum"></span></div>
+          </div>
+          <div class="panel-note" data-explain-body="setup" hidden style="border-top: none">
+            Mac
+            を無人で動かし続けるための設定です。「手動」の項目はシステム設定で行います（docs/setup-mac.md）。
+            未完了と未確認だけを常に出し、完了した項目は畳んでいます。
+          </div>
+          <div class="panel-body flush" id="setup-body"></div>
+        </div>
+      </section>
+
+      <!-- ===== 履歴 ===== -->
+      <section class="tabpanel" id="history" role="tabpanel" hidden>
+        <div class="panel">
+          <div class="panel-head">
+            <div class="t"><h2>このマシンの履歴</h2></div>
+          </div>
+          <div class="panel-body flush table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>時刻</th>
+                  <th>操作</th>
+                  <th>実行者</th>
+                  <th class="r">結果</th>
+                </tr>
+              </thead>
+              <tbody id="history-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="wrap">
+        <span>Example Inc.</span>
+        <span>Cloudflare Access で保護されています</span>
+      </div>
+    </footer>
+
+    <dialog id="dlg"></dialog>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

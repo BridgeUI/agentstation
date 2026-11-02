@@ -1,0 +1,51 @@
+# cloudflared のローカル設定（host に置く）
+#
+# 置き場所：/etc/cloudflared/config.yml（root:wheel, 644）
+# LaunchDaemon（root）で動かすので、/etc/cloudflared/ を読む（docs/spec.md 3.1, 13章 #2）。
+# 手順：cloudflare/cloudflared/setup.md
+#
+# 置き換えるもの：
+#   <TUNNEL_ID>   `cloudflared tunnel create macmini` が出す UUID
+#   192.168.64.10 / .11  VM の固定 IP。docs/verify.md B-2 の結果で置き換える
+#                  （ゲスト内静的 IP なら .10/.11 のまま。ブリッジにしたならルーターの DHCP 予約の IP）
+
+tunnel: <TUNNEL_ID>
+credentials-file: /etc/cloudflared/<TUNNEL_ID>.json   # 秘密情報。root:wheel, 600
+
+# 内部ネットワーク（192.168.64.0/24）を WARP 経由で公開する設定は
+# `cloudflared tunnel route ip add 192.168.64.0/24 macmini` で Cloudflare 側に登録する。
+# 以前は `warp-routing: enabled: true` が必要だったが、cloudflared 2023.9.0 以降は
+# 不要（書くと設定警告が出る）。
+# https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/do-more-with-tunnels/local-management/configuration-file/
+#
+# 古い cloudflared を使う場合だけ、次の 2 行のコメントを外す：
+# warp-routing:
+#   enabled: true
+
+# 公開ホスト名（docs/spec.md 8.1）。上から順に評価され、最後の http_status:404 が必須。
+ingress:
+  # host（Mac mini 本体）
+  - hostname: ssh-host.example.com
+    service: ssh://localhost:22
+  - hostname: vnc-host.example.com
+    service: tcp://localhost:5900
+
+  # vm1（Hanako）
+  - hostname: ssh-vm1.example.com
+    service: ssh://192.168.64.10:22
+  - hostname: vnc-vm1.example.com
+    service: tcp://192.168.64.10:5900
+
+  # vm2（Jiro）
+  - hostname: ssh-vm2.example.com
+    service: ssh://192.168.64.11:22
+  - hostname: vnc-vm2.example.com
+    service: tcp://192.168.64.11:5900
+
+  # それ以外は 404（必須の catch-all）
+  - service: http_status:404
+
+# ログ（LaunchDaemon の stdout/stderr とは別に、cloudflared 自身のログ）
+# 既定の /Library/Logs/com.cloudflare.cloudflared.{out,err}.log に任せるならこの 2 行は不要。
+# loglevel: info
+# logfile: /Library/Logs/cloudflared.log

@@ -64,6 +64,8 @@ export function renderEnvPage(ctx: EnvPageCtx): void {
   const own = down ? null : e.heartbeat;
 
   $('env-title').textContent = titleOf(env);
+  const av = document.querySelector<HTMLElement>('.avatar.lg');
+  if (av) av.textContent = PEOPLE[env].initial;
   const version = own?.claude.version
     ? `Claude Code ${own.claude.version}${own.claude.channel ? `（${own.claude.channel}）` : ''}`
     : null;
@@ -188,7 +190,9 @@ function renderMetrics(ctx: EnvPageCtx, e: EnvStatus): void {
     tile('ディスク', sh.disk, subs[2]);
   $('metric-note').textContent =
     env === 'host'
-      ? 'Mac mini 全体のうち、VM 2台を除いた本体の分'
+      ? s.envs.length > 1
+        ? 'Mac mini 全体のうち、VM を除いた本体の分'
+        : 'Mac mini 全体の値'
       : 'Mac mini 全体のうち、この VM の分';
 }
 

@@ -917,7 +917,7 @@ var HOST_OPS = [
     desc: "\u30AA\u30FC\u30CA\u30FC\u306E\u307F\u3002VM\u3092\u6B62\u3081\u3066\u304B\u3089\u518D\u8D77\u52D5\u3057\u307E\u3059\u3002\u30DB\u30B9\u30C8\u540D\u306E\u5165\u529B\u3068\u30011\u5206\u9593\u306E\u53D6\u308A\u6D88\u3057\u7336\u4E88\u304C\u3042\u308A\u307E\u3059\u3002",
     button: "\u518D\u8D77\u52D5\u2026",
     danger: true,
-    confirmBody: "Mac mini \u672C\u4F53\u3092\u518D\u8D77\u52D5\u3057\u307E\u3059\u3002VM 2\u53F0\u3082\u6B62\u307E\u308A\u3001\u5168\u54E1\u306E Claude Code \u304C\u6570\u5206\u9593\u4F7F\u3048\u306A\u304F\u306A\u308A\u307E\u3059\u3002\u6B21\u306E\u753B\u9762\u3067\u30DB\u30B9\u30C8\u540D\u3092\u5165\u529B\u3057\u307E\u3059\u3002"
+    confirmBody: "Mac mini \u672C\u4F53\u3092\u518D\u8D77\u52D5\u3057\u307E\u3059\u3002VM \u3082\u6B62\u307E\u308A\u3001\u5168\u54E1\u306E Claude Code \u304C\u6570\u5206\u9593\u4F7F\u3048\u306A\u304F\u306A\u308A\u307E\u3059\u3002\u6B21\u306E\u753B\u9762\u3067\u30DB\u30B9\u30C8\u540D\u3092\u5165\u529B\u3057\u307E\u3059\u3002"
   },
   {
     action: "host_power_cycle",
@@ -1273,7 +1273,7 @@ function renderOverview(s, me, audit, serverOffset, opts) {
   const spec = hb ? `CPU ${hb.cpu_cores ?? "\u2014"}\u30B3\u30A2 \xB7 \u30E1\u30E2\u30EA ${hb.mem_total_gb ?? "\u2014"}GB \xB7 SSD ${hb.disk_total_gb ?? "\u2014"}GB` : null;
   const plug = s.plug_enabled ? plugRow(s) : null;
   const plugText = plug ? `\u96FB\u6E90\u30D7\u30E9\u30B0 ${plug.value}${s.plug?.ok && s.plug.watts !== null ? ` \xB7 ${s.plug.watts}W` : ""}` : null;
-  $("hero-sub").innerHTML = html`<span>Mac mini · 3環境</span
+  $("hero-sub").innerHTML = html`<span>Mac mini · ${s.envs.length}環境</span
     ><span>最終受信 ${ago(s.host_received_at, s.now)}</span
     >${spec ? html`<span>${spec}</span>` : ""}${plugText ? html`<span>${plugText}</span>` : ""}`;
   const ov = overall(s);
@@ -1300,7 +1300,7 @@ function renderBanners(s) {
   const bn = $("banners");
   bn.hidden = bs.length === 0;
   bn.innerHTML = bs.map((b) => {
-    const env = ["host", "vm1", "vm2"].find((x) => b.title.includes(`\uFF08${x}\uFF09`));
+    const env = s.envs.map((x) => x.env).find((x) => b.title.includes(`\uFF08${x}\uFF09`));
     return bannerHtml(
       b,
       env ? { href: `/${env}.html`, label: `${PEOPLE[env].name} \u306E\u74B0\u5883\u3092\u958B\u304F` } : void 0
@@ -1344,7 +1344,7 @@ function renderUsage(s) {
   const sh = shares(s);
   const h = hostHeartbeat(s)?.host;
   const down = hostLiveness(s) === "unresponsive" || !h;
-  const order = ["host", "vm1", "vm2"];
+  const order = s.envs.map((e) => e.env);
   const tiles = ["cpu", "mem", "disk"].map((k) => {
     const label = { cpu: "CPU", mem: "\u30E1\u30E2\u30EA", disk: "\u30C7\u30A3\u30B9\u30AF" }[k];
     const vals = order.map((e) => sh[e]?.[k] ?? null);
@@ -1378,17 +1378,20 @@ function renderUsage(s) {
 }
 function renderAlloc(s) {
   const h = hostHeartbeat(s)?.host;
-  const vm1 = s.envs.find((e) => e.env === "vm1")?.vm_view?.alloc;
-  const vm2 = s.envs.find((e) => e.env === "vm2")?.vm_view?.alloc;
+  const vms = s.envs.filter((e) => e.env !== "host").map((e) => ({ env: e.env, alloc: e.vm_view?.alloc }));
   const card = $("alloc-card");
-  if (!h || !vm1 || !vm2) {
+  if (!h || vms.some((v) => !v.alloc)) {
     card.innerHTML = html`<p class="empty">配分は host の報告から表示します（未受信）</p>`;
     return;
   }
   const n = (v, unit) => v === void 0 ? "\u2014" : `${v}${unit}`;
-  const hostMem = h.mem_total_gb !== void 0 && vm1.mem_gb !== void 0 && vm2.mem_gb !== void 0 ? h.mem_total_gb - vm1.mem_gb - vm2.mem_gb : void 0;
-  const hostDisk = h.disk_total_gb !== void 0 && vm1.disk_gb !== void 0 && vm2.disk_gb !== void 0 ? Math.max(0, h.disk_total_gb - vm1.disk_gb - vm2.disk_gb - DISK_RESERVE_GB) : void 0;
-  const hostCpu = h.cpu_cores !== void 0 && vm1.cpu !== void 0 && vm2.cpu !== void 0 ? `\u5168\u30B3\u30A2\u3092\u5171\u6709\uFF08\u6B8B\u308A ${Math.max(0, h.cpu_cores - vm1.cpu - vm2.cpu)}\uFF09` : "\u2014";
+  const sum = (k) => vms.every((v) => v.alloc?.[k] !== void 0) ? vms.reduce((a, v) => a + (v.alloc?.[k] ?? 0), 0) : void 0;
+  const vmMem = sum("mem_gb");
+  const vmDisk = sum("disk_gb");
+  const vmCpu = sum("cpu");
+  const hostMem = h.mem_total_gb !== void 0 && vmMem !== void 0 ? h.mem_total_gb - vmMem : void 0;
+  const hostDisk = h.disk_total_gb !== void 0 && vmDisk !== void 0 ? Math.max(0, h.disk_total_gb - vmDisk - DISK_RESERVE_GB) : void 0;
+  const hostCpu = h.cpu_cores !== void 0 && vmCpu !== void 0 ? vms.length === 0 ? `\u5168\u30B3\u30A2\uFF08${h.cpu_cores}\uFF09` : `\u5168\u30B3\u30A2\u3092\u5171\u6709\uFF08\u6B8B\u308A ${Math.max(0, h.cpu_cores - vmCpu)}\uFF09` : "\u2014";
   const row = (name, cpu, mem, disk, muted = false) => html`<tr class="${muted ? "muted" : ""}">
       <td>${name}</td>
       <td class="r num">${cpu}</td>
@@ -1413,9 +1416,15 @@ function renderAlloc(s) {
         n(h.mem_total_gb, "GB"),
         n(h.disk_total_gb, "GB")
       ),
-      row("Taro\uFF08\u672C\u4F53\uFF09", hostCpu, n(hostMem, "GB"), n(hostDisk, "GB")),
-      row("Hanako\uFF08vm1\uFF09", n(vm1.cpu, "\u30B3\u30A2"), n(vm1.mem_gb, "GB"), n(vm1.disk_gb, "GB")),
-      row("Jiro\uFF08vm2\uFF09", n(vm2.cpu, "\u30B3\u30A2"), n(vm2.mem_gb, "GB"), n(vm2.disk_gb, "GB")),
+      row(`${PEOPLE.host.name}\uFF08\u672C\u4F53\uFF09`, hostCpu, n(hostMem, "GB"), n(hostDisk, "GB")),
+      ...vms.map(
+        (v) => row(
+          shortOf(v.env),
+          n(v.alloc?.cpu, "\u30B3\u30A2"),
+          n(v.alloc?.mem_gb, "GB"),
+          n(v.alloc?.disk_gb, "GB")
+        )
+      ),
       row("\u7A7A\u3051\u3066\u304A\u304F\u5206\uFF08macOS \u7528\uFF09", "\u2014", "\u2014", `${DISK_RESERVE_GB}GB`, true)
     ].join("")
   )}
@@ -1488,6 +1497,8 @@ function renderEnvPage(ctx) {
   const down = hostLiveness(s) === "unresponsive";
   const own = down ? null : e.heartbeat;
   $("env-title").textContent = titleOf(env);
+  const av = document.querySelector(".avatar.lg");
+  if (av) av.textContent = PEOPLE[env].initial;
   const version = own?.claude.version ? `Claude Code ${own.claude.version}${own.claude.channel ? `\uFF08${own.claude.channel}\uFF09` : ""}` : null;
   $("hero-sub").innerHTML = html`<span>${env} · ${p.account}</span>${version ? html`<span>${version}</span>` : ""}<span>最終受信 ${ago(e.agent_received_at, s.now)}</span>`;
   const pill = $("overall");
@@ -1577,7 +1588,7 @@ function renderMetrics(ctx, e) {
       <span class="sub">${sub}</span>
     </div>`;
   $("state-metrics").innerHTML = tile("CPU", sh.cpu, subs[0]) + tile("\u30E1\u30E2\u30EA", sh.mem, subs[1]) + tile("\u30C7\u30A3\u30B9\u30AF", sh.disk, subs[2]);
-  $("metric-note").textContent = env === "host" ? "Mac mini \u5168\u4F53\u306E\u3046\u3061\u3001VM 2\u53F0\u3092\u9664\u3044\u305F\u672C\u4F53\u306E\u5206" : "Mac mini \u5168\u4F53\u306E\u3046\u3061\u3001\u3053\u306E VM \u306E\u5206";
+  $("metric-note").textContent = env === "host" ? s.envs.length > 1 ? "Mac mini \u5168\u4F53\u306E\u3046\u3061\u3001VM \u3092\u9664\u3044\u305F\u672C\u4F53\u306E\u5206" : "Mac mini \u5168\u4F53\u306E\u5024" : "Mac mini \u5168\u4F53\u306E\u3046\u3061\u3001\u3053\u306E VM \u306E\u5206";
 }
 function renderTodo(ctx, e, canUse) {
   const { s } = ctx;
@@ -2120,7 +2131,7 @@ async function checkBuild() {
     if (!res.ok) return;
     const body = await res.json();
     const build = typeof body.build === "string" ? body.build : null;
-    if (!build || build === "nogit-mvz08x8j" || reloadedFor === build) return;
+    if (!build || build === "6565912-mvz0r237" || reloadedFor === build) return;
     reloadedFor = build;
     location.reload();
   } catch {
@@ -2180,12 +2191,23 @@ var timer2;
 async function boot() {
   setupExplainButtons();
   registerServiceWorker();
-  if (page === "guide") return;
+  if (page === "guide") {
+    api.me().then(
+      (m) => applyEnabledEnvs(m.enabled_envs),
+      () => void 0
+    );
+    return;
+  }
   let me;
   try {
     me = await api.me();
   } catch (e) {
     fail(e);
+    return;
+  }
+  applyEnabledEnvs(me.enabled_envs);
+  if (pageEnv && !me.enabled_envs.includes(pageEnv)) {
+    showUnusedEnv(pageEnv);
     return;
   }
   state = { me, status: null, audit: null, serverOffset: 0, auditAll: false };
@@ -2235,6 +2257,21 @@ function render() {
     renderEnvPage({ env: pageEnv, me, s: status, audit, serverOffset });
     selectTab();
   }
+}
+function applyEnabledEnvs(enabled) {
+  for (const env of ["vm1", "vm2"]) {
+    if (enabled.includes(env)) continue;
+    for (const el of document.querySelectorAll(
+      `a[href="/${env}.html"], a[href^="/${env}.html#"], [data-env-only="${env}"]`
+    ))
+      el.hidden = true;
+  }
+}
+function showUnusedEnv(env) {
+  const main = document.querySelector("main");
+  if (!main) return;
+  main.innerHTML = `<section class="panel"><div class="panel-head"><h2>${env} \u306F\u4F7F\u3063\u3066\u3044\u307E\u305B\u3093</h2></div>
+    <p class="empty">\u3053\u306E\u5C0E\u5165\u3067\u306F ${env} \u3092\u4F7F\u3046\u8A2D\u5B9A\u306B\u306A\u3063\u3066\u3044\u307E\u305B\u3093\uFF08MEMBERS_JSON \u306E envs \u306B\u7121\u3044\uFF09\u3002<a href="/">\u4E00\u89A7\u306B\u623B\u308B</a></p></section>`;
 }
 function fail(e) {
   const el = $("load-error");

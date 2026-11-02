@@ -42,7 +42,7 @@ export function renderOverview(
   const plugText = plug
     ? `電源プラグ ${plug.value}${s.plug?.ok && s.plug.watts !== null ? ` · ${s.plug.watts}W` : ''}`
     : null;
-  $('hero-sub').innerHTML = html`<span>Mac mini · 3環境</span
+  $('hero-sub').innerHTML = html`<span>Mac mini · ${s.envs.length}環境</span
     ><span>最終受信 ${ago(s.host_received_at, s.now)}</span
     >${spec ? html`<span>${spec}</span>` : ''}${plugText ? html`<span>${plugText}</span>` : ''}`;
   const ov = overall(s);
@@ -78,7 +78,7 @@ function renderBanners(s: StatusResponse): void {
   bn.innerHTML = bs
     .map((b) => {
       // 「Hanako（vm1）で…」のようにどの環境の話か分かるものは、その環境の画面へ
-      const env = (['host', 'vm1', 'vm2'] as const).find((x) => b.title.includes(`（${x}）`));
+      const env = s.envs.map((x) => x.env).find((x) => b.title.includes(`（${x}）`));
       return bannerHtml(
         b,
         env ? { href: `/${env}.html`, label: `${PEOPLE[env].name} の環境を開く` } : undefined,
@@ -130,7 +130,8 @@ function renderUsage(s: StatusResponse): void {
   const sh = shares(s);
   const h = hostHeartbeat(s)?.host;
   const down = hostLiveness(s) === 'unresponsive' || !h;
-  const order = ['host', 'vm1', 'vm2'] as const;
+  // 使っている環境だけ（VM は 0〜2 台）
+  const order = s.envs.map((e) => e.env);
   const tiles = (['cpu', 'mem', 'disk'] as const).map((k) => {
     const label = { cpu: 'CPU', mem: 'メモリ', disk: 'ディスク' }[k];
     const vals = order.map((e) => sh[e]?.[k] ?? null);
@@ -168,25 +169,34 @@ function renderUsage(s: StatusResponse): void {
 
 function renderAlloc(s: StatusResponse): void {
   const h = hostHeartbeat(s)?.host;
-  const vm1 = s.envs.find((e) => e.env === 'vm1')?.vm_view?.alloc;
-  const vm2 = s.envs.find((e) => e.env === 'vm2')?.vm_view?.alloc;
+  // 使っている VM（0〜2 台）の割り当て
+  const vms = s.envs
+    .filter((e) => e.env !== 'host')
+    .map((e) => ({ env: e.env, alloc: e.vm_view?.alloc }));
   const card = $('alloc-card');
-  if (!h || !vm1 || !vm2) {
+  if (!h || vms.some((v) => !v.alloc)) {
     card.innerHTML = html`<p class="empty">配分は host の報告から表示します（未受信）</p>`;
     return;
   }
   const n = (v: number | undefined, unit: string) => (v === undefined ? '—' : `${v}${unit}`);
-  const hostMem =
-    h.mem_total_gb !== undefined && vm1.mem_gb !== undefined && vm2.mem_gb !== undefined
-      ? h.mem_total_gb - vm1.mem_gb - vm2.mem_gb
+  const sum = (k: 'cpu' | 'mem_gb' | 'disk_gb'): number | undefined =>
+    vms.every((v) => v.alloc?.[k] !== undefined)
+      ? vms.reduce((a, v) => a + (v.alloc?.[k] ?? 0), 0)
       : undefined;
+  const vmMem = sum('mem_gb');
+  const vmDisk = sum('disk_gb');
+  const vmCpu = sum('cpu');
+  const hostMem =
+    h.mem_total_gb !== undefined && vmMem !== undefined ? h.mem_total_gb - vmMem : undefined;
   const hostDisk =
-    h.disk_total_gb !== undefined && vm1.disk_gb !== undefined && vm2.disk_gb !== undefined
-      ? Math.max(0, h.disk_total_gb - vm1.disk_gb - vm2.disk_gb - DISK_RESERVE_GB)
+    h.disk_total_gb !== undefined && vmDisk !== undefined
+      ? Math.max(0, h.disk_total_gb - vmDisk - DISK_RESERVE_GB)
       : undefined;
   const hostCpu =
-    h.cpu_cores !== undefined && vm1.cpu !== undefined && vm2.cpu !== undefined
-      ? `全コアを共有（残り ${Math.max(0, h.cpu_cores - vm1.cpu - vm2.cpu)}）`
+    h.cpu_cores !== undefined && vmCpu !== undefined
+      ? vms.length === 0
+        ? `全コア（${h.cpu_cores}）`
+        : `全コアを共有（残り ${Math.max(0, h.cpu_cores - vmCpu)}）`
       : '—';
   const row = (name: string, cpu: string, mem: string, disk: string, muted = false) =>
     html`<tr class="${muted ? 'muted' : ''}">
@@ -213,9 +223,15 @@ function renderAlloc(s: StatusResponse): void {
             n(h.mem_total_gb, 'GB'),
             n(h.disk_total_gb, 'GB'),
           ),
-          row('Taro（本体）', hostCpu, n(hostMem, 'GB'), n(hostDisk, 'GB')),
-          row('Hanako（vm1）', n(vm1.cpu, 'コア'), n(vm1.mem_gb, 'GB'), n(vm1.disk_gb, 'GB')),
-          row('Jiro（vm2）', n(vm2.cpu, 'コア'), n(vm2.mem_gb, 'GB'), n(vm2.disk_gb, 'GB')),
+          row(`${PEOPLE.host.name}（本体）`, hostCpu, n(hostMem, 'GB'), n(hostDisk, 'GB')),
+          ...vms.map((v) =>
+            row(
+              shortOf(v.env),
+              n(v.alloc?.cpu, 'コア'),
+              n(v.alloc?.mem_gb, 'GB'),
+              n(v.alloc?.disk_gb, 'GB'),
+            ),
+          ),
           row('空けておく分（macOS 用）', '—', '—', `${DISK_RESERVE_GB}GB`, true),
         ].join(''),
       )}

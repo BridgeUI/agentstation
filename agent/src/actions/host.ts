@@ -1,4 +1,4 @@
-import { VM_ENVS, type Command } from '@macmini/shared';
+import type { Command } from '@macmini/shared';
 import { failOutcome, okOutcome, type ActionContext, type ActionOutcome } from './context.js';
 import { tartStop } from './vm.js';
 
@@ -31,12 +31,12 @@ export function hostRestartAllowed(
 }
 
 /**
- * VM 2 台を `tart stop`（disable はしない。再起動後に KeepAlive で戻る）→ 呼び出し側が result を done で
+ * 使っている VM（0〜2 台）を `tart stop`（disable はしない。再起動後に KeepAlive で戻る）→ 呼び出し側が result を done で
  * 先に送る → この関数の後半 shutdown を実行する。そのため 2 段階に分けている。
  */
 export async function hostRestartPrepare(ctx: ActionContext): Promise<ActionOutcome> {
   const failed: string[] = [];
-  for (const vm of VM_ENVS) {
+  for (const vm of ctx.cfg.vms) {
     const r = await tartStop(ctx, vm);
     if (!r.ok) failed.push(vm);
   }

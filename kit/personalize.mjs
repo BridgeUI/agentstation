@@ -67,8 +67,11 @@ need(
 );
 need(RE.label.test(site.label_prefix ?? ''), 'label_prefix（逆ドメイン。例 com.example）');
 need(typeof site.timezone === 'string' && site.timezone.includes('/'), 'timezone（例 Asia/Tokyo）');
+need(site.people?.host, 'people.host（Mac mini 本体を使う人。必須）');
 for (const env of ENVS) {
   const p = site.people?.[env];
+  // VM（vm1 / vm2）は使うものだけ書く。0〜2 台（macOS の使用許諾で、1 台の Mac で動かせる macOS の VM は 2 つまで）
+  if (env !== 'host' && (p === undefined || p === null)) continue;
   need(
     p && RE.name.test(p.name ?? ''),
     `people.${env}.name（空白・記号なしの表示名。24 文字まで）`,
@@ -96,10 +99,20 @@ need(
   'cloudflare.switchbot_plug_device_id',
 );
 if (errors.length) die(`site.json の次の項目を直す:\n  - ${errors.join('\n  - ')}`);
-const names = ENVS.map((e) => site.people[e].name);
-if (new Set(names).size !== 3) die('people の name は 3 人で別にする（画面で区別できなくなる）');
-const logins = ENVS.map((e) => site.people[e].login);
-if (new Set(logins).size !== 3) die('people の login は 3 人で別にする');
+/** 使う環境（site.json の people に書いたもの） */
+const ENABLED = ENVS.filter((e) => site.people[e]);
+/**
+ * 置き換えに使う人の値。使わない VM は今の値（source.json）のまま残す（画面には出ないが、
+ * あとで使うことにしたときに置き換えられるように source.json にも残す）
+ */
+const people = Object.fromEntries(ENVS.map((e) => [e, site.people[e] ?? src.people[e]]));
+const names = ENVS.map((e) => people[e].name);
+if (new Set(names).size !== 3)
+  die(
+    'people の name が重なっている（使わない VM の名前は source.json の値のまま残るので、それとも別にする）',
+  );
+const logins = ENVS.map((e) => people[e].login);
+if (new Set(logins).size !== 3) die('people の login が重なっている');
 
 // ---------- 置き換え規則 ----------
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -113,7 +126,7 @@ function rules(kind) {
     if (from && from !== to) r.push([raw ? from : esc(from), to]);
   };
   // 長いもの・具体的なものを先に
-  if (kind === 'full') for (const e of ENVS) add(src.people[e].email, site.people[e].email);
+  if (kind === 'full') for (const e of ENVS) add(src.people[e].email, people[e].email);
   add(src.dashboard_host, site.dashboard_host);
   add(`${src.access_team}.cloudflareaccess.com`, `${site.access_team}.cloudflareaccess.com`);
   add(`${src.label_prefix}.`, `${site.label_prefix}.`);
@@ -137,7 +150,7 @@ function peopleRules({ logins: withLogins, team }) {
   const r = [];
   for (const e of ENVS) {
     const a = src.people[e];
-    const b = site.people[e];
+    const b = people[e];
     if (a.name !== b.name) r.push([`${W}${esc(a.name)}${WE}`, b.name]);
     if (withLogins && a.login !== b.login) r.push([`${W}${esc(a.login)}${WE}`, b.login]);
   }
@@ -235,10 +248,19 @@ for (const f of files) {
   if (f === 'worker/ui/people.ts') {
     for (const e of ENVS) {
       const re = new RegExp(`(\\n  ${e}: \\{[\\s\\S]*?initial: ')[^']*(')`);
-      text = text.replace(re, `$1${site.people[e].name[0].toUpperCase()}$2`);
+      text = text.replace(re, `$1${people[e].name[0].toUpperCase()}$2`);
     }
   }
   if (f === 'worker/wrangler.toml') text = wrangler(text);
+  if (f === 'worker/public/manifest.webmanifest') {
+    // 使わない VM のショートカットを外す
+    const m = JSON.parse(text);
+    if (Array.isArray(m.shortcuts))
+      m.shortcuts = m.shortcuts.filter(
+        (x) => !ENVS.some((e) => e !== 'host' && !ENABLED.includes(e) && x.url === `/${e}.html`),
+      );
+    text = JSON.stringify(m, null, 2) + '\n';
+  }
 
   if (text !== before) {
     changed.push([f, total]);
@@ -249,7 +271,7 @@ for (const f of files) {
 function wrangler(t) {
   const members = {
     owner: site.people.host.email,
-    envs: Object.fromEntries(ENVS.map((e) => [e, site.people[e].email])),
+    envs: Object.fromEntries(ENABLED.map((e) => [e, site.people[e].email])),
     viewers: site.viewers,
   };
   t = t.replace(/^MEMBERS_JSON = '.*'$/m, `MEMBERS_JSON = '${JSON.stringify(members)}'`);
@@ -285,7 +307,7 @@ if (!DRY) {
   const { _comment } = src;
   writeFileSync(
     join(ROOT, 'kit/source.json'),
-    JSON.stringify({ _comment, ...stripComment(site) }, null, 2) + '\n',
+    JSON.stringify({ _comment, ...stripComment(site), people }, null, 2) + '\n',
   );
 }
 function stripComment(o) {

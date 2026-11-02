@@ -1,7 +1,7 @@
 import { cpus } from 'node:os';
-import { VM_ENVS, type HostHeartbeat, type VmView } from '@macmini/shared';
+import type { HostHeartbeat, VmView } from '@macmini/shared';
 import type { AgentConfig } from '../config.js';
-import { runDf, type Runner } from '../exec.js';
+import { runDf, type ExecResult, type Runner } from '../exec.js';
 import { tartGet, tartIp, tartList, vmStateOf } from './tart.js';
 import { VmProcessResolver } from './vmproc.js';
 import {
@@ -46,8 +46,10 @@ export async function collectHost(
   sampler: CpuSampler,
   resolver: VmProcessResolver,
 ): Promise<HostCollected> {
-  const tart = cfg.tartPath;
-  if (tart === null) throw new Error('host には tart_path が必要');
+  // VM を使わない導入（設定 vms が []）では tart を呼ばない
+  const tart = cfg.vms.length > 0 ? cfg.tartPath : null;
+  if (cfg.vms.length > 0 && tart === null) throw new Error('VM を使う host には tart_path が必要');
+  const skipped: ExecResult = { code: null, stdout: '', stderr: '', timedOut: false };
 
   const [sw, boot, ncpu, memsize, df, vmstat, ps, tartVer, list] = await Promise.all([
     run('/usr/bin/sw_vers', ['-productVersion']),
@@ -57,8 +59,8 @@ export async function collectHost(
     runDf(run),
     run('/usr/bin/vm_stat', []),
     run('/bin/ps', ['-axo', 'pid=,ppid=,%cpu=,rss=,command=']),
-    run(tart, ['--version']),
-    tartList(run, tart),
+    tart ? run(tart, ['--version']) : Promise.resolve(skipped),
+    tart ? tartList(run, tart) : Promise.resolve(null),
   ]);
 
   const host: HostHeartbeat['host'] = {};
@@ -86,7 +88,8 @@ export async function collectHost(
   const pidToVm = await resolver.resolve(run, psRows);
 
   const vms: VmView[] = [];
-  for (const vm of VM_ENVS) {
+  for (const vm of cfg.vms) {
+    if (tart === null) break;
     const name = cfg.vmNames[vm];
     const entry = list?.get(name);
     const listState = list === null ? undefined : (entry?.state ?? 'unknown');

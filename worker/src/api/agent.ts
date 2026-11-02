@@ -1,5 +1,9 @@
 import {
   FORBIDDEN_PATTERNS,
+  VM_ENVS,
+  isHostHeartbeat,
+  parseMembersConfig,
+  type Env,
   isRcDirName,
   isSetupCheckKey,
   isVmEnv,
@@ -48,11 +52,14 @@ export async function postHeartbeat(request: Request, env: Bindings): Promise<Re
   }
   const hb = parseHeartbeat(body, agent.env);
   rejectSecrets(hb);
+  // host が使っていない VM（MEMBERS_JSON.envs に無い）の様子まで送ってきても保存しない
+  const enabled = parseMembersConfig(env.MEMBERS_JSON).enabled;
+  if (isHostHeartbeat(hb)) hb.vms = hb.vms.filter((v) => enabled.includes(v.env));
 
   await saveHeartbeat(env.DB, agent.env, hb, now);
   await upsertSessions(env.DB, agent.env, hb.sessions, now);
   const res = await claimAndAdvise(env, agent.env, now);
-  if (agent.env === 'host') res.peers = await peers(env, now);
+  if (agent.env === 'host') res.peers = await peers(env, now, enabled);
   return json(res);
 }
 
@@ -256,10 +263,15 @@ function rejectSecrets(hb: Heartbeat): void {
   }
 }
 
-async function peers(env: Bindings, now: number): Promise<Partial<Record<VmEnv, PeerSummary>>> {
+async function peers(
+  env: Bindings,
+  now: number,
+  enabled: readonly Env[],
+): Promise<Partial<Record<VmEnv, PeerSummary>>> {
   const rows = await latestHeartbeats(env.DB);
   const out: Partial<Record<VmEnv, PeerSummary>> = {};
-  for (const e of ['vm1', 'vm2'] as const) {
+  for (const e of VM_ENVS) {
+    if (!enabled.includes(e)) continue;
     const r = rows.get(e);
     if (!r) continue;
     const m = r.payload.maintenance;

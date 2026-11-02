@@ -1,7 +1,7 @@
 import { readFileSync, statSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { isEnv, VM_ENVS, type Env, type VmEnv } from '@macmini/shared';
+import { isEnv, isVmEnv, VM_ENVS, type Env, type VmEnv } from '@macmini/shared';
 
 /**
  * エージェントの設定（docs/spec.md 3.6・9章）。
@@ -11,6 +11,7 @@ import { isEnv, VM_ENVS, type Env, type VmEnv } from '@macmini/shared';
  *   "base_url": "https://workstation.example.com",
  *   "claude_path": "/Users/<user>/.local/bin/claude",
  *   "tart_path": "/opt/homebrew/bin/tart",            // host だけ必須
+ *   "vms": ["vm1", "vm2"],                             // host が面倒を見る VM（0〜2 台。省略時は両方。[] なら VM なし）
  *   "codex_app": "/Applications/ChatGPT.app",          // Codex を ChatGPT アプリで動かすとき（任意）
  *   "work_dir": "/Users/<user>/work/rc",               // claude remote-control の作業フォルダ
  *   "rc_debug_log": "/Users/<user>/Library/Logs/claude-rc.log",  // --debug-file のパス
@@ -53,6 +54,8 @@ export interface AgentConfig {
     codex: string | null;
     vm: Record<VmEnv, string>;
   };
+  /** host が面倒を見る VM（MEMBERS_JSON.envs に書いた VM と揃える）。VM を使わない導入では空 */
+  vms: VmEnv[];
   vmPlists: Record<VmEnv, string>;
   vmNames: Record<VmEnv, string>;
   /** VM の固定 IP（docs/verify.md B-2 で静的 IP に決めた）。あれば tart ip より優先する。無い VM は tart ip で引く */
@@ -136,7 +139,9 @@ export function buildConfig(s: ConfigSources): AgentConfig {
     }
   }
 
-  const tartPath = env === 'host' ? absPath(settings, 'tart_path') : null;
+  const vms = parseVms(settings.vms);
+  // VM を 1 台も使わないなら tart は要らない
+  const tartPath = env === 'host' && vms.length > 0 ? absPath(settings, 'tart_path') : null;
   const intervalMs = optNum(settings, 'interval_ms') ?? 60_000;
   if (intervalMs < 10_000) throw new Error('設定 interval_ms は 10000 以上にする');
 
@@ -154,6 +159,7 @@ export function buildConfig(s: ConfigSources): AgentConfig {
     rcDebugLog:
       optAbsPath(settings, 'rc_debug_log') ?? join(home, 'Library', 'Logs', 'claude-rc.log'),
     labels,
+    vms,
     vmPlists,
     vmNames,
     vmIps,
@@ -166,6 +172,16 @@ export function buildConfig(s: ConfigSources): AgentConfig {
     shutdownPath: '/sbin/shutdown',
     sudoPath: '/usr/bin/sudo',
   };
+}
+
+/** 設定 vms。省略時は両方（この設定ができる前の導入と同じ動き） */
+function parseVms(v: unknown): VmEnv[] {
+  if (v === undefined || v === null) return [...VM_ENVS];
+  if (!Array.isArray(v) || !v.every((x) => isVmEnv(x)))
+    throw new Error(
+      `設定 vms は ${VM_ENVS.map((x) => `"${x}"`).join(' / ')} の配列にする（[] で VM なし）`,
+    );
+  return VM_ENVS.filter((x) => (v as unknown[]).includes(x));
 }
 
 function readJson(path: string): Record<string, unknown> {

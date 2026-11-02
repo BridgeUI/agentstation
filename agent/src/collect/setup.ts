@@ -8,6 +8,7 @@ import {
   type SetupCheck,
   type SetupCheckKey,
   type SetupStatus,
+  type VmEnv,
 } from '@macmini/shared';
 import { readClaudeDefaultMode } from '../claudesettings.js';
 import type { AgentConfig } from '../config.js';
@@ -333,7 +334,10 @@ export async function collectSetup(
   run: Runner,
   deps: SetupDeps = realSetupDeps,
 ): Promise<SetupCheck[]> {
-  const keys = setupKeysFor(env);
+  // 使っていない VM の自動起動（launchd.vm1 / vm2）は確かめない
+  const keys = setupKeysFor(env).filter(
+    (k) => !(k === 'launchd.vm1' || k === 'launchd.vm2') || cfg.vms.includes(k.slice(8) as VmEnv),
+  );
   const want = new Set<SetupCheckKey>(keys);
   const home = deps.home();
   const username = deps.username();

@@ -34,34 +34,43 @@
 
 導入者に次を確かめる。足りないものがあれば、そこで止めて用意してもらう。
 
-| 項目                                                                   | 必須 | 確かめ方・補足                                                                                                   |
-| ---------------------------------------------------------------------- | ---- | ---------------------------------------------------------------------------------------------------------------- |
-| Apple Silicon の Mac mini（メモリ 24GB 以上推奨、SSD 空き 200GB 以上） | ○    | `sysctl -n hw.memsize`、`df -h /`。VM 2 台に 6GB ずつ割り当てる（`docs/initial-setup.md` 5.1）                   |
-| この Mac を Claude 専用にしてよいか                                    | ○    | FileVault オフ・自動ログイン・スリープ無効にする（`docs/spec.md` 13章）。日常使いの Mac なら導入しない方がよい   |
-| macOS のユーザー名がオーナーのメールの @ より前と同じ                  | ○    | `whoami`。違うとブラウザ版 SSH に入れない。違えば新しいユーザーを作るか、`site.json` の login とメールを合わせる |
-| 有線 LAN（推奨）とルーターの DHCP 予約                                 | △    | Wi-Fi でも動くが復旧が不安定                                                                                     |
-| Cloudflare アカウントと、DNS を Cloudflare に置いた独自ドメイン        | ○    | ダッシュボードで対象ゾーンが Active。無料プランで足りる                                                          |
-| Cloudflare Zero Trust（無料プラン）とチーム名                          | ○    | Zero Trust を初めて開くとチーム名を決める画面になる。50 人まで無料                                               |
-| ログイン用の Google アカウント（3 人分）                               | ○    | Gmail でも可。Google Cloud で OAuth クライアントを作る（同意画面は **外部** にする。`kit/lessons.md`）           |
-| Claude のアカウント 3 つ（Remote Control が使えるプラン）              | ○    | 各環境で別アカウント。プランは導入者が確認                                                                       |
-| Slack の Incoming Webhook                                              | 任意 | 無ければ通知なしで動く（あとから足せる）                                                                         |
-| SwitchBot プラグミニ                                                   | 任意 | 電源の入れ直し用。無ければプラグの表示が出ないだけ                                                               |
-| Node.js 22 以上、Homebrew                                              | ○    | 無ければ 4 章で入れる                                                                                            |
+| 項目                                                                                                   | 必須 | 確かめ方・補足                                                                                                   |
+| ------------------------------------------------------------------------------------------------------ | ---- | ---------------------------------------------------------------------------------------------------------------- |
+| Apple Silicon の Mac mini（VM 2 台ならメモリ 24GB 以上推奨・SSD 空き 200GB 以上。VM なしなら制限なし） | ○    | `sysctl -n hw.memsize`、`df -h /`。VM 2 台に 6GB ずつ割り当てる（`docs/initial-setup.md` 5.1）                   |
+| この Mac を Claude 専用にしてよいか                                                                    | ○    | FileVault オフ・自動ログイン・スリープ無効にする（`docs/spec.md` 13章）。日常使いの Mac なら導入しない方がよい   |
+| macOS のユーザー名がオーナーのメールの @ より前と同じ                                                  | ○    | `whoami`。違うとブラウザ版 SSH に入れない。違えば新しいユーザーを作るか、`site.json` の login とメールを合わせる |
+| 有線 LAN（推奨）とルーターの DHCP 予約                                                                 | △    | Wi-Fi でも動くが復旧が不安定                                                                                     |
+| Cloudflare アカウントと、DNS を Cloudflare に置いた独自ドメイン                                        | ○    | ダッシュボードで対象ゾーンが Active。無料プランで足りる                                                          |
+| Cloudflare Zero Trust（無料プラン）とチーム名                                                          | ○    | Zero Trust を初めて開くとチーム名を決める画面になる。50 人まで無料                                               |
+| ログイン用の Google アカウント（3 人分）                                                               | ○    | Gmail でも可。Google Cloud で OAuth クライアントを作る（同意画面は **外部** にする。`kit/lessons.md`）           |
+| Claude のアカウント 3 つ（Remote Control が使えるプラン）                                              | ○    | 各環境で別アカウント。プランは導入者が確認                                                                       |
+| Slack の Incoming Webhook                                                                              | 任意 | 無ければ通知なしで動く（あとから足せる）                                                                         |
+| SwitchBot プラグミニ                                                                                   | 任意 | 電源の入れ直し用。無ければプラグの表示が出ないだけ                                                               |
+| Node.js 22 以上、Homebrew                                                                              | ○    | 無ければ 4 章で入れる                                                                                            |
 
-使う人が 3 人いないとき：環境は host・vm1・vm2 の 3 つで固定（コードの前提）。vm1 / vm2 の `email` にオーナーのメールを入れておけば、オーナーが全部を使える。VM を作らないと、その環境は「途絶」のままになり通知が出続けるので、VM は 2 台とも作る。
+VM の台数：**0〜2 台から選べる**（host は必須）。macOS の使用許諾で、1 台の Mac で動かせる macOS の VM は 2 つまで。VM を使わないなら Mac mini 本体（host）だけの導入になり、Tart も要らない。1 台だけなら vm1 か vm2 のどちらか（名前は URL に出るだけなので、ふつうは vm1）。
+
+使わない VM について、手順で省くもの：
+
+- `site.json` の `people` にその VM を書かない
+- サービストークン、SSH と VNC の Access アプリ、DNS、cloudflared の ingress、WARP のターゲットを作らない
+- `AGENT_TOKEN_NAMES` と `VNC_PASSWORDS_JSON` に書かない
+- host のエージェントの `config.json` の `vms` に入れない（VM なしなら `"vms": []`。`tart_path` も要らない）
+- `mac/launchd/<label_prefix>.tart-<vm>.plist` を置かない
+- 6 章をその VM の分だけ飛ばす
 
 聞き取ったら `kit/site.example.json` を `kit/site.json` にコピーして埋める（秘密情報は入らない）。
 
-| キー                      | 意味                                              | 例                                   |
-| ------------------------- | ------------------------------------------------- | ------------------------------------ |
-| `org_name` / `org_footer` | 画面・ガイドに出る組織名 / フッター               | `Example` / `Example Inc.`           |
-| `domain`                  | Cloudflare に置いたドメイン                       | `example.com`                        |
-| `dashboard_host`          | ダッシュボードのホスト名（`domain` の 1 階層下）  | `workstation.example.com`            |
-| `access_team`             | Zero Trust のチーム名                             | `example`                            |
-| `label_prefix`            | launchd のラベルの接頭辞（逆ドメイン）            | `com.example`                        |
-| `timezone`                | 表示用タイムゾーン                                | `Asia/Tokyo`                         |
-| `people.host / vm1 / vm2` | 表示名・macOS ユーザー名・Google ログインのメール | `Taro` / `taro` / `taro@example.com` |
-| `viewers`                 | 閲覧だけの人のメール                              | `[]`                                 |
+| キー                      | 意味                                                                                         | 例                                   |
+| ------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------ |
+| `org_name` / `org_footer` | 画面・ガイドに出る組織名 / フッター                                                          | `Example` / `Example Inc.`           |
+| `domain`                  | Cloudflare に置いたドメイン                                                                  | `example.com`                        |
+| `dashboard_host`          | ダッシュボードのホスト名（`domain` の 1 階層下）                                             | `workstation.example.com`            |
+| `access_team`             | Zero Trust のチーム名                                                                        | `example`                            |
+| `label_prefix`            | launchd のラベルの接頭辞（逆ドメイン）                                                       | `com.example`                        |
+| `timezone`                | 表示用タイムゾーン                                                                           | `Asia/Tokyo`                         |
+| `people.host / vm1 / vm2` | 表示名・macOS ユーザー名・Google ログインのメール。host は必須、vm1 / vm2 は使う VM だけ書く | `Taro` / `taro` / `taro@example.com` |
+| `viewers`                 | 閲覧だけの人のメール                                                                         | `[]`                                 |
 
 SSH / VNC のホスト名は `ssh-host.<domain>`、`vnc-vm1.<domain>` のように自動で決まる。
 
@@ -133,7 +142,7 @@ npm run build:ui && npx wrangler deploy
 
 `kit/lessons.md` の「エージェントの再起動でこのセッションが切れる」に注意（host で Claude Code を動かしながら導入しているとき）。
 
-## 6. VM 2 台（`docs/initial-setup.md` 5 章）
+## 6. VM（使う台数だけ。0 台なら飛ばす。`docs/initial-setup.md` 5 章）
 
 `tart clone` → 構築用の鍵 → `mac/scripts/vm-guest-stage1.sh`〜`stage3.sh`。利用者のパスワードと VNC パスワードは host の `~/.config/macmini-agent/vm1-secrets` などに置き、本人には安全な経路で伝える。IP は vm1 = `192.168.64.10`、vm2 = `192.168.64.11`（Tart の既定のネットワーク。変えると cloudflared・ガイド・エージェントの設定も変える必要がある）。
 

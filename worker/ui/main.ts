@@ -123,13 +123,25 @@ let timer: number | undefined;
 async function boot(): Promise<void> {
   setupExplainButtons();
   registerServiceWorker();
-  if (page === 'guide') return;
+  if (page === 'guide') {
+    // ガイドはログインの確認だけ。使っていない VM へのリンクを隠す（取れなければそのまま）
+    api.me().then(
+      (m) => applyEnabledEnvs(m.enabled_envs),
+      () => undefined,
+    );
+    return;
+  }
 
   let me: MeResponse;
   try {
     me = await api.me();
   } catch (e) {
     fail(e);
+    return;
+  }
+  applyEnabledEnvs(me.enabled_envs);
+  if (pageEnv && !me.enabled_envs.includes(pageEnv)) {
+    showUnusedEnv(pageEnv);
     return;
   }
   state = { me, status: null, audit: null, serverOffset: 0, auditAll: false };
@@ -184,6 +196,28 @@ function render(): void {
     renderEnvPage({ env: pageEnv, me, s: status, audit, serverOffset });
     selectTab();
   }
+}
+
+/**
+ * 使っていない VM（MEMBERS_JSON.envs に無いもの。VM は 0〜2 台）へのリンクを隠す。
+ * ナビ・下のタブバー・ガイドの中の「/vm1.html」へのリンクと、data-env-only="vm1" の要素が対象。
+ */
+function applyEnabledEnvs(enabled: readonly Env[]): void {
+  for (const env of ['vm1', 'vm2'] as const) {
+    if (enabled.includes(env)) continue;
+    for (const el of document.querySelectorAll<HTMLElement>(
+      `a[href="/${env}.html"], a[href^="/${env}.html#"], [data-env-only="${env}"]`,
+    ))
+      el.hidden = true;
+  }
+}
+
+/** 使っていない環境の画面を開いたとき（ブックマークなど） */
+function showUnusedEnv(env: Env): void {
+  const main = document.querySelector<HTMLElement>('main');
+  if (!main) return;
+  main.innerHTML = `<section class="panel"><div class="panel-head"><h2>${env} は使っていません</h2></div>
+    <p class="empty">この導入では ${env} を使う設定になっていません（MEMBERS_JSON の envs に無い）。<a href="/">一覧に戻る</a></p></section>`;
 }
 
 function fail(e: unknown): void {

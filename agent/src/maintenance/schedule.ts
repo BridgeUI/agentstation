@@ -1,4 +1,4 @@
-import type { Env, PeerSummary, VmEnv } from '@macmini/shared';
+import { VM_ENVS, type Env, type PeerSummary, type VmEnv } from '@macmini/shared';
 import { hhmm, jstParts } from '../time.js';
 
 /**
@@ -9,6 +9,8 @@ import { hhmm, jstParts } from '../time.js';
  * | 04:20 | vm2  | vm1 と同じ
  * | 04:30 | host | vm2 の再起動
  * | 04:40 | host | host 自身の更新と Remote Control 再起動
+ *
+ * 使っていない VM（設定 vms に無いもの）の枠は飛ばす。時刻は VM の有無で変えない。
  */
 export type MaintenanceKind = 'self_update' | 'vm_restart';
 
@@ -25,7 +27,7 @@ export interface MaintenanceTask {
 /** 予定時刻からこの時間を過ぎたら、その日は実行しない（起動が遅れて昼に走るのを防ぐ） */
 export const MAINTENANCE_WINDOW_MIN = 90;
 
-export function maintenanceTasksFor(env: Env): MaintenanceTask[] {
+export function maintenanceTasksFor(env: Env, vms: readonly VmEnv[] = VM_ENVS): MaintenanceTask[] {
   switch (env) {
     case 'vm1':
       return [{ key: 'self_update', kind: 'self_update', atMinutes: hhmm(4, 0) }];
@@ -33,10 +35,10 @@ export function maintenanceTasksFor(env: Env): MaintenanceTask[] {
       return [{ key: 'self_update', kind: 'self_update', atMinutes: hhmm(4, 20) }];
     case 'host':
       return [
-        { key: 'vm_restart:vm1', kind: 'vm_restart', vm: 'vm1', atMinutes: hhmm(4, 10) },
-        { key: 'vm_restart:vm2', kind: 'vm_restart', vm: 'vm2', atMinutes: hhmm(4, 30) },
-        { key: 'self_update', kind: 'self_update', atMinutes: hhmm(4, 40) },
-      ];
+        { key: 'vm_restart:vm1', kind: 'vm_restart', vm: 'vm1', atMinutes: hhmm(4, 10) } as const,
+        { key: 'vm_restart:vm2', kind: 'vm_restart', vm: 'vm2', atMinutes: hhmm(4, 30) } as const,
+        { key: 'self_update', kind: 'self_update', atMinutes: hhmm(4, 40) } as const,
+      ].filter((t) => !('vm' in t) || vms.includes(t.vm));
   }
 }
 
@@ -45,9 +47,10 @@ export function dueTasks(
   env: Env,
   nowMs: number,
   runs: Readonly<Record<string, string>>,
+  vms: readonly VmEnv[] = VM_ENVS,
 ): MaintenanceTask[] {
   const { date, minutesOfDay } = jstParts(nowMs);
-  return maintenanceTasksFor(env)
+  return maintenanceTasksFor(env, vms)
     .filter(
       (t) => minutesOfDay >= t.atMinutes && minutesOfDay < t.atMinutes + MAINTENANCE_WINDOW_MIN,
     )

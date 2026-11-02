@@ -251,7 +251,7 @@ export interface Share {
 
 /**
  * 各環境の使用量（Mac mini 全体に対する割合）。
- * host（Taro 本体）は全体から VM 2台の分を引いた値。
+ * host（本体）は全体から VM（0〜2 台）の分を引いた値。
  */
 export function shares(s: StatusResponse): Record<string, Share> {
   const hb = hostHeartbeat(s);

@@ -224,7 +224,7 @@ export class AgentLoop {
       this.enqueueCommands(res.commands);
     }
 
-    for (const task of dueTasks(this.cfg.env, now, this.state.maintenance_runs)) {
+    for (const task of dueTasks(this.cfg.env, now, this.state.maintenance_runs, this.cfg.vms)) {
       this.enqueue(`maintenance:${task.key}`, () =>
         runMaintenanceTask(task, {
           ctx: this.actionContext(),

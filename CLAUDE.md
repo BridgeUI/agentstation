@@ -22,6 +22,8 @@ Mac mini 1台（メモリ24GB・SSD 512GB）で3つの環境（host＋macOS VM 2
 | vm1  | Tart の macOS VM | Hanako           | B                |
 | vm2  | Tart の macOS VM | Jiro             | C                |
 
+VM は 0〜2 台から選べる（macOS の使用許諾で 1 台の Mac につき 2 つまで）。使う VM は `MEMBERS_JSON.envs` に書いたものだけ。3 台以上（2 台目の Mac など）は今後の検討（`docs/spec.md` 13章 #24）。
+
 UIでは「Taro の環境」のように人を主役に見せ、host/vm1/vm2 は補足扱い。ただしホスト名やIDはマシン名（host/vm1/vm2）で固定する（使う人が替わってもURLを変えないため）。
 
 ## 守ること（設計上の前提）

@@ -172,8 +172,11 @@ check_agent() {
 check_agent com.example.agent
 check_agent com.example.claude-rc
 if [ "$ENV_NAME" = host ]; then
-  check_agent com.example.tart-vm1
-  check_agent com.example.tart-vm2
+  # VM は 0〜2 台。plist を置いていない VM は使っていないものとして飛ばす
+  for vm in vm1 vm2; do
+    if [ -f "$HOME_DIR/Library/LaunchAgents/com.example.tart-$vm.plist" ]; then check_agent "com.example.tart-$vm"
+    else SKIP "com.example.tart-$vm" "未配置（この VM は使っていない）"; fi
+  done
 fi
 if [ -f "$HOME_DIR/Library/LaunchAgents/com.example.codex.plist" ]; then check_agent com.example.codex; else SKIP "com.example.codex" "未配置（要確認 verify C-5）"; fi
 if [ "$ENV_NAME" = host ]; then

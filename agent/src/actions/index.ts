@@ -104,15 +104,16 @@ async function dispatch(
     case 'codex_restart':
       return codexRestart(ctx);
     case 'vm_restart':
-      return isVmEnv(cmd.env)
-        ? vmRestart(ctx, cmd.env)
-        : { ok: false, summary: '対象が VM ではない' };
     case 'vm_stop':
-      return isVmEnv(cmd.env) ? vmStop(ctx, cmd.env) : { ok: false, summary: '対象が VM ではない' };
     case 'vm_start':
-      return isVmEnv(cmd.env)
-        ? vmStart(ctx, cmd.env)
-        : { ok: false, summary: '対象が VM ではない' };
+      if (!isVmEnv(cmd.env)) return { ok: false, summary: '対象が VM ではない' };
+      if (!ctx.cfg.vms.includes(cmd.env))
+        return { ok: false, summary: `${cmd.env} はこの Mac の設定（vms）に無い` };
+      return cmd.action === 'vm_restart'
+        ? vmRestart(ctx, cmd.env)
+        : cmd.action === 'vm_stop'
+          ? vmStop(ctx, cmd.env)
+          : vmStart(ctx, cmd.env);
     case 'host_restart': {
       const allowed = hostRestartAllowed(cmd, opts.batch, ctx.now());
       if (!allowed.ok) return { ok: false, summary: allowed.reason };

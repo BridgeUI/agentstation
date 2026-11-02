@@ -1,6 +1,5 @@
 import {
   COMMAND_SPECS,
-  ENVS,
   LIVENESS_DELAYED_MS,
   LIVENESS_UNRESPONSIVE_MS,
   canOperate,
@@ -77,7 +76,8 @@ export async function getStatus(request: Request, env: Bindings): Promise<Respon
   const hostHb = hostRow && isHostHeartbeat(hostRow.payload) ? hostRow.payload : null;
   const members = parseMembersConfig(env.MEMBERS_JSON);
 
-  const envs: EnvStatus[] = ENVS.map((e) => {
+  // 使っている環境だけ（MEMBERS_JSON.envs に書いた VM。0〜2 台）
+  const envs: EnvStatus[] = members.enabled.map((e) => {
     const row = rows.get(e) ?? null;
     let live = liveness(row?.received_at ?? null, now);
     let vm_view: VmView | null = null;
@@ -87,7 +87,8 @@ export async function getStatus(request: Request, env: Bindings): Promise<Respon
       if (hostLive === 'unresponsive') live = 'unresponsive';
     }
     const heartbeat = row?.payload ?? null;
-    if (heartbeat?.setup) heartbeat.setup = resolveUserNameCheck(heartbeat.setup, members.envs[e]);
+    if (heartbeat?.setup)
+      heartbeat.setup = resolveUserNameCheck(heartbeat.setup, members.envs[e] ?? '');
     return {
       env: e,
       agent_received_at: row?.received_at ?? null,
@@ -178,6 +179,8 @@ export async function postCommand(request: Request, env: Bindings): Promise<Resp
   const action = body.action;
   if (!id || !UUID_RE.test(id)) throw new HttpError(400, 'id は UUID');
   if (!isEnv(target)) throw new HttpError(400, 'env が不正');
+  if (!me.enabled_envs.includes(target))
+    throw new HttpError(400, `${target} はこの導入で使っていない`);
   if (!isCommandAction(action)) throw new HttpError(400, 'action がホワイトリストにない');
 
   const spec = COMMAND_SPECS[action];
@@ -251,6 +254,7 @@ export async function getSessions(request: Request, env: Bindings): Promise<Resp
   const url = new URL(request.url);
   const e = url.searchParams.get('env');
   if (!isEnv(e)) throw new HttpError(400, 'env が不正');
+  if (!me.enabled_envs.includes(e)) throw new HttpError(400, `${e} はこの導入で使っていない`);
   if (!canOperate(me, e)) throw new HttpError(403, 'この環境のセッションを見る権限がない');
   return json(await listSessions(env.DB, e, Date.now()));
 }
@@ -332,6 +336,7 @@ export async function getVncPassword(request: Request, env: Bindings): Promise<R
   const url = new URL(request.url);
   const e = url.searchParams.get('env');
   if (!isEnv(e)) throw new HttpError(400, 'env が不正');
+  if (!me.enabled_envs.includes(e)) throw new HttpError(400, `${e} はこの導入で使っていない`);
   if (!canOperate(me, e)) throw new HttpError(403, 'この環境の VNC パスワードを見る権限がない');
   const pw = vncPasswordFor(env.VNC_PASSWORDS_JSON, e);
   if (!pw) {

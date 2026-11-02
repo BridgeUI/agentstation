@@ -21,17 +21,17 @@
 
 ## `site.json` の項目
 
-| キー                      | 意味                                                                                           | 例                                   |
-| ------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------ |
-| `org_name` / `org_footer` | 画面・ガイドに出る組織名 / フッター                                                            | `Example` / `Example Inc.`           |
-| `domain`                  | Cloudflare に置いたドメイン                                                                    | `example.com`                        |
-| `dashboard_host`          | ダッシュボードのホスト名（`domain` の 1 階層下）                                               | `workstation.example.com`            |
-| `access_team`             | Zero Trust のチーム名                                                                          | `example`                            |
-| `label_prefix`            | launchd のラベルの接頭辞（逆ドメイン）                                                         | `com.example`                        |
-| `timezone`                | 表示用タイムゾーン                                                                             | `Asia/Tokyo`                         |
-| `people.host / vm1 / vm2` | 表示名・macOS のユーザー名・Google ログインのメール                                            | `Taro` / `taro` / `taro@example.com` |
-| `viewers`                 | 閲覧だけの人のメール                                                                           | `[]`                                 |
-| `cloudflare.*`            | D1 の ID、Access の AUD タグ 2 つ、SwitchBot の deviceId（分かった段階で埋める。秘密ではない） |                                      |
+| キー                      | 意味                                                                                                  | 例                                   |
+| ------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| `org_name` / `org_footer` | 画面・ガイドに出る組織名 / フッター                                                                   | `Example` / `Example Inc.`           |
+| `domain`                  | Cloudflare に置いたドメイン                                                                           | `example.com`                        |
+| `dashboard_host`          | ダッシュボードのホスト名（`domain` の 1 階層下）                                                      | `workstation.example.com`            |
+| `access_team`             | Zero Trust のチーム名                                                                                 | `example`                            |
+| `label_prefix`            | launchd のラベルの接頭辞（逆ドメイン）                                                                | `com.example`                        |
+| `timezone`                | 表示用タイムゾーン                                                                                    | `Asia/Tokyo`                         |
+| `people.host / vm1 / vm2` | 表示名・macOS のユーザー名・Google ログインのメール。host は必須、vm1 / vm2 は使う VM だけ（0〜2 台） | `Taro` / `taro` / `taro@example.com` |
+| `viewers`                 | 閲覧だけの人のメール                                                                                  | `[]`                                 |
+| `cloudflare.*`            | D1 の ID、Access の AUD タグ 2 つ、SwitchBot の deviceId（分かった段階で埋める。秘密ではない）        |                                      |
 
 SSH / VNC のホスト名は `ssh-host.<domain>`、`vnc-vm1.<domain>` のように決まる。
 

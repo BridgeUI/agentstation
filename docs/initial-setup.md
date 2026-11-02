@@ -10,14 +10,14 @@ Mac mini（host）と VM 2 台（vm1 / vm2）を実際に構築して確定し�
 
 ## 0. 全体の流れ
 
-| 段階 | やること | 誰が | 済んだかの確認 |
-| --- | --- | --- | --- |
-| 1 | Cloudflare（Zero Trust・Tunnel・WARP）の設定 | Taro（Claude が Chrome で操作） | `https://workstation.example.com/` に Google でログインできる |
-| 2 | Worker と D1 のデプロイ、secret の登録 | Taro | `/api/health` が 200、`wrangler secret list` に 3 つ |
-| 3 | host の基礎設定・ツール・常駐 | Taro（一部はシステム設定で手動） | ダッシュボードの Taro の環境で基礎設定が全部 OK |
-| 4 | VM の作成と基礎設定（スクリプト 3 本） | Taro | Hanako / Jiro の環境に報告が届き、基礎設定が OK |
-| 5 | 利用者の初期設定（Claude ログイン・Remote Control の同意） | Hanako / Jiro 本人 | ダッシュボードで Remote Control が「接続中」 |
-| 6 | 復旧の試験（再起動・電源断） | Taro | `docs/runbook.md` 8 章に記録 |
+| 段階 | やること                                                   | 誰が                             | 済んだかの確認                                                |
+| ---- | ---------------------------------------------------------- | -------------------------------- | ------------------------------------------------------------- |
+| 1    | Cloudflare（Zero Trust・Tunnel・WARP）の設定               | Taro（Claude が Chrome で操作）  | `https://workstation.example.com/` に Google でログインできる |
+| 2    | Worker と D1 のデプロイ、secret の登録                     | Taro                             | `/api/health` が 200、`wrangler secret list` に 3 つ          |
+| 3    | host の基礎設定・ツール・常駐                              | Taro（一部はシステム設定で手動） | ダッシュボードの Taro の環境で基礎設定が全部 OK               |
+| 4    | VM の作成と基礎設定（スクリプト 3 本）                     | Taro                             | Hanako / Jiro の環境に報告が届き、基礎設定が OK               |
+| 5    | 利用者の初期設定（Claude ログイン・Remote Control の同意） | Hanako / Jiro 本人               | ダッシュボードで Remote Control が「接続中」                  |
+| 6    | 復旧の試験（再起動・電源断）                               | Taro                             | `docs/runbook.md` 8 章に記録                                  |
 
 所要時間の目安：1 が 2〜3 時間（初回のみ）、3 が 1〜2 時間、4 が VM 1 台あたり 20 分（ダウンロード込み）。
 
@@ -25,6 +25,7 @@ Mac mini（host）と VM 2 台（vm1 / vm2）を実際に構築して確定し�
 
 - FileVault は **オフ**（自動ログインのため）。最後の復旧手段はスマートプラグ
 - cloudflared は **LaunchDaemon**（root）。それ以外の常駐は利用者の LaunchAgent
+- VM は **0〜2 台**（macOS の使用許諾で 1 台の Mac につき 2 つまで）。使う VM は `MEMBERS_JSON.envs` に書いたものだけ。使わない VM の分は、この文書の VM に関する手順（Access アプリ・トークン・DNS・ingress・5 章）を飛ばす（`docs/spec.md` 13章 #24）
 - VM の IP は **ゲスト内で静的**：vm1 = `192.168.64.10`、vm2 = `192.168.64.11`、ゲートウェイ・DNS = `192.168.64.1`（Tart の NAT）
 - macOS のユーザー名は Access のメールの @ より前：`taro` / `hanako` / `jiro`
 - Remote Control の作業フォルダは **`~/workspace`**（全プロジェクトの親。ホーム直下は信頼が保存されない）
@@ -36,16 +37,16 @@ Mac mini（host）と VM 2 台（vm1 / vm2）を実際に構築して確定し�
 
 手順書：`cloudflare/access/setup.md`、`cloudflare/cloudflared/setup.md`、`cloudflare/warp/setup.md`、`cloudflare/worker/setup.md`。作るもの：
 
-| 種類 | 名前 | 中身 |
-| --- | --- | --- |
-| Zero Trust のチーム | `example` | ログイン URL `example.cloudflareaccess.com` |
-| IdP | Google | Google Cloud プロジェクト `example-access`（組織 example.com）の OAuth クライアント `cloudflare-access`。同意画面は「外部」（Gmail の人も入れる。Google Workspace の組織内だけで使うなら「内部」でもよい） |
-| Access アプリ（Self-hosted） | `macmini-dashboard` | `workstation.example.com`。ポリシー「macmini members」（taro / hanako / jiro）。AUD は `worker/wrangler.toml` の `ACCESS_AUD_DASHBOARD` |
-| Access アプリ（Self-hosted） | `macmini-agent-api` | `workstation.example.com/api/agent`。Service Auth。サービストークン `macmini-agent-host / vm1 / vm2`。AUD は `ACCESS_AUD_AGENT` |
-| Access アプリ（SSH / VNC） | `ssh-host`, `vnc-host`, `ssh-vm1`, `vnc-vm1`, `ssh-vm2`, `vnc-vm2` | マシンごとの再利用ポリシー「macmini host users / vm1 users / vm2 users」 |
-| SSH CA | ssh-host / ssh-vm1 / ssh-vm2 用 ＋ Infrastructure 用 | 公開鍵は `cloudflare/access/ca/`。各マシンの `/etc/ssh/ca.pub` は `ca.pub.host / .vm1 / .vm2` |
-| Tunnel | `macmini` | 認証情報は host の `/etc/cloudflared/<UUID>.json`。ingress は `cloudflare/cloudflared/config.yml.example` と同じ。内部ネットワーク `192.168.64.0/24` をルート |
-| WARP | 端末登録ポリシー「macmini members」、Split Tunnel（Exclude から `192.168.64.0/24` を外す）、Gateway プロキシ TCP、Targets（host .1 / vm1 .10 / vm2 .11）、Infrastructure アプリ `macmini-ssh` | TLS 復号はオフ（クライアントに「証明書がない」警告が出るが実害なし） |
+| 種類                         | 名前                                                                                                                                                                                          | 中身                                                                                                                                                                                                       |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Zero Trust のチーム          | `example`                                                                                                                                                                                     | ログイン URL `example.cloudflareaccess.com`                                                                                                                                                                |
+| IdP                          | Google                                                                                                                                                                                        | Google Cloud プロジェクト `example-access`（組織 example.com）の OAuth クライアント `cloudflare-access`。同意画面は「外部」（Gmail の人も入れる。Google Workspace の組織内だけで使うなら「内部」でもよい） |
+| Access アプリ（Self-hosted） | `macmini-dashboard`                                                                                                                                                                           | `workstation.example.com`。ポリシー「macmini members」（taro / hanako / jiro）。AUD は `worker/wrangler.toml` の `ACCESS_AUD_DASHBOARD`                                                                    |
+| Access アプリ（Self-hosted） | `macmini-agent-api`                                                                                                                                                                           | `workstation.example.com/api/agent`。Service Auth。サービストークン `macmini-agent-host / vm1 / vm2`。AUD は `ACCESS_AUD_AGENT`                                                                            |
+| Access アプリ（SSH / VNC）   | `ssh-host`, `vnc-host`, `ssh-vm1`, `vnc-vm1`, `ssh-vm2`, `vnc-vm2`                                                                                                                            | マシンごとの再利用ポリシー「macmini host users / vm1 users / vm2 users」                                                                                                                                   |
+| SSH CA                       | ssh-host / ssh-vm1 / ssh-vm2 用 ＋ Infrastructure 用                                                                                                                                          | 公開鍵は `cloudflare/access/ca/`。各マシンの `/etc/ssh/ca.pub` は `ca.pub.host / .vm1 / .vm2`                                                                                                              |
+| Tunnel                       | `macmini`                                                                                                                                                                                     | 認証情報は host の `/etc/cloudflared/<UUID>.json`。ingress は `cloudflare/cloudflared/config.yml.example` と同じ。内部ネットワーク `192.168.64.0/24` をルート                                              |
+| WARP                         | 端末登録ポリシー「macmini members」、Split Tunnel（Exclude から `192.168.64.0/24` を外す）、Gateway プロキシ TCP、Targets（host .1 / vm1 .10 / vm2 .11）、Infrastructure アプリ `macmini-ssh` | TLS 復号はオフ（クライアントに「証明書がない」警告が出るが実害なし）                                                                                                                                       |
 
 注意：サービストークンの JWT の `common_name` は **トークン名ではなく Client ID**。`AGENT_TOKEN_NAMES` には Client ID を入れる。
 
@@ -61,11 +62,11 @@ cd worker && npm run build:ui && npx wrangler d1 migrations apply macmini-dashbo
 
 secret（値はリポジトリに書かない。`wrangler secret put <名前>` に標準入力で渡す）：
 
-| 名前 | 中身 | 状態 |
-| --- | --- | --- |
-| `AGENT_TOKEN_NAMES` | `{"host":"<Client ID>","vm1":"…","vm2":"…"}` | 必須 |
+| 名前                 | 中身                                                               | 状態 |
+| -------------------- | ------------------------------------------------------------------ | ---- |
+| `AGENT_TOKEN_NAMES`  | `{"host":"<Client ID>","vm1":"…","vm2":"…"}`                       | 必須 |
 | `VNC_PASSWORDS_JSON` | `{"host":"…","vm1":"…","vm2":"…"}`（7 章のファイルから組み立てる） | 必須 |
-| `SLACK_WEBHOOK_URL` | example の Slack の Incoming Webhook | 任意 |
+| `SLACK_WEBHOOK_URL`  | example の Slack の Incoming Webhook                               | 任意 |
 
 `[vars]`（`MEMBERS_JSON`、`ACCESS_TEAM_DOMAIN`、AUD 2 つ、`TZ_DISPLAY`）は `worker/wrangler.toml` に書いてある。ローカル開発は `docs/dev.md`。
 
@@ -102,14 +103,14 @@ mkdir -p ~/.tart ~/workspace && tmutil addexclusion ~/.tart
 
 ### 4.3 ツール
 
-| ツール | 入れ方 | 置き場（plist が参照する絶対パス） |
-| --- | --- | --- |
-| Homebrew | 公式スクリプト | `/opt/homebrew/bin/brew` |
-| Node 24 | `brew install nodebrew` → `nodebrew setup` → `nodebrew install v24` → `nodebrew use v24` → `~/.zprofile` に PATH | `~/.nodebrew/current/bin/node` |
-| Tart | **公式リリースの tart.app を `~/Applications/` に置く**（brew の formula が壊れていた）。`ln -s ~/Applications/tart.app/Contents/MacOS/tart ~/.local/bin/tart` | `~/Applications/tart.app/Contents/MacOS/tart` |
-| cloudflared | `brew install cloudflared` | `/opt/homebrew/bin/cloudflared` |
-| Claude Code | `curl -fsSL https://claude.ai/install.sh \| bash` | `~/.local/bin/claude` |
-| Claude の設定 | `~/.claude/settings.json` に `{"env":{"DISABLE_AUTOUPDATER":"1"},"autoUpdatesChannel":"stable"}` | ー |
+| ツール        | 入れ方                                                                                                                                                         | 置き場（plist が参照する絶対パス）            |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| Homebrew      | 公式スクリプト                                                                                                                                                 | `/opt/homebrew/bin/brew`                      |
+| Node 24       | `brew install nodebrew` → `nodebrew setup` → `nodebrew install v24` → `nodebrew use v24` → `~/.zprofile` に PATH                                               | `~/.nodebrew/current/bin/node`                |
+| Tart          | **公式リリースの tart.app を `~/Applications/` に置く**（brew の formula が壊れていた）。`ln -s ~/Applications/tart.app/Contents/MacOS/tart ~/.local/bin/tart` | `~/Applications/tart.app/Contents/MacOS/tart` |
+| cloudflared   | `brew install cloudflared`                                                                                                                                     | `/opt/homebrew/bin/cloudflared`               |
+| Claude Code   | `curl -fsSL https://claude.ai/install.sh \| bash`                                                                                                              | `~/.local/bin/claude`                         |
+| Claude の設定 | `~/.claude/settings.json` に `{"env":{"DISABLE_AUTOUPDATER":"1"},"autoUpdatesChannel":"stable"}`                                                               | ー                                            |
 
 ### 4.4 Claude のログインと初回の同意（一度だけ、対話で）
 
@@ -136,6 +137,7 @@ cd ~/workspace/macmini-dashboard/agent && npm run build
   "rc_debug_log": "/Users/taro/Library/Logs/claude-rc.log",
   "labels": { "codex": null },
   "tart_vms_dir": "/Users/taro/.tart/vms",
+  "vms": ["vm1", "vm2"],
   "vm_ips": { "vm1": "192.168.64.10", "vm2": "192.168.64.11" },
   "interval_ms": 60000
 }
@@ -145,11 +147,11 @@ cd ~/workspace/macmini-dashboard/agent && npm run build
 
 ### 4.6 launchd（LaunchAgent。`mac/launchd/` のテンプレートを `__USER__` 置換して `~/Library/LaunchAgents/` へ）
 
-| ラベル | 中身 | 備考 |
-| --- | --- | --- |
-| `com.example.agent` | エージェント `--env=host` | ー |
-| `com.example.claude-rc` | `claude-rc.sh` → `claude remote-control`。WorkingDirectory は `~/workspace` | 4.4 を先に |
-| `com.example.tart-vm1` / `-vm2` | `tart run --no-graphics vmN` | **tart のパスをテンプレートの `/opt/homebrew/bin/tart` から実機の場所に置き換える**。VM を作ってから登録する（無い VM を KeepAlive で起動し続けると失敗ループ） |
+| ラベル                          | 中身                                                                        | 備考                                                                                                                                                            |
+| ------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `com.example.agent`             | エージェント `--env=host`                                                   | ー                                                                                                                                                              |
+| `com.example.claude-rc`         | `claude-rc.sh` → `claude remote-control`。WorkingDirectory は `~/workspace` | 4.4 を先に                                                                                                                                                      |
+| `com.example.tart-vm1` / `-vm2` | `tart run --no-graphics vmN`                                                | **tart のパスをテンプレートの `/opt/homebrew/bin/tart` から実機の場所に置き換える**。VM を作ってから登録する（無い VM を KeepAlive で起動し続けると失敗ループ） |
 
 ```bash
 launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.agent.plist
@@ -182,6 +184,8 @@ sudo install -m 0644 -o root -g wheel cloudflare/access/ca/ca.pub.host /etc/ssh/
 - `launchctl print gui/$(id -u)/com.example.claude-rc` が running、ダッシュボードの Remote Control が「接続中」
 
 ## 5. VM（vm1 = Hanako、vm2 = Jiro）
+
+VM を使わない導入ではこの章を飛ばす。1 台だけなら、その VM の分だけ行う。host のエージェントの `config.json` の `vms` を、使う VM に合わせる（例 `["vm1"]`）。
 
 すべて host のターミナルから。画面は使わない（最後の 1 画面だけ画面共有で）。例は vm1。vm2 は `vm1→vm2`、`hanako→jiro`、`Hanako→Jiro`、`.10→.11` に読み替える。
 
@@ -298,16 +302,16 @@ vm2 は `.11`、`vm2-secrets`、`jiro`。期待：`smbd が 445 で待受中`、
 
 ## 7. 秘密情報の置き場
 
-| もの | 置き場 | 備考 |
-| --- | --- | --- |
-| host のサービストークン | host `~/.config/macmini-agent/token.json`（600） | ー |
-| VM のサービストークン | 各 VM の同じ場所。host の `tokens/` は配布後に削除 | ー |
+| もの                                       | 置き場                                                                                    | 備考                                                                                       |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| host のサービストークン                    | host `~/.config/macmini-agent/token.json`（600）                                          | ー                                                                                         |
+| VM のサービストークン                      | 各 VM の同じ場所。host の `tokens/` は配布後に削除                                        | ー                                                                                         |
 | 利用者のログインパスワード・VNC パスワード | host `~/.config/macmini-agent/vm1-secrets`、`vm2-secrets`（600。`USER_PW=` と `VNC_PW=`） | 本人に伝える。チャットやダッシュボードには出さない（VNC だけは「パスワードを表示」で出す） |
-| host の VNC パスワード | host `~/.config/macmini-agent/host-secrets`（600） | システム設定の画面共有で同じ値にする |
-| VNC パスワード（画面表示用） | Worker の secret `VNC_PASSWORDS_JSON` | 上の 3 ファイルから組み立てて `wrangler secret put` |
-| Tunnel の認証情報 | host `/etc/cloudflared/<UUID>.json`（root、600） | ー |
-| Slack Webhook | Worker の secret `SLACK_WEBHOOK_URL` | 任意 |
-| 構築用 SSH 鍵 | host `~/.ssh/id_ed25519`（VM の admin と利用者の authorized_keys に公開鍵） | 構築専用。終わったら外してよい |
+| host の VNC パスワード                     | host `~/.config/macmini-agent/host-secrets`（600）                                        | システム設定の画面共有で同じ値にする                                                       |
+| VNC パスワード（画面表示用）               | Worker の secret `VNC_PASSWORDS_JSON`                                                     | 上の 3 ファイルから組み立てて `wrangler secret put`                                        |
+| Tunnel の認証情報                          | host `/etc/cloudflared/<UUID>.json`（root、600）                                          | ー                                                                                         |
+| Slack Webhook                              | Worker の secret `SLACK_WEBHOOK_URL`                                                      | 任意                                                                                       |
+| 構築用 SSH 鍵                              | host `~/.ssh/id_ed25519`（VM の admin と利用者の authorized_keys に公開鍵）               | 構築専用。終わったら外してよい                                                             |
 
 ## 8. 構築後の確認
 

@@ -39,7 +39,7 @@
             <h1>一覧</h1>
             <span class="pill s-none" id="overall"><span class="dot"></span>読み込み中</span>
           </div>
-          <p class="meta" id="hero-sub"><span>Mac mini · 3環境</span><span>最終受信 —</span></p>
+          <p class="meta" id="hero-sub"><span>Mac mini</span><span>最終受信 —</span></p>
         </div>
         <div class="right">
           <span class="small muted">5秒ごとに自動更新</span>
@@ -106,7 +106,7 @@
         <div class="panel-note" data-explain-body="envs" hidden>
           VM は Mac mini の上で動くため、そのままでは host の値に VM
           の分が混ざります。Taro（本体）は、全体から VM
-          2台の分を引いた値です。基礎設定に未完了があるときは、状態の下に件数を出します。
+          の分を引いた値です。基礎設定に未完了があるときは、状態の下に件数を出します。
         </div>
       </section>
 
@@ -136,8 +136,8 @@
           <div class="tools">
             <span class="legend" aria-hidden="true">
               <span><i class="p1"></i>Taro（本体）</span>
-              <span><i class="p2"></i>Hanako</span>
-              <span><i class="p3"></i>Jiro</span>
+              <span data-env-only="vm1"><i class="p2"></i>Hanako</span>
+              <span data-env-only="vm2"><i class="p3"></i>Jiro</span>
               <span><i class="free"></i>空き</span>
             </span>
             <div class="seg" role="group" aria-label="表示" data-seg="total">

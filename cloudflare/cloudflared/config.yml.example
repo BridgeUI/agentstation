@@ -30,6 +30,7 @@ ingress:
   - hostname: vnc-host.example.com
     service: tcp://localhost:5900
 
+  # 使わない VM の 2 行（ssh-/vnc-）は消す（VM は 0〜2 台。docs/spec.md 13章 #24）
   # vm1（Hanako）
   - hostname: ssh-vm1.example.com
     service: ssh://192.168.64.10:22

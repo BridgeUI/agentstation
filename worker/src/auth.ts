@@ -1,5 +1,6 @@
 import {
   isEnv,
+  isEnabledEnv,
   parseMembersConfig,
   resolveIdentity,
   type Env,
@@ -184,15 +185,20 @@ export async function authenticateAgent(request: Request, env: Bindings): Promis
     env.ACCESS_AUD_AGENT,
   );
   if (!claims.common_name) throw new HttpError(401, 'サービストークンが必要');
-  const names = parseTokenNames(env.AGENT_TOKEN_NAMES);
+  const members = parseMembersConfig(env.MEMBERS_JSON);
+  const names = parseTokenNames(env.AGENT_TOKEN_NAMES, members.enabled);
   const found = (Object.entries(names) as [Env, string][]).find(
     ([, n]) => n === claims.common_name,
   );
   if (!found) throw new HttpError(403, 'このサービストークンはどの環境にも対応していない');
+  // 使っていない VM（MEMBERS_JSON.envs に無い）からの報告は受け付けない
+  if (!isEnabledEnv(members, found[0]))
+    throw new HttpError(403, `${found[0]} はこの導入で使っていない（MEMBERS_JSON.envs に無い）`);
   return { env: found[0], tokenName: found[1] };
 }
 
-function parseTokenNames(json: string): Record<Env, string> {
+/** AGENT_TOKEN_NAMES。使う環境（enabled）の分は必須。使っていない VM の分は書いてあっても無視される */
+function parseTokenNames(json: string, enabled: readonly Env[]): Partial<Record<Env, string>> {
   let raw: unknown;
   try {
     raw = JSON.parse(json);
@@ -201,14 +207,14 @@ function parseTokenNames(json: string): Record<Env, string> {
   }
   if (typeof raw !== 'object' || raw === null)
     throw new HttpError(500, 'AGENT_TOKEN_NAMES の形が不正');
-  const out = {} as Record<Env, string>;
+  const out: Partial<Record<Env, string>> = {};
   for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
     if (!isEnv(k) || typeof v !== 'string' || v.length === 0) {
       throw new HttpError(500, `AGENT_TOKEN_NAMES の ${k} が不正`);
     }
     out[k] = v;
   }
-  for (const e of ['host', 'vm1', 'vm2'] as const) {
+  for (const e of enabled) {
     if (!out[e]) throw new HttpError(500, `AGENT_TOKEN_NAMES に ${e} がない`);
   }
   return out;

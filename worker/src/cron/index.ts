@@ -1,5 +1,6 @@
 import {
   VM_ENVS,
+  parseMembersConfig,
   isHostHeartbeat,
   type Command,
   type CommandAction,
@@ -149,7 +150,8 @@ async function checkConditions(env: Bindings, notifier: Notifier, now: Millis): 
   const rows = await latestHeartbeats(env.DB);
   const states = await listNotifyStates(env.DB);
   const plug = switchbotConfig(env) ? await getPlugStatus(env.DB) : null;
-  const { desired, evaluated } = await evaluate(env.DB, rows, now, plug);
+  const enabled = parseMembersConfig(env.MEMBERS_JSON).enabled;
+  const { desired, evaluated } = await evaluate(env.DB, rows, now, plug, enabled);
 
   for (const key of evaluated) {
     const cond = desired.get(key);
@@ -214,6 +216,7 @@ async function evaluate(
   rows: Map<Env, HeartbeatRow>,
   now: Millis,
   plug: PlugView | null = null,
+  enabled: readonly Env[] = ['host', ...VM_ENVS],
 ): Promise<Evaluation> {
   const desired = new Map<string, Condition>();
   const evaluated = new Set<string>();
@@ -301,7 +304,9 @@ async function evaluate(
   // host 自身の Remote Control
   rcConditions('host', hostRow.payload, desired, evaluated);
 
+  // 使っている VM だけ（MEMBERS_JSON.envs に書いたもの）
   for (const vm of VM_ENVS) {
+    if (!enabled.includes(vm)) continue;
     const view = hostHb.vms.find((v) => v.env === vm);
     const vmRow = rows.get(vm);
     if (view) {

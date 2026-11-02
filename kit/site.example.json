@@ -1,5 +1,5 @@
 {
-  "_comment": "kit/site.json にコピーして埋める。秘密情報（パスワード・トークン・Webhook URL）はここに書かない。メールアドレスと cloudflare の値は秘密ではない（cloudflare は分かった段階で埋める。空なら wrangler.toml の今の値のまま）。",
+  "_comment": "kit/site.json にコピーして埋める。秘密情報（パスワード・トークン・Webhook URL）はここに書かない。people の host は必須、vm1 / vm2 は使う VM だけ書く（0〜2 台）。メールアドレスと cloudflare の値は秘密ではない（cloudflare は分かった段階で埋める。空なら wrangler.toml の今の値のまま）。",
   "org_name": "Example",
   "org_footer": "Example Inc.",
   "domain": "example.com",

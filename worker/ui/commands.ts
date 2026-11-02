@@ -60,7 +60,7 @@ const HOST_OPS: OpDef[] = [
     button: '再起動…',
     danger: true,
     confirmBody:
-      'Mac mini 本体を再起動します。VM 2台も止まり、全員の Claude Code が数分間使えなくなります。次の画面でホスト名を入力します。',
+      'Mac mini 本体を再起動します。VM も止まり、全員の Claude Code が数分間使えなくなります。次の画面でホスト名を入力します。',
   },
   {
     action: 'host_power_cycle',

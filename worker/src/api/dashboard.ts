@@ -45,6 +45,7 @@ import {
 import type { Bindings } from '../env.js';
 import { HttpError, json, obj, readJson, str } from '../http.js';
 import { switchbotConfig } from '../switchbot.js';
+import { machineName } from '../site.js';
 
 /** 画面向け API（docs/spec.md 4.1）。認証は Access JWT、権限はここで判定する。 */
 
@@ -109,9 +110,9 @@ export async function getStatus(request: Request, env: Bindings): Promise<Respon
 
   const alerts: StatusAlert[] = [];
   if (hostLive === 'unresponsive')
-    alerts.push({ level: 'error', message: 'Mac が応答していません' });
+    alerts.push({ level: 'error', message: `${machineName()} が応答していません` });
   else if (hostLive === 'delayed')
-    alerts.push({ level: 'warn', message: 'Mac からの報告が遅れています' });
+    alerts.push({ level: 'warn', message: `${machineName()} からの報告が遅れています` });
   else if (hostLive === 'unknown')
     alerts.push({ level: 'warn', message: 'まだ報告を受け取っていません' });
   if (hostHb) {
@@ -150,7 +151,10 @@ export async function getStatus(request: Request, env: Bindings): Promise<Respon
     plug.state === 'off' &&
     (active.get('host')?.action ?? null) !== 'host_power_cycle'
   )
-    alerts.push({ level: 'error', message: 'スマートプラグがオフ（Mac に電源が来ていない）' });
+    alerts.push({
+      level: 'error',
+      message: `スマートプラグがオフ（${machineName()} に電源が来ていない）`,
+    });
 
   const res: StatusResponse = {
     now,
@@ -284,7 +288,7 @@ async function checkPowerCycleAllowed(env: Bindings, now: Millis): Promise<void>
   if (live === 'ok' || live === 'delayed') {
     throw new HttpError(
       409,
-      'Mac からの報告が届いているので電源は切らない。10 分以上途絶えたときだけ使える（先に「ホストを再起動」を）',
+      `${machineName()} からの報告が届いているので電源は切らない。10 分以上途絶えたときだけ使える（先に「ホストを再起動」を）`,
     );
   }
 }

@@ -15,6 +15,14 @@ export interface Person {
 }
 
 export interface SiteConfig {
+  /** 画面のタイトル（ナビの左上・ブラウザのタブ）。既定 agentstation */
+  app_name: string;
+  /** ホーム画面に置いたときの短い名前。既定は app_name */
+  app_short_name: string;
+  /** 本体の呼び方（「Mac が応答していません」「Mac 全体」など）。既定 Mac */
+  machine_name: string;
+  /** ログイン画面の案内に出すメールのドメイン（「会社の Google アカウント（@example.com）」）。無ければ出さない */
+  login_email_domain: string;
   org_name: string;
   org_footer: string;
   /** SSH / VNC のホスト名の親（ssh-host.<domain>） */
@@ -31,10 +39,14 @@ const NAME_RE = /^[^\s"'<>`\\]{1,24}$/;
 const LOGIN_RE = /^[a-z_][a-z0-9_-]{0,31}$/;
 const HOST_RE = /^(?=.{4,253}$)([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/;
 const TEAM_RE = /^[a-z0-9][a-z0-9-]{0,62}$/;
-const TEXT_RE = /^[^<>"`\\]{0,60}$/;
+const TEXT_RE = /^[^<>"'`\\]{1,60}$/;
 
 /** SITE_JSON が無いときの値（ローカル開発・テスト用の見本と同じ） */
 export const DEFAULT_SITE: SiteConfig = {
+  app_name: 'agentstation',
+  app_short_name: 'agentstation',
+  machine_name: 'Mac',
+  login_email_domain: '',
   org_name: 'Example',
   org_footer: 'Example Inc.',
   domain: 'example.com',
@@ -81,7 +93,14 @@ export function parseSiteConfig(json: string | undefined): SiteConfig {
       throw new Error(`SITE_JSON.people.${env}.login が不正（macOS の短いユーザー名）`);
     people[env] = { name: o.name, login: o.login };
   }
+  const opt = (k: string, re: RegExp, fallback: string): string =>
+    r[k] === undefined || r[k] === null || r[k] === '' ? fallback : text(k, re);
+  const app_name = opt('app_name', TEXT_RE, DEFAULT_SITE.app_name);
   return {
+    app_name,
+    app_short_name: opt('app_short_name', TEXT_RE, app_name),
+    machine_name: opt('machine_name', TEXT_RE, DEFAULT_SITE.machine_name),
+    login_email_domain: opt('login_email_domain', HOST_RE, ''),
     org_name: text('org_name', TEXT_RE),
     org_footer: text('org_footer', TEXT_RE),
     domain: text('domain', HOST_RE),

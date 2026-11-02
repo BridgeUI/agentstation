@@ -10,6 +10,7 @@ export default tseslint.config(
       '**/.wrangler/**',
       'design/**',
       'worker/public/**',
+      'worker/.deploy-assets/**',
     ],
   },
   js.configs.recommended,

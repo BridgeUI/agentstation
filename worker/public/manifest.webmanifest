@@ -1,6 +1,6 @@
 {
   "name": "agentstation",
-  "short_name": "Mac",
+  "short_name": "agentstation",
   "description": "Mac の macOS 環境（本体と VM）の状態確認と操作",
   "lang": "ja",
   "start_url": "/",

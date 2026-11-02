@@ -8,7 +8,7 @@ import type {
   VmView,
 } from '@agentstation/shared';
 import { isHostHeartbeat } from '@agentstation/shared';
-import { PEOPLE, shortOf } from './people.js';
+import { SITE, PEOPLE, shortOf } from './people.js';
 import { minutesSince } from './format.js';
 
 /** 表示の判定（docs/spec.md 5章）。サーバーが返した liveness と中身を合わせて決める。 */
@@ -118,7 +118,7 @@ export function banners(
     if (a.message.startsWith('Mac') && hostLive === 'unresponsive' && s.host_received_at !== null) {
       out.push({
         level: 'error',
-        title: `Macから${minutesSince(s.host_received_at, s.now)}分間応答がありません`,
+        title: `${SITE.machine_name}から${minutesSince(s.host_received_at, s.now)}分間応答がありません`,
         body: outageAdvice(s),
       });
     } else if (hostLive === 'unknown' && a.level === 'warn' && s.host_received_at === null) {
@@ -154,7 +154,8 @@ function outageAdvice(s: StatusResponse): string {
   if (!p.ok) {
     return 'スマートプラグにも届きません。自宅の回線かルーターが落ちている可能性が高いので、戻るまで待ってください。';
   }
-  if (p.state === 'off') return `スマートプラグがオフで、Mac に電源が来ていません。${cycle}`;
+  if (p.state === 'off')
+    return `スマートプラグがオフで、${SITE.machine_name} に電源が来ていません。${cycle}`;
   if (p.state === 'on' && p.watts !== null && p.watts < PLUG_OFF_LIKE_W) {
     return `プラグはオンですが消費電力がほぼ 0 です。Mac が落ちている可能性があります。${cycle}`;
   }

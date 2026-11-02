@@ -341,6 +341,10 @@ function summarizeSetup(checks) {
 
 // ../shared/src/site.ts
 var DEFAULT_SITE = {
+  app_name: "agentstation",
+  app_short_name: "agentstation",
+  machine_name: "Mac",
+  login_email_domain: "",
   org_name: "Example",
   org_footer: "Example Inc.",
   domain: "example.com",
@@ -728,7 +732,7 @@ function banners(s) {
     if (a.message.startsWith("Mac") && hostLive === "unresponsive" && s.host_received_at !== null) {
       out.push({
         level: "error",
-        title: `Mac\u304B\u3089${minutesSince(s.host_received_at, s.now)}\u5206\u9593\u5FDC\u7B54\u304C\u3042\u308A\u307E\u305B\u3093`,
+        title: `${SITE.machine_name}\u304B\u3089${minutesSince(s.host_received_at, s.now)}\u5206\u9593\u5FDC\u7B54\u304C\u3042\u308A\u307E\u305B\u3093`,
         body: outageAdvice(s)
       });
     } else if (hostLive === "unknown" && a.level === "warn" && s.host_received_at === null) {
@@ -757,7 +761,8 @@ function outageAdvice(s) {
   if (!p.ok) {
     return "\u30B9\u30DE\u30FC\u30C8\u30D7\u30E9\u30B0\u306B\u3082\u5C4A\u304D\u307E\u305B\u3093\u3002\u81EA\u5B85\u306E\u56DE\u7DDA\u304B\u30EB\u30FC\u30BF\u30FC\u304C\u843D\u3061\u3066\u3044\u308B\u53EF\u80FD\u6027\u304C\u9AD8\u3044\u306E\u3067\u3001\u623B\u308B\u307E\u3067\u5F85\u3063\u3066\u304F\u3060\u3055\u3044\u3002";
   }
-  if (p.state === "off") return `\u30B9\u30DE\u30FC\u30C8\u30D7\u30E9\u30B0\u304C\u30AA\u30D5\u3067\u3001Mac \u306B\u96FB\u6E90\u304C\u6765\u3066\u3044\u307E\u305B\u3093\u3002${cycle}`;
+  if (p.state === "off")
+    return `\u30B9\u30DE\u30FC\u30C8\u30D7\u30E9\u30B0\u304C\u30AA\u30D5\u3067\u3001${SITE.machine_name} \u306B\u96FB\u6E90\u304C\u6765\u3066\u3044\u307E\u305B\u3093\u3002${cycle}`;
   if (p.state === "on" && p.watts !== null && p.watts < PLUG_OFF_LIKE_W) {
     return `\u30D7\u30E9\u30B0\u306F\u30AA\u30F3\u3067\u3059\u304C\u6D88\u8CBB\u96FB\u529B\u304C\u307B\u307C 0 \u3067\u3059\u3002Mac \u304C\u843D\u3061\u3066\u3044\u308B\u53EF\u80FD\u6027\u304C\u3042\u308A\u307E\u3059\u3002${cycle}`;
   }
@@ -925,15 +930,15 @@ var HOST_OPS = [
     desc: "\u30AA\u30FC\u30CA\u30FC\u306E\u307F\u3002VM\u3092\u6B62\u3081\u3066\u304B\u3089\u518D\u8D77\u52D5\u3057\u307E\u3059\u3002\u30DB\u30B9\u30C8\u540D\u306E\u5165\u529B\u3068\u30011\u5206\u9593\u306E\u53D6\u308A\u6D88\u3057\u7336\u4E88\u304C\u3042\u308A\u307E\u3059\u3002",
     button: "\u518D\u8D77\u52D5\u2026",
     danger: true,
-    confirmBody: "Mac \u672C\u4F53\u3092\u518D\u8D77\u52D5\u3057\u307E\u3059\u3002VM \u3082\u6B62\u307E\u308A\u3001\u5168\u54E1\u306E Claude Code \u304C\u6570\u5206\u9593\u4F7F\u3048\u306A\u304F\u306A\u308A\u307E\u3059\u3002\u6B21\u306E\u753B\u9762\u3067\u30DB\u30B9\u30C8\u540D\u3092\u5165\u529B\u3057\u307E\u3059\u3002"
+    confirmBody: `${SITE.machine_name} \u672C\u4F53\u3092\u518D\u8D77\u52D5\u3057\u307E\u3059\u3002VM \u3082\u6B62\u307E\u308A\u3001\u5168\u54E1\u306E Claude Code \u304C\u6570\u5206\u9593\u4F7F\u3048\u306A\u304F\u306A\u308A\u307E\u3059\u3002\u6B21\u306E\u753B\u9762\u3067\u30DB\u30B9\u30C8\u540D\u3092\u5165\u529B\u3057\u307E\u3059\u3002`
   },
   {
     action: "host_power_cycle",
     name: "\u96FB\u6E90\u3092\u5165\u308C\u76F4\u3059\uFF08\u30B9\u30DE\u30FC\u30C8\u30D7\u30E9\u30B0\uFF09",
-    desc: "\u30AA\u30FC\u30CA\u30FC\u306E\u307F\u3002\u6700\u5F8C\u306E\u624B\u6BB5\u3067\u3059\u3002Mac \u306E\u96FB\u6E90\u30B1\u30FC\u30D6\u30EB\u306B\u631F\u3093\u3060 SwitchBot \u306E\u30D7\u30E9\u30B0\u3092\u30AA\u30D5\u306B\u3057\u3001\u7D04 1 \u5206\u5F8C\u306B\u30AA\u30F3\u306B\u3057\u307E\u3059\u3002\u30A8\u30FC\u30B8\u30A7\u30F3\u30C8\u3082 SSH \u3082\u52B9\u304B\u306A\u3044\u3068\u304D\u3060\u3051\u4F7F\u3048\u307E\u3059\uFF08\u5831\u544A\u304C 10 \u5206\u4EE5\u4E0A\u9014\u7D76\u3048\u3066\u3044\u308B\u3068\u304D\u3060\u3051\u53D7\u3051\u4ED8\u3051\u307E\u3059\uFF09\u3002\u5F37\u5236\u96FB\u6E90\u65AD\u306A\u306E\u3067\u3001\u30C7\u30A3\u30B9\u30AF\u3084\u66F8\u304D\u304B\u3051\u306E\u30D5\u30A1\u30A4\u30EB\u304C\u58CA\u308C\u308B\u3053\u3068\u304C\u3042\u308A\u307E\u3059\u3002",
+    desc: `\u30AA\u30FC\u30CA\u30FC\u306E\u307F\u3002\u6700\u5F8C\u306E\u624B\u6BB5\u3067\u3059\u3002${SITE.machine_name} \u306E\u96FB\u6E90\u30B1\u30FC\u30D6\u30EB\u306B\u631F\u3093\u3060 SwitchBot \u306E\u30D7\u30E9\u30B0\u3092\u30AA\u30D5\u306B\u3057\u3001\u7D04 1 \u5206\u5F8C\u306B\u30AA\u30F3\u306B\u3057\u307E\u3059\u3002\u30A8\u30FC\u30B8\u30A7\u30F3\u30C8\u3082 SSH \u3082\u52B9\u304B\u306A\u3044\u3068\u304D\u3060\u3051\u4F7F\u3048\u307E\u3059\uFF08\u5831\u544A\u304C 10 \u5206\u4EE5\u4E0A\u9014\u7D76\u3048\u3066\u3044\u308B\u3068\u304D\u3060\u3051\u53D7\u3051\u4ED8\u3051\u307E\u3059\uFF09\u3002\u5F37\u5236\u96FB\u6E90\u65AD\u306A\u306E\u3067\u3001\u30C7\u30A3\u30B9\u30AF\u3084\u66F8\u304D\u304B\u3051\u306E\u30D5\u30A1\u30A4\u30EB\u304C\u58CA\u308C\u308B\u3053\u3068\u304C\u3042\u308A\u307E\u3059\u3002`,
     button: "\u5165\u308C\u76F4\u3059\u2026",
     danger: true,
-    confirmBody: "Mac \u306E\u96FB\u6E90\u3092\u5F37\u5236\u7684\u306B\u5207\u3063\u3066\u5165\u308C\u76F4\u3057\u307E\u3059\u3002\u4FDD\u5B58\u3057\u3066\u3044\u306A\u3044\u4F5C\u696D\u306F\u5931\u308F\u308C\u3001VM \u306E\u30A4\u30E1\u30FC\u30B8\u304C\u58CA\u308C\u308B\u3053\u3068\u3082\u3042\u308A\u307E\u3059\u3002\u623B\u308B\u307E\u3067 3\u301C5 \u5206\u304B\u304B\u308A\u307E\u3059\u3002\u6B21\u306E\u753B\u9762\u3067\u30DB\u30B9\u30C8\u540D\u3092\u5165\u529B\u3057\u307E\u3059\u3002"
+    confirmBody: `${SITE.machine_name} \u306E\u96FB\u6E90\u3092\u5F37\u5236\u7684\u306B\u5207\u3063\u3066\u5165\u308C\u76F4\u3057\u307E\u3059\u3002\u4FDD\u5B58\u3057\u3066\u3044\u306A\u3044\u4F5C\u696D\u306F\u5931\u308F\u308C\u3001VM \u306E\u30A4\u30E1\u30FC\u30B8\u304C\u58CA\u308C\u308B\u3053\u3068\u3082\u3042\u308A\u307E\u3059\u3002\u623B\u308B\u307E\u3067 3\u301C5 \u5206\u304B\u304B\u308A\u307E\u3059\u3002\u6B21\u306E\u753B\u9762\u3067\u30DB\u30B9\u30C8\u540D\u3092\u5165\u529B\u3057\u307E\u3059\u3002`
   }
 ];
 var VM_OPS = [
@@ -1281,7 +1286,7 @@ function renderOverview(s, me, audit, serverOffset, opts) {
   const spec = hb ? `CPU ${hb.cpu_cores ?? "\u2014"}\u30B3\u30A2 \xB7 \u30E1\u30E2\u30EA ${hb.mem_total_gb ?? "\u2014"}GB \xB7 SSD ${hb.disk_total_gb ?? "\u2014"}GB` : null;
   const plug = s.plug_enabled ? plugRow(s) : null;
   const plugText = plug ? `\u96FB\u6E90\u30D7\u30E9\u30B0 ${plug.value}${s.plug?.ok && s.plug.watts !== null ? ` \xB7 ${s.plug.watts}W` : ""}` : null;
-  $("hero-sub").innerHTML = html`<span>Mac · ${s.envs.length}環境</span
+  $("hero-sub").innerHTML = html`<span>${SITE.machine_name} · ${s.envs.length}環境</span
     ><span>最終受信 ${ago(s.host_received_at, s.now)}</span
     >${spec ? html`<span>${spec}</span>` : ""}${plugText ? html`<span>${plugText}</span>` : ""}`;
   const ov = overall(s);
@@ -1419,7 +1424,7 @@ function renderAlloc(s) {
       ${raw(
     [
       row(
-        "Mac \u5168\u4F53",
+        `${SITE.machine_name} \u5168\u4F53`,
         n(h.cpu_cores, "\u30B3\u30A2"),
         n(h.mem_total_gb, "GB"),
         n(h.disk_total_gb, "GB")
@@ -1505,7 +1510,7 @@ function renderEnvPage(ctx) {
   const down = hostLiveness(s) === "unresponsive";
   const own = down ? null : e.heartbeat;
   $("env-title").textContent = titleOf(env);
-  document.title = `${titleOf(env)} \xB7 agentstation`;
+  document.title = `${titleOf(env)} \xB7 ${SITE.app_name}`;
   const av = document.querySelector(".avatar.lg");
   if (av) av.textContent = PEOPLE[env].initial;
   const version = own?.claude.version ? `Claude Code ${own.claude.version}${own.claude.channel ? `\uFF08${own.claude.channel}\uFF09` : ""}` : null;
@@ -1595,7 +1600,7 @@ function renderMetrics(ctx, e) {
       <span class="sub">${sub}</span>
     </div>`;
   $("state-metrics").innerHTML = tile("CPU", sh.cpu, subs[0]) + tile("\u30E1\u30E2\u30EA", sh.mem, subs[1]) + tile("\u30C7\u30A3\u30B9\u30AF", sh.disk, subs[2]);
-  $("metric-note").textContent = env === "host" ? s.envs.length > 1 ? "Mac \u5168\u4F53\u306E\u3046\u3061\u3001VM \u3092\u9664\u3044\u305F\u672C\u4F53\u306E\u5206" : "Mac \u5168\u4F53\u306E\u5024" : "Mac \u5168\u4F53\u306E\u3046\u3061\u3001\u3053\u306E VM \u306E\u5206";
+  $("metric-note").textContent = env === "host" ? s.envs.length > 1 ? `${SITE.machine_name} \u5168\u4F53\u306E\u3046\u3061\u3001VM \u3092\u9664\u3044\u305F\u672C\u4F53\u306E\u5206` : `${SITE.machine_name} \u5168\u4F53\u306E\u5024` : `${SITE.machine_name} \u5168\u4F53\u306E\u3046\u3061\u3001\u3053\u306E VM \u306E\u5206`;
 }
 function renderTodo(ctx, e, canUse) {
   const { s } = ctx;
@@ -1918,7 +1923,7 @@ function renderOps(ctx, e, canUse) {
       why = "\u30B9\u30DE\u30FC\u30C8\u30D7\u30E9\u30B0\u304C\u672A\u8A2D\u5B9A\u3067\u3059\uFF08Worker \u306E secret\uFF09";
     } else if (op.action === "host_power_cycle" && hostLive !== "unresponsive" && hostLive !== "unknown") {
       disabled = true;
-      why = "Mac \u304B\u3089\u306E\u5831\u544A\u304C\u5C4A\u3044\u3066\u3044\u308B\u3042\u3044\u3060\u306F\u4F7F\u3048\u307E\u305B\u3093\uFF08\u5148\u306B\u300C\u30DB\u30B9\u30C8\u3092\u518D\u8D77\u52D5\u300D\uFF09";
+      why = `${SITE.machine_name} \u304B\u3089\u306E\u5831\u544A\u304C\u5C4A\u3044\u3066\u3044\u308B\u3042\u3044\u3060\u306F\u4F7F\u3048\u307E\u305B\u3093\uFF08\u5148\u306B\u300C\u30DB\u30B9\u30C8\u3092\u518D\u8D77\u52D5\u300D\uFF09`;
     } else if (op.action === "vm_start" && vmState === "running") {
       disabled = true;
       why = "\u3059\u3067\u306B\u8D77\u52D5\u3057\u3066\u3044\u307E\u3059";
@@ -2138,7 +2143,7 @@ async function checkBuild() {
     if (!res.ok) return;
     const body = await res.json();
     const build = typeof body.build === "string" ? body.build : null;
-    if (!build || build === "9807fcb-mvz2j6e3" || reloadedFor === build) return;
+    if (!build || build === "2de8886-mvz774cg" || reloadedFor === build) return;
     reloadedFor = build;
     location.reload();
   } catch {
@@ -2290,6 +2295,14 @@ function fillSiteDom() {
   set("[data-team]", () => SITE.access_team);
   set("[data-org]", () => SITE.org_name);
   set("[data-org-footer]", () => SITE.org_footer);
+  set("[data-app]", () => SITE.app_name);
+  set("[data-machine]", () => SITE.machine_name);
+  set("[data-email-domain]", () => SITE.login_email_domain || SITE.domain);
+  set(
+    "[data-login-domain]",
+    () => SITE.login_email_domain ? `\uFF08@${SITE.login_email_domain}\uFF09` : ""
+  );
+  document.title = document.title.replace(/agentstation$/, SITE.app_name);
   for (const img of document.querySelectorAll('img[src="/logo.png"]'))
     img.alt = SITE.org_name;
   document.documentElement.classList.add("site-ready");

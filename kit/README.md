@@ -33,6 +33,9 @@
 | `people.host / vm1 / vm2`                     | 表示名・macOS のユーザー名・Google ログインのメール。host は必須、vm1 / vm2 は使う VM だけ（0〜2 台）                                                                          | `Taro` / `taro` / `taro@example.com` |
 | `viewers`                                     | 閲覧だけの人のメール                                                                                                                                                           | `[]`                                 |
 | `cloudflare.*`                                | D1 の ID、Access の AUD タグ 2 つ、SwitchBot の deviceId（分かった段階で埋める。秘密ではない）                                                                                 |                                      |
+| `app_name` / `app_short_name`                 | 画面のタイトル / ホーム画面に置いたときの短い名前（任意。既定 `agentstation`）                                                                                                 | `Mac mini 監視ダッシュボード`        |
+| `machine_name`                                | 本体の呼び方（「Mac が応答していません」「Mac 全体」の Mac。任意。既定 `Mac`）                                                                                                 | `Mac mini`                           |
+| `login_email_domain`                          | ログイン画面の案内に出すメールのドメイン（任意。書かなければ出さない）                                                                                                         | `example.com`                        |
 | `assets_dir`                                  | 画面の素材（`logo.png`、`icons/`、`guide/*.jpg` など）を差し替えるフォルダ。`site.json` の実体からの相対パスで、`worker/public` と同じ並びで置く。デプロイのときだけ上書きする | `assets`                             |
 | `cloudflare.worker_name` / `d1_database_name` | 以前の名前で動いている Worker・D1 を引き継ぐときだけ書く（既定は `agentstation`）                                                                                              |                                      |
 

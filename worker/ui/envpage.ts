@@ -64,7 +64,7 @@ export function renderEnvPage(ctx: EnvPageCtx): void {
   const own = down ? null : e.heartbeat;
 
   $('env-title').textContent = titleOf(env);
-  document.title = `${titleOf(env)} · agentstation`;
+  document.title = `${titleOf(env)} · ${SITE.app_name}`;
   const av = document.querySelector<HTMLElement>('.avatar.lg');
   if (av) av.textContent = PEOPLE[env].initial;
   const version = own?.claude.version
@@ -190,9 +190,9 @@ function renderMetrics(ctx: EnvPageCtx, e: EnvStatus): void {
   $('metric-note').textContent =
     env === 'host'
       ? s.envs.length > 1
-        ? 'Mac 全体のうち、VM を除いた本体の分'
-        : 'Mac 全体の値'
-      : 'Mac 全体のうち、この VM の分';
+        ? `${SITE.machine_name} 全体のうち、VM を除いた本体の分`
+        : `${SITE.machine_name} 全体の値`
+      : `${SITE.machine_name} 全体のうち、この VM の分`;
 }
 
 /** 要対応：他のタブで直すものへの入口 */
@@ -580,7 +580,7 @@ function renderOps(ctx: EnvPageCtx, e: EnvStatus, canUse: boolean): void {
       hostLive !== 'unknown'
     ) {
       disabled = true;
-      why = 'Mac からの報告が届いているあいだは使えません（先に「ホストを再起動」）';
+      why = `${SITE.machine_name} からの報告が届いているあいだは使えません（先に「ホストを再起動」）`;
     } else if (op.action === 'vm_start' && vmState === 'running') {
       disabled = true;
       why = 'すでに起動しています';

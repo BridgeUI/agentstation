@@ -105,7 +105,10 @@ html:not(.site-ready) [data-domain],
 html:not(.site-ready) [data-dashboard-host],
 html:not(.site-ready) [data-team],
 html:not(.site-ready) [data-org],
-html:not(.site-ready) [data-org-footer] {
+html:not(.site-ready) [data-org-footer],
+html:not(.site-ready) [data-app],
+html:not(.site-ready) [data-machine],
+html:not(.site-ready) [data-email-domain] {
   visibility: hidden;
 }
 .sr-only {

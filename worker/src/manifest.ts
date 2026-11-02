@@ -17,6 +17,8 @@ export async function manifest(request: Request, env: Bindings): Promise<Respons
     url: `/${e}.html`,
     icons: icon,
   }));
+  m.name = site.app_name;
+  m.short_name = site.app_short_name;
   m.description = `${site.org_name} の Claude Code 環境の状態確認と操作`;
   return new Response(JSON.stringify(m), {
     headers: { 'content-type': 'application/manifest+json', 'cache-control': 'no-store' },

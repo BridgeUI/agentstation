@@ -15,6 +15,7 @@ import {
   switchbotConfig,
   type SwitchBotConfig,
 } from '../switchbot.js';
+import { machineName } from '../site.js';
 
 /**
  * スマートプラグ（docs/spec.md 6.1）。1 分ごとの Cron から呼ぶ。
@@ -106,7 +107,7 @@ function reason(e: unknown): string {
 export function plugLine(p: PlugView | null): string | null {
   if (!p) return null;
   if (!p.ok) return '電源プラグ: 届かない（自宅の回線かルーターが落ちている可能性）';
-  if (p.state === 'off') return '電源プラグ: オフ（Mac に電源が来ていない）';
+  if (p.state === 'off') return `電源プラグ: オフ（${machineName()} に電源が来ていない）`;
   if (p.state === 'on' && p.watts !== null) {
     return p.watts < PLUG_OFF_LIKE_W
       ? `電源プラグ: オン・${p.watts}W（消費電力がほぼ 0。Mac が落ちている可能性）`

@@ -7,6 +7,9 @@
 //
 // kit/site.json は実体を別の場所（private な場所）に置いてシンボリックリンクにしてもよい。
 // site.json の任意の項目：
+//   app_name / app_short_name  画面のタイトル / ホーム画面での短い名前（既定 agentstation）
+//   machine_name               本体の呼び方（「Mac が応答していません」の Mac。既定 Mac）
+//   login_email_domain         ログイン画面の案内に出すメールのドメイン（「会社の Google アカウント（@example.com）」）
 //   assets_dir                 画面の素材を差し替えるフォルダ（site.json の実体からの相対パス）。
 //                              logo.png、icons/*.png、guide/*.jpg など worker/public と同じ並びで置くと、
 //                              デプロイのときだけ上書きする（リポジトリのファイルは書き換えない）
@@ -88,6 +91,15 @@ need(
   Array.isArray(site.viewers) && site.viewers.every((v) => RE.email.test(v)),
   'viewers（閲覧だけの人のメールの配列。空でよい）',
 );
+for (const k of ['app_name', 'app_short_name', 'machine_name'])
+  need(
+    site[k] === undefined || RE.text.test(site[k]),
+    `${k}（60 文字まで。記号 < > " ' \` \\ なし）`,
+  );
+need(
+  !site.login_email_domain || RE.host.test(site.login_email_domain),
+  'login_email_domain（例 example.com）',
+);
 const cf = site.cloudflare ?? {};
 const NAME_RE = /^[a-z0-9][a-z0-9-]{0,62}$/;
 need(!cf.worker_name || NAME_RE.test(cf.worker_name), 'cloudflare.worker_name（小文字・数字・-）');
@@ -130,6 +142,12 @@ const members = {
   viewers: site.viewers,
 };
 const siteJson = {
+  // 任意の項目は書いてあるときだけ（無ければ Worker 側の既定：agentstation、Mac、案内のドメインなし）
+  ...Object.fromEntries(
+    ['app_name', 'app_short_name', 'machine_name', 'login_email_domain']
+      .filter((k) => site[k])
+      .map((k) => [k, site[k]]),
+  ),
   org_name: site.org_name,
   org_footer: site.org_footer,
   domain: site.domain,

@@ -9,7 +9,7 @@ import { ApiFailure, api } from './api.js';
 import { confirmDialog, hostnameDialog, sessionDialog } from './dialogs.js';
 import { html } from './dom.js';
 import { ACTION_LABEL, actionLabel } from './judge.js';
-import { titleOf } from './people.js';
+import { SITE, titleOf } from './people.js';
 
 /**
  * 操作の実行。確認ダイアログ → POST /api/commands → 画面を更新。
@@ -64,17 +64,15 @@ const HOST_OPS: OpDef[] = [
     desc: 'オーナーのみ。VMを止めてから再起動します。ホスト名の入力と、1分間の取り消し猶予があります。',
     button: '再起動…',
     danger: true,
-    confirmBody:
-      'Mac 本体を再起動します。VM も止まり、全員の Claude Code が数分間使えなくなります。次の画面でホスト名を入力します。',
+    confirmBody: `${SITE.machine_name} 本体を再起動します。VM も止まり、全員の Claude Code が数分間使えなくなります。次の画面でホスト名を入力します。`,
   },
   {
     action: 'host_power_cycle',
     name: '電源を入れ直す（スマートプラグ）',
-    desc: 'オーナーのみ。最後の手段です。Mac の電源ケーブルに挟んだ SwitchBot のプラグをオフにし、約 1 分後にオンにします。エージェントも SSH も効かないときだけ使えます（報告が 10 分以上途絶えているときだけ受け付けます）。強制電源断なので、ディスクや書きかけのファイルが壊れることがあります。',
+    desc: `オーナーのみ。最後の手段です。${SITE.machine_name} の電源ケーブルに挟んだ SwitchBot のプラグをオフにし、約 1 分後にオンにします。エージェントも SSH も効かないときだけ使えます（報告が 10 分以上途絶えているときだけ受け付けます）。強制電源断なので、ディスクや書きかけのファイルが壊れることがあります。`,
     button: '入れ直す…',
     danger: true,
-    confirmBody:
-      'Mac の電源を強制的に切って入れ直します。保存していない作業は失われ、VM のイメージが壊れることもあります。戻るまで 3〜5 分かかります。次の画面でホスト名を入力します。',
+    confirmBody: `${SITE.machine_name} の電源を強制的に切って入れ直します。保存していない作業は失われ、VM のイメージが壊れることもあります。戻るまで 3〜5 分かかります。次の画面でホスト名を入力します。`,
   },
 ];
 

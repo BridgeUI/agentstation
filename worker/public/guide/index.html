@@ -19,7 +19,7 @@
       <div class="wrap">
         <a class="nav-brand" href="/">
           <img src="/logo.png" alt="Example" />
-          <span>agentstation</span>
+          <span data-app>agentstation</span>
         </a>
         <div class="nav-links">
           <a href="/">一覧</a>
@@ -37,7 +37,9 @@
         <nav>
           <div class="gnav-sec"><a href="/guide/start.html">はじめての設定</a></div>
           <div class="gnav-sec"><a href="/guide/daily.html">普段の使い方</a></div>
-          <div class="gnav-sec"><a href="/guide/connect.html">入り方（画面共有・SSH・ファイル）</a></div>
+          <div class="gnav-sec">
+            <a href="/guide/connect.html">入り方（画面共有・SSH・ファイル）</a>
+          </div>
           <div class="gnav-sec"><a href="/guide/trouble.html">困ったとき</a></div>
         </nav>
         <a class="gnav-back" href="/">← ダッシュボードへ</a>
@@ -48,8 +50,9 @@
           <p class="eyebrow">使い方ガイド</p>
           <h1>自分の Mac で Claude を使う</h1>
           <p class="lead-p">
-            会社の Mac の中に、あなた専用の Mac（仮想マシン）があります。そこで Claude Code が動き続けていて、
-            スマホや PC の Claude アプリから Remote Control でつないで使います。このガイドは 4 つに分かれています。
+            会社の <span data-machine>Mac</span> の中に、あなた専用の
+            Mac（仮想マシン）があります。そこで Claude Code が動き続けていて、 スマホや PC の Claude
+            アプリから Remote Control でつないで使います。このガイドは 4 つに分かれています。
           </p>
         </header>
 
@@ -57,22 +60,34 @@
           <a class="guide-card" href="/guide/start.html">
             <span class="k">最初の 1 回だけ · 約 10 分</span>
             <span class="t">はじめての設定</span>
-            <span class="d">ダッシュボードへのログイン、自分の Mac の画面を出す、Claude へのログイン。Remote Control はログインが済めば自動で起動します。初日はここから始めます。</span>
+            <span class="d"
+              >ダッシュボードへのログイン、自分の Mac の画面を出す、Claude へのログイン。Remote
+              Control はログインが済めば自動で起動します。初日はここから始めます。</span
+            >
           </a>
           <a class="guide-card" href="/guide/daily.html">
             <span class="k">毎日</span>
             <span class="t">普段の使い方</span>
-            <span class="d">Claude アプリからつなぐ、ダッシュボードの見方、Remote Control の遠隔起動、プロジェクトごとの Remote Control。</span>
+            <span class="d"
+              >Claude アプリからつなぐ、ダッシュボードの見方、Remote Control
+              の遠隔起動、プロジェクトごとの Remote Control。</span
+            >
           </a>
           <a class="guide-card" href="/guide/connect.html">
             <span class="k">必要なとき</span>
             <span class="t">入り方（画面共有・SSH・ファイル）</span>
-            <span class="d">自分の Mac の画面を見る方法、文字だけで入る方法、スマホの「ファイル」アプリで作業フォルダを開く方法。ブラウザで入る方法と、WARP をオンにしてアプリで入る方法。</span>
+            <span class="d"
+              >自分の Mac
+              の画面を見る方法、文字だけで入る方法、スマホの「ファイル」アプリで作業フォルダを開く方法。ブラウザで入る方法と、WARP
+              をオンにしてアプリで入る方法。</span
+            >
           </a>
           <a class="guide-card" href="/guide/trouble.html">
             <span class="k">うまくいかないとき</span>
             <span class="t">困ったとき</span>
-            <span class="d">「要ログイン」と出た、つながらない、パスワードが通らない。やらないでほしいことも書いています。</span>
+            <span class="d"
+              >「要ログイン」と出た、つながらない、パスワードが通らない。やらないでほしいことも書いています。</span
+            >
           </a>
         </div>
 
@@ -81,29 +96,54 @@
           <div class="account-box">
             <div>
               <span class="k">Mac のユーザー名</span>
-              <span class="v"><span data-name="vm1">Hanako</span> さん → <code><span data-login="vm1">hanako</span></code></span>
-              <span class="v"><span data-name="vm2">Jiro</span> さん → <code><span data-login="vm2">jiro</span></code></span>
-              <span class="d">メールアドレスの @ より前と同じです。SSH のユーザー名もこれです。</span>
+              <span class="v"
+                ><span data-name="vm1">Hanako</span> さん →
+                <code><span data-login="vm1">hanako</span></code></span
+              >
+              <span class="v"
+                ><span data-name="vm2">Jiro</span> さん →
+                <code><span data-login="vm2">jiro</span></code></span
+              >
+              <span class="d"
+                >メールアドレスの @ より前と同じです。SSH のユーザー名もこれです。</span
+              >
             </div>
             <div>
               <span class="k">① Mac のログインパスワード</span>
               <span class="v"><span data-name="host">Taro</span> から受け取ります</span>
-              <span class="d">ロック画面（名前の下にパスワード欄がある画面）で使います。変えたときは <span data-name="host">Taro</span> に伝えてください。</span>
+              <span class="d"
+                >ロック画面（名前の下にパスワード欄がある画面）で使います。変えたときは
+                <span data-name="host">Taro</span> に伝えてください。</span
+              >
             </div>
             <div>
               <span class="k">② 画面共有（VNC）のパスワード</span>
               <span class="v">ダッシュボードで表示します</span>
-              <span class="d">8 文字です。自分の環境 › 「接続」タブ › 「パスワードを表示」を押すと 60 秒だけ出ます。①とは別のパスワードです。</span>
+              <span class="d"
+                >8 文字です。自分の環境 › 「接続」タブ › 「パスワードを表示」を押すと 60
+                秒だけ出ます。①とは別のパスワードです。</span
+              >
             </div>
           </div>
         </section>
 
         <section class="sec" aria-labelledby="who-h">
           <h2 id="who-h">しくみ</h2>
-          <figure class="diagram" aria-label="あなたの端末から Cloudflare を通って Mac の中の自分の Mac につながる図">
+          <figure
+            class="diagram"
+            aria-label="あなたの端末から Cloudflare を通って Mac の中の自分の Mac につながる図"
+          >
             <svg viewBox="0 0 760 230" role="img" xmlns="http://www.w3.org/2000/svg">
               <defs>
-                <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <marker
+                  id="arr"
+                  viewBox="0 0 10 10"
+                  refX="9"
+                  refY="5"
+                  markerWidth="7"
+                  markerHeight="7"
+                  orient="auto-start-reverse"
+                >
                   <path d="M0 0L10 5L0 10z" fill="#6e6e73" />
                 </marker>
               </defs>
@@ -112,38 +152,152 @@
               <rect x="57" y="92" width="24" height="40" rx="2" fill="#f5f5f7" />
               <rect x="96" y="96" width="50" height="34" rx="4" fill="#1d1d1f" />
               <rect x="100" y="100" width="42" height="26" rx="2" fill="#f5f5f7" />
-              <text x="91" y="156" text-anchor="middle" font-size="13" fill="#1d1d1f" font-weight="600">あなたのスマホ・PC</text>
-              <line x1="166" y1="118" x2="236" y2="118" stroke="#6e6e73" stroke-width="2" marker-end="url(#arr)" />
+              <text
+                x="91"
+                y="156"
+                text-anchor="middle"
+                font-size="13"
+                fill="#1d1d1f"
+                font-weight="600"
+              >
+                あなたのスマホ・PC
+              </text>
+              <line
+                x1="166"
+                y1="118"
+                x2="236"
+                y2="118"
+                stroke="#6e6e73"
+                stroke-width="2"
+                marker-end="url(#arr)"
+              />
               <rect x="238" y="70" width="170" height="96" rx="12" fill="#fff" stroke="#d2d2d7" />
-              <path d="M268 128c-12 0-20-8-20-18s8-18 20-18c3-14 16-24 32-24 14 0 26 8 31 20 3-1 5-1 8-1 12 0 22 9 22 21s-10 20-22 20z" fill="#f6821f" opacity=".9" />
-              <text x="323" y="156" text-anchor="middle" font-size="13" fill="#1d1d1f" font-weight="600">Cloudflare（本人確認）</text>
-              <text x="323" y="60" text-anchor="middle" font-size="12" fill="#6e6e73">Google でログインします。鍵の登録は要りません</text>
-              <line x1="408" y1="118" x2="478" y2="118" stroke="#6e6e73" stroke-width="2" marker-end="url(#arr)" />
-              <rect x="480" y="22" width="264" height="190" rx="14" fill="#f5f5f7" stroke="#d2d2d7" />
-              <text x="612" y="46" text-anchor="middle" font-size="13" fill="#6e6e73" font-weight="600">会社の Mac</text>
+              <path
+                d="M268 128c-12 0-20-8-20-18s8-18 20-18c3-14 16-24 32-24 14 0 26 8 31 20 3-1 5-1 8-1 12 0 22 9 22 21s-10 20-22 20z"
+                fill="#f6821f"
+                opacity=".9"
+              />
+              <text
+                x="323"
+                y="156"
+                text-anchor="middle"
+                font-size="13"
+                fill="#1d1d1f"
+                font-weight="600"
+              >
+                Cloudflare（本人確認）
+              </text>
+              <text x="323" y="60" text-anchor="middle" font-size="12" fill="#6e6e73">
+                Google でログインします。鍵の登録は要りません
+              </text>
+              <line
+                x1="408"
+                y1="118"
+                x2="478"
+                y2="118"
+                stroke="#6e6e73"
+                stroke-width="2"
+                marker-end="url(#arr)"
+              />
+              <rect
+                x="480"
+                y="22"
+                width="264"
+                height="190"
+                rx="14"
+                fill="#f5f5f7"
+                stroke="#d2d2d7"
+              />
+              <text
+                x="612"
+                y="46"
+                text-anchor="middle"
+                font-size="13"
+                fill="#6e6e73"
+                font-weight="600"
+              >
+                会社の
+                <tspan data-machine>Mac</tspan>
+              </text>
               <rect x="498" y="60" width="228" height="40" rx="8" fill="#fff" stroke="#d2d2d7" />
-              <text x="612" y="85" text-anchor="middle" font-size="13" fill="#1d1d1f"><span data-name="host">Taro</span> の Mac（本体）</text>
-              <rect x="498" y="108" width="228" height="40" rx="8" fill="#fff" stroke="#1d1d1f" stroke-width="1.5" />
-              <text x="612" y="133" text-anchor="middle" font-size="13" fill="#1d1d1f" font-weight="700"><span data-name="vm1">Hanako</span> の Mac（仮想マシン vm1）</text>
-              <rect x="498" y="156" width="228" height="40" rx="8" fill="#fff" stroke="#1d1d1f" stroke-width="1.5" />
-              <text x="612" y="181" text-anchor="middle" font-size="13" fill="#1d1d1f" font-weight="700"><span data-name="vm2">Jiro</span> の Mac（仮想マシン vm2）</text>
+              <text x="612" y="85" text-anchor="middle" font-size="13" fill="#1d1d1f">
+                <tspan data-name="host">Taro</tspan>
+                の Mac（本体）
+              </text>
+              <rect
+                x="498"
+                y="108"
+                width="228"
+                height="40"
+                rx="8"
+                fill="#fff"
+                stroke="#1d1d1f"
+                stroke-width="1.5"
+              />
+              <text
+                x="612"
+                y="133"
+                text-anchor="middle"
+                font-size="13"
+                fill="#1d1d1f"
+                font-weight="700"
+              >
+                <tspan data-name="vm1">Hanako</tspan>
+                の Mac（仮想マシン vm1）
+              </text>
+              <rect
+                x="498"
+                y="156"
+                width="228"
+                height="40"
+                rx="8"
+                fill="#fff"
+                stroke="#1d1d1f"
+                stroke-width="1.5"
+              />
+              <text
+                x="612"
+                y="181"
+                text-anchor="middle"
+                font-size="13"
+                fill="#1d1d1f"
+                font-weight="700"
+              >
+                <tspan data-name="vm2">Jiro</tspan>
+                の Mac（仮想マシン vm2）
+              </text>
             </svg>
             <figcaption>
-              入り口は Cloudflare です。会社の Google アカウントで本人確認が済むと、自分の Mac につながります。インターネットから Mac へ直接はつなげません。
+              入り口は Cloudflare です。会社の Google アカウントで本人確認が済むと、自分の Mac
+              につながります。インターネットから
+              <span data-machine>Mac</span> へ直接はつなげません。
             </figcaption>
           </figure>
           <div class="tips">
             <div>
               <strong>自分の Mac はどれか</strong>
-              <span class="d"><span data-name="vm1">Hanako</span> さんは「vm1」、<span data-name="vm2">Jiro</span> さんは「vm2」です。ダッシュボードでは「<span data-name="vm1">Hanako</span> の環境」「<span data-name="vm2">Jiro</span> の環境」と表示します。</span>
+              <span class="d"
+                ><span data-name="vm1">Hanako</span> さんは「vm1」、<span data-name="vm2"
+                  >Jiro</span
+                >
+                さんは「vm2」です。ダッシュボードでは「<span data-name="vm1">Hanako</span>
+                の環境」「<span data-name="vm2">Jiro</span> の環境」と表示します。</span
+              >
             </div>
             <div>
               <strong>普段の使い方</strong>
-              <span class="d">スマホや PC の Claude アプリから Remote Control でつなぎます。このガイドの手順が必要なのは、最初の 1 回と、調子が悪いときです。</span>
+              <span class="d"
+                >スマホや PC の Claude アプリから Remote Control
+                でつなぎます。このガイドの手順が必要なのは、最初の 1
+                回と、調子が悪いときです。</span
+              >
             </div>
             <div>
               <strong>Google のパスワード</strong>
-              <span class="d">ダッシュボードと Cloudflare へのログインに使います。いつもの会社アカウントです。</span>
+              <span class="d"
+                >ダッシュボードと Cloudflare
+                へのログインに使います。いつもの会社アカウントです。</span
+              >
             </div>
           </div>
         </section>

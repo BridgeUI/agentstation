@@ -2,9 +2,11 @@ import type { Bindings } from './env.js';
 import { handleApi } from './api/router.js';
 import { runCron } from './cron/index.js';
 import { manifest } from './manifest.js';
+import { useSite } from './site.js';
 
 export default {
   async fetch(request: Request, env: Bindings, ctx: ExecutionContext): Promise<Response> {
+    useSite(env);
     const url = new URL(request.url);
     if (url.pathname === '/api' || url.pathname.startsWith('/api/')) {
       return handleApi(request, env, ctx);
@@ -20,6 +22,7 @@ export default {
     env: Bindings,
     ctx: ExecutionContext,
   ): Promise<void> {
+    useSite(env);
     ctx.waitUntil(runCron(env));
   },
 } satisfies ExportedHandler<Bindings>;

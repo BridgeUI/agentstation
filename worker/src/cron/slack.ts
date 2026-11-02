@@ -1,4 +1,5 @@
 import { DEFAULT_SITE, parseSiteConfig, type Env, type Millis } from '@agentstation/shared';
+import { machineName } from '../site.js';
 
 /**
  * Slack Incoming Webhook への送信と本文の組み立て。
@@ -21,7 +22,7 @@ export function envPageUrl(env: Env, base = DASHBOARD_URL): string {
 
 /** 環境の表示名。人の名前は MEMBERS_JSON（メール）からしか引けないので、マシン名で固定する */
 export function envLabel(env: Env): string {
-  return env === 'host' ? 'Mac（host）' : env;
+  return env === 'host' ? `${machineName()}（host）` : env;
 }
 
 /** メールアドレスの @ より前だけ（@ が無ければそのまま。空なら「不明」） */

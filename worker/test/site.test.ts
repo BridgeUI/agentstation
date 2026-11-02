@@ -72,3 +72,30 @@ describe('SITE_JSON', () => {
     expect(parseSiteConfig(undefined).domain).toBe('example.com');
   });
 });
+
+describe('呼び方とタイトル（app_name・machine_name・login_email_domain）', () => {
+  it('書かなければ既定（agentstation・Mac）、書けばその値が /api/me と通知に出る', async () => {
+    const { useSite } = await import('../src/site.js');
+    const { envLabel } = await import('../src/cron/slack.js');
+    expect(parseSiteConfig(SITE).app_name).toBe('agentstation');
+    expect(parseSiteConfig(SITE).machine_name).toBe('Mac');
+    const custom = JSON.stringify({
+      ...JSON.parse(SITE),
+      app_name: 'Mac mini 監視ダッシュボード',
+      app_short_name: 'Mac mini',
+      machine_name: 'Mac mini',
+      login_email_domain: 'acme.dev',
+    });
+    const res = await get({ ...ACME, SITE_JSON: custom }, '/api/me', await userToken(OWNER));
+    const me = (await res.json()) as { site: Record<string, string> };
+    expect(me.site.app_name).toBe('Mac mini 監視ダッシュボード');
+    expect(me.site.login_email_domain).toBe('acme.dev');
+    useSite({ SITE_JSON: custom });
+    expect(envLabel('host')).toBe('Mac mini（host）');
+    const m = (await (
+      await get({ ...ACME, SITE_JSON: custom }, '/manifest.webmanifest')
+    ).json()) as Record<string, string>;
+    expect([m.name, m.short_name]).toEqual(['Mac mini 監視ダッシュボード', 'Mac mini']);
+    useSite({});
+  });
+});

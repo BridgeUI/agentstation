@@ -208,10 +208,12 @@ function render(): void {
 
 /**
  * HTML の印に導入先の値を入れる（SITE_JSON。リポジトリの HTML は見本の値のまま）。
- * data-name / data-login="host|vm1|vm2"、data-domain、data-dashboard-host、data-team、data-org、data-org-footer。
+ * data-name / data-login="host|vm1|vm2"、data-domain、data-dashboard-host、data-team、data-org、data-org-footer、
+ * data-app（タイトル）、data-machine（本体の呼び方）、data-login-domain（ログイン画面の案内のドメイン）。
  * 入れ終わるまで、それらは CSS で隠しておく（見本の名前が一瞬見えないように）
  */
 function fillSiteDom(): void {
+  // SVG の図の中は <tspan data-…>（HTMLElement ではないが dataset と textContent は同じに使える）
   const set = (sel: string, value: (el: HTMLElement) => string | null) => {
     for (const el of document.querySelectorAll<HTMLElement>(sel)) {
       const v = value(el);
@@ -229,6 +231,14 @@ function fillSiteDom(): void {
   set('[data-team]', () => SITE.access_team);
   set('[data-org]', () => SITE.org_name);
   set('[data-org-footer]', () => SITE.org_footer);
+  set('[data-app]', () => SITE.app_name);
+  set('[data-machine]', () => SITE.machine_name);
+  set('[data-email-domain]', () => SITE.login_email_domain || SITE.domain);
+  set('[data-login-domain]', () =>
+    SITE.login_email_domain ? `（@${SITE.login_email_domain}）` : '',
+  );
+  // タブの題名の「 · agentstation」をタイトルの設定に（環境の画面は envpage.ts が付け直す）
+  document.title = document.title.replace(/agentstation$/, SITE.app_name);
   for (const img of document.querySelectorAll<HTMLImageElement>('img[src="/logo.png"]'))
     img.alt = SITE.org_name;
   document.documentElement.classList.add('site-ready');

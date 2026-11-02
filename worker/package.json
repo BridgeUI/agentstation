@@ -10,7 +10,7 @@
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
     "db:migrate:local": "wrangler d1 migrations apply agentstation --local",
-    "db:migrate:remote": "node ../kit/render-config.mjs && wrangler d1 migrations apply agentstation --remote -c wrangler.deploy.toml",
+    "db:migrate:remote": "node ../kit/render-config.mjs && wrangler d1 migrations apply DB --remote -c wrangler.deploy.toml",
     "cf-typegen": "wrangler types",
     "build:ui": "node scripts/build-ui.mjs",
     "typecheck:ui": "tsc -p ui/tsconfig.json"

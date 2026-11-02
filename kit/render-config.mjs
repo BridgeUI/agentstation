@@ -5,12 +5,28 @@
 //   node kit/render-config.mjs other.json   # 別の場所の site.json
 //   node kit/render-config.mjs --check      # 書かずに検証だけ（D1 の ID などが空でもよい）
 //
+// kit/site.json は実体を別の場所（private な場所）に置いてシンボリックリンクにしてもよい。
+// site.json の任意の項目：
+//   assets_dir                 画面の素材を差し替えるフォルダ（site.json の実体からの相対パス）。
+//                              logo.png、icons/*.png、guide/*.jpg など worker/public と同じ並びで置くと、
+//                              デプロイのときだけ上書きする（リポジトリのファイルは書き換えない）
+//   cloudflare.worker_name     Worker の名前（既定 agentstation。以前の名前で動いている導入を引き継ぐとき）
+//   cloudflare.d1_database_name D1 の名前（既定 agentstation。同上）
+//
 // リポジトリの worker/wrangler.toml は見本の値のまま（ローカル開発用）。本番のデプロイは
 // `npm run deploy --workspace worker` が、このスクリプトで作った wrangler.deploy.toml を使う。
 // 名前・ドメインなどは SITE_JSON、メンバーと使う環境は MEMBERS_JSON として Worker に渡り、
 // 画面はそれを /api/me で受け取って表示する（HTML や画面のコードを書き換えない）。
 // 秘密情報はここに入れない（wrangler secret put）。
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import {
+  cpSync,
+  existsSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -73,6 +89,21 @@ need(
   'viewers（閲覧だけの人のメールの配列。空でよい）',
 );
 const cf = site.cloudflare ?? {};
+const NAME_RE = /^[a-z0-9][a-z0-9-]{0,62}$/;
+need(!cf.worker_name || NAME_RE.test(cf.worker_name), 'cloudflare.worker_name（小文字・数字・-）');
+need(
+  !cf.d1_database_name || NAME_RE.test(cf.d1_database_name),
+  'cloudflare.d1_database_name（小文字・数字・-）',
+);
+// 素材の差し替え：site.json の実体の場所から見たパス
+const assetsDir =
+  typeof site.assets_dir === 'string' && site.assets_dir
+    ? join(dirname(realpathSync(sitePath)), site.assets_dir)
+    : null;
+need(
+  !assetsDir || (existsSync(assetsDir) && statSync(assetsDir).isDirectory()),
+  `assets_dir（${assetsDir} が無い）`,
+);
 need(!cf.d1_database_id || /^[0-9a-f-]{36}$/.test(cf.d1_database_id), 'cloudflare.d1_database_id');
 for (const k of ['access_aud_dashboard', 'access_aud_agent'])
   need(!cf[k] || /^[0-9a-f]{64}$/.test(cf[k]), `cloudflare.${k}（64 桁の 16 進）`);
@@ -125,6 +156,27 @@ const replace = (text, re, to, label) => {
 };
 let out = src;
 out = replace(out, /^pattern = ".*"$/m, `pattern = "${site.dashboard_host}"`, 'routes の pattern');
+if (cf.worker_name) out = replace(out, /^name = ".*"$/m, `name = "${cf.worker_name}"`, 'name');
+if (cf.d1_database_name)
+  out = replace(
+    out,
+    /^database_name = ".*"$/m,
+    `database_name = "${cf.d1_database_name}"`,
+    'database_name',
+  );
+if (assetsDir) {
+  // worker/public を写してから差し替え、デプロイはその写しを使う（.gitignore 済み）
+  const deployAssets = join(ROOT, 'worker', '.deploy-assets');
+  rmSync(deployAssets, { recursive: true, force: true });
+  cpSync(join(ROOT, 'worker', 'public'), deployAssets, { recursive: true });
+  cpSync(assetsDir, deployAssets, { recursive: true });
+  out = replace(
+    out,
+    /^directory = "\.\/public"$/m,
+    'directory = "./.deploy-assets"',
+    '[assets] の directory',
+  );
+}
 out = replace(out, /^database_id = ".*"$/m, `database_id = "${cf.d1_database_id}"`, 'database_id');
 out = replace(out, /^MEMBERS_JSON = '.*'$/m, `MEMBERS_JSON = ${lit(members)}`, 'MEMBERS_JSON');
 out = replace(out, /^SITE_JSON = '.*'$/m, `SITE_JSON = ${lit(siteJson)}`, 'SITE_JSON');

@@ -30,3 +30,4 @@ worker/public/version.json
 # 導入先の値と、そこから作る本番の設定（リポジトリには入れない。kit/README.md）
 kit/site.json
 worker/wrangler.deploy.toml
+worker/.deploy-assets/

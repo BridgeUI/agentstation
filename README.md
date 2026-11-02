@@ -65,7 +65,9 @@ Read kit/START.md and help me install this repository in my environment.
 
 The installation guide, the dashboard UI and most documentation are in **Japanese**. Claude Code can follow them and explain each step in English if you ask it to.
 
-What the kit contains and how to take in upstream updates: [`kit/README.md`](kit/README.md). The step-by-step procedure: [`docs/initial-setup.md`](docs/initial-setup.md).
+Most of the work is done by scripts: `kit/cloudflare-setup.mjs` creates the Cloudflare resources (Access apps and policies, service tokens, Tunnel, DNS, D1) from `kit/site.json`, and `kit/doctor.mjs` checks how far the setup has got and tells you what to do next. Your settings live only in `kit/site.json`; the repository itself is never modified, so updating is `git pull` and redeploy.
+
+What the kit contains: [`kit/README.md`](kit/README.md). The step-by-step procedure: [`docs/initial-setup.md`](docs/initial-setup.md).
 
 ## Limitations
 

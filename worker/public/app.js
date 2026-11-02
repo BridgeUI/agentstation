@@ -2138,7 +2138,7 @@ async function checkBuild() {
     if (!res.ok) return;
     const body = await res.json();
     const build = typeof body.build === "string" ? body.build : null;
-    if (!build || build === "cfd09cf-mvz2b6xz" || reloadedFor === build) return;
+    if (!build || build === "9807fcb-mvz2j6e3" || reloadedFor === build) return;
     reloadedFor = build;
     location.reload();
   } catch {

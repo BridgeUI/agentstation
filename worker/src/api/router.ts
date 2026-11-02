@@ -1,7 +1,7 @@
 import { parseMembersConfig } from '@agentstation/shared';
 import type { Bindings } from '../env.js';
 import { HttpError, json } from '../http.js';
-import { postHeartbeat, postPoll, postResult } from './agent.js';
+import { getWhoami, postHeartbeat, postPoll, postResult } from './agent.js';
 import { postNotifyTest } from './notify.js';
 import {
   getAudit,
@@ -49,6 +49,7 @@ async function route(request: Request, env: Bindings): Promise<Response> {
   if (pathname === '/api/agent/heartbeat' && m === 'POST') return postHeartbeat(request, env);
   if (pathname === '/api/agent/result' && m === 'POST') return postResult(request, env);
   if (pathname === '/api/agent/poll' && m === 'POST') return postPoll(request, env);
+  if (pathname === '/api/agent/whoami' && m === 'GET') return getWhoami(request, env);
 
   if (pathname === '/api/me' && m === 'GET') return getMe(request, env);
   if (pathname === '/api/status' && m === 'GET') return getStatus(request, env);

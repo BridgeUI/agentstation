@@ -79,6 +79,16 @@ export async function postPoll(request: Request, env: Bindings): Promise<Respons
   return json(await claimAndAdvise(env, agent.env, Date.now()));
 }
 
+/**
+ * 読むだけの確認（kit/doctor.mjs が使う）。このトークンがどの環境のもので、その環境の最後の報告がいつかだけ返す。
+ * 指示を受け取ったり状態を書いたりはしない。
+ */
+export async function getWhoami(request: Request, env: Bindings): Promise<Response> {
+  const agent = await authenticateAgent(request, env);
+  const row = (await latestHeartbeats(env.DB)).get(agent.env);
+  return json({ env: agent.env, last_received_at: row?.received_at ?? null, now: Date.now() });
+}
+
 /** 期限切れを片付け、実行担当がこのエージェントの queued を running にして返す。次の間隔（poll_ms）も付ける */
 async function claimAndAdvise(
   env: Bindings,

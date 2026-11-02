@@ -149,14 +149,14 @@ fetch("https://api.switch-bot.com/v1.1/devices", { headers: { Authorization: tok
 
 `worker/wrangler.toml` の `[vars]`。Access の値は `cloudflare/access/setup.md` を進めたあとに入る。初回デプロイの時点では `TODO` のままでよい（画面の API は 401 を返すだけ）。
 
-| キー | 値の取り方 | 入れ方 |
-| --- | --- | --- |
-| `ACCESS_TEAM_DOMAIN` | Zero Trust の **Team name and domain**（`<team>.cloudflareaccess.com`） | `wrangler.toml` に書く（秘密ではない） |
-| `ACCESS_AUD_DASHBOARD` | Access アプリ `agentstation` › Configure › Additional settings › **Application Audience (AUD) Tag** | 同上 |
-| `ACCESS_AUD_AGENT` | Access アプリ `agentstation-api` の AUD Tag | 同上 |
-| `MEMBERS_JSON` | `{"owner":"taro@example.com","envs":{"host":"taro@example.com","vm1":"<Hanako のメール>","vm2":"<Jiro のメール>"},"viewers":["<閲覧者のメール>", ...]}` | `wrangler.toml` に書く。メールは公開情報ではないので、コミットしたくなければ下の「コミットしない値」の方法 |
-| `AGENT_TOKEN_NAMES` | **各サービストークンの Client ID**（`{"host":"<host の Client ID>","vm1":"...","vm2":"..."}`） | **`wrangler.toml` に書かず** `wrangler secret put AGENT_TOKEN_NAMES` で入れる（下記） |
-| `TZ_DISPLAY` | `Asia/Tokyo` | そのまま |
+| キー                   | 値の取り方                                                                                                                                              | 入れ方                                                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `ACCESS_TEAM_DOMAIN`   | Zero Trust の **Team name and domain**（`<team>.cloudflareaccess.com`）                                                                                 | `wrangler.toml` に書く（秘密ではない）                                                                     |
+| `ACCESS_AUD_DASHBOARD` | Access アプリ `agentstation` › Configure › Additional settings › **Application Audience (AUD) Tag**                                                     | 同上                                                                                                       |
+| `ACCESS_AUD_AGENT`     | Access アプリ `agentstation-api` の AUD Tag                                                                                                             | 同上                                                                                                       |
+| `MEMBERS_JSON`         | `{"owner":"taro@example.com","envs":{"host":"taro@example.com","vm1":"<Hanako のメール>","vm2":"<Jiro のメール>"},"viewers":["<閲覧者のメール>", ...]}` | `wrangler.toml` に書く。メールは公開情報ではないので、コミットしたくなければ下の「コミットしない値」の方法 |
+| `AGENT_TOKEN_NAMES`    | **各サービストークンの Client ID**（`{"host":"<host の Client ID>","vm1":"...","vm2":"..."}`）                                                          | **`wrangler.toml` に書かず** `wrangler secret put AGENT_TOKEN_NAMES` で入れる（下記）                      |
+| `TZ_DISPLAY`           | `Asia/Tokyo`                                                                                                                                            | そのまま                                                                                                   |
 
 ### `AGENT_TOKEN_NAMES` について
 
@@ -242,14 +242,14 @@ npx wrangler deploy
 
 確認（順に）
 
-| 確認 | コマンド／操作 | 期待 |
-| --- | --- | --- |
-| health | `curl -sI https://workstation.example.com/api/health \| head -1` | Access のアプリができたあとは `302`（`<team>.cloudflareaccess.com` へ）。未ログインでは Worker に届かない |
-| 画面のログイン | ブラウザで `https://workstation.example.com/` | Google のログイン → 画面。ログイン後 `/api/me` に自分のメールとロール |
-| 一覧外のメール | 別の Google アカウント | Access の拒否画面。Worker に届かない |
-| エージェント API（未認証） | `curl -si -X POST https://workstation.example.com/api/agent/heartbeat -H 'Content-Type: application/json' -d '{}' \| head -1` | Worker の `401` ではなく **Access が止める**（`401 Response for Service Auth policies` をオンにしていれば Access の `401`、オフなら `302`/`403` の Access ページ）。応答ヘッダに `cf-access-*` があれば Access 由来 |
-| エージェント API（トークンあり） | `cloudflare/access/setup.md` 3-4 | Worker の `400`（空ペイロード）。`401 JWT の aud が違う` なら `ACCESS_AUD_AGENT`、`403 ...どの環境にも対応していない` なら `AGENT_TOKEN_NAMES` |
-| Cron | `npx wrangler tail --format pretty` を開いて 1〜2 分待つ | 毎分 `scheduled` の実行ログ。Slack に通知が来るのは条件を満たしたとき（`docs/spec.md` 4.3） |
+| 確認                             | コマンド／操作                                                                                                                | 期待                                                                                                                                                                                                                |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| health                           | `curl -sI https://workstation.example.com/api/health \| head -1`                                                              | Access のアプリができたあとは `302`（`<team>.cloudflareaccess.com` へ）。未ログインでは Worker に届かない                                                                                                           |
+| 画面のログイン                   | ブラウザで `https://workstation.example.com/`                                                                                 | Google のログイン → 画面。ログイン後 `/api/me` に自分のメールとロール                                                                                                                                               |
+| 一覧外のメール                   | 別の Google アカウント                                                                                                        | Access の拒否画面。Worker に届かない                                                                                                                                                                                |
+| エージェント API（未認証）       | `curl -si -X POST https://workstation.example.com/api/agent/heartbeat -H 'Content-Type: application/json' -d '{}' \| head -1` | Worker の `401` ではなく **Access が止める**（`401 Response for Service Auth policies` をオンにしていれば Access の `401`、オフなら `302`/`403` の Access ページ）。応答ヘッダに `cf-access-*` があれば Access 由来 |
+| エージェント API（トークンあり） | `cloudflare/access/setup.md` 3-4                                                                                              | Worker の `400`（空ペイロード）。`401 JWT の aud が違う` なら `ACCESS_AUD_AGENT`、`403 ...どの環境にも対応していない` なら `AGENT_TOKEN_NAMES`                                                                      |
+| Cron                             | `npx wrangler tail --format pretty` を開いて 1〜2 分待つ                                                                      | 毎分 `scheduled` の実行ログ。Slack に通知が来るのは条件を満たしたとき（`docs/spec.md` 4.3）                                                                                                                         |
 
 ## 10. 日常の更新
 

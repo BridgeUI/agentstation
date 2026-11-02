@@ -1,5 +1,7 @@
 # cloudflared（Tunnel）の導入手順
 
+> **`kit/cloudflare-setup.mjs` で作る場合はこの手順は要らない**（`kit/START.md` 3 章）。この文書は Cloudflare の資源を手で作る・直すときの参照。スクリプトは Tunnel を Cloudflare 側で設定を持つ方式（トークンで `cloudflared service install`）で作るので、下の「ローカルの設定ファイル」の手順とは違う。
+
 host（Mac mini 本体）に cloudflared を LaunchDaemon（root）で常駐させ、公開ホスト名 6 本と内部ネットワーク `192.168.64.0/24` を Cloudflare に公開する（`docs/spec.md` 3.1, 3.4, 8.1）。
 
 前提
@@ -119,11 +121,11 @@ sudo cloudflared --config /etc/cloudflared/config.yml tunnel ingress rule https:
 
 置き場のまとめ
 
-| ファイル | 置き場 | 権限 | 備考 |
-| --- | --- | --- | --- |
-| `config.yml` | `/etc/cloudflared/config.yml` | root, 644 | リポジトリの `config.yml.example` から作る |
-| `<TUNNEL_ID>.json` | `/etc/cloudflared/<TUNNEL_ID>.json` | root, 600 | 秘密情報。コミットしない。バックアップは Taro のパスワードマネージャーに |
-| `cert.pem` | `~/.cloudflared/cert.pem`（Taro のホーム） | 600 | 管理用。常駐には不要。`route dns` などを打つときだけ使う |
+| ファイル           | 置き場                                     | 権限      | 備考                                                                     |
+| ------------------ | ------------------------------------------ | --------- | ------------------------------------------------------------------------ |
+| `config.yml`       | `/etc/cloudflared/config.yml`              | root, 644 | リポジトリの `config.yml.example` から作る                               |
+| `<TUNNEL_ID>.json` | `/etc/cloudflared/<TUNNEL_ID>.json`        | root, 600 | 秘密情報。コミットしない。バックアップは Taro のパスワードマネージャーに |
+| `cert.pem`         | `~/.cloudflared/cert.pem`（Taro のホーム） | 600       | 管理用。常駐には不要。`route dns` などを打つときだけ使う                 |
 
 `~/.cloudflared/<TUNNEL_ID>.json` は `/etc/cloudflared/` に移したら消してよい（`rm -P`）。
 
@@ -190,11 +192,11 @@ Zero Trust › Networking › Tunnels に `agentstation` が `HEALTHY` で出る
 
 ## 10. 困ったとき
 
-| 症状 | 見るところ |
-| --- | --- |
-| `tunnel info` に接続が出ない | `/Library/Logs/com.cloudflare.cloudflared.err.log`。7844/TCP が外に出られるか（`nc -vz region1.v2.argotunnel.com 7844`） |
-| `ssh-vm1` だけ繋がらない | host から `nc -vz 192.168.64.10 22`。VM が起動しているか、IP が B-2 と一致するか |
-| 設定を変えたのに反映されない | `/etc/cloudflared/config.yml` を編集したか（`~/.cloudflared/config.yml` ではない）。`kickstart -k` で再起動したか |
+| 症状                            | 見るところ                                                                                                                                                                                         |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tunnel info` に接続が出ない    | `/Library/Logs/com.cloudflare.cloudflared.err.log`。7844/TCP が外に出られるか（`nc -vz region1.v2.argotunnel.com 7844`）                                                                           |
+| `ssh-vm1` だけ繋がらない        | host から `nc -vz 192.168.64.10 22`。VM が起動しているか、IP が B-2 と一致するか                                                                                                                   |
+| 設定を変えたのに反映されない    | `/etc/cloudflared/config.yml` を編集したか（`~/.cloudflared/config.yml` ではない）。`kickstart -k` で再起動したか                                                                                  |
 | 2 つの cloudflared が動いている | `launchctl print system/com.cloudflare.cloudflared` と `launchctl print gui/$(id -u)/com.cloudflare.cloudflared` の両方を見て、LaunchAgent 側は `cloudflared service uninstall`（sudo なし）で消す |
 
 cloudflared の更新は `brew upgrade cloudflared` → `kickstart -k`。エージェントは cloudflared を触らない（`docs/spec.md` 13章 #2）。

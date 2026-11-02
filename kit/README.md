@@ -11,12 +11,15 @@
 
 ## 中身
 
-| ファイル                | 役割                                                                                                                     |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `kit/START.md`          | Claude Code が従う導入手順（前提の確認 → Cloudflare → Worker → host → VM → 利用者 → 仕上げ → 更新の取り込み）            |
-| `kit/site.example.json` | 導入先の値の雛形。`kit/site.json` にコピーして埋める。秘密情報は入れない                                                 |
-| `kit/render-config.mjs` | `site.json` を検証し、本番の Worker の設定を作る（`--check` で検証だけ）。`npm run deploy --workspace worker` が先に呼ぶ |
-| `kit/lessons.md`        | 元の構成を作ったときに分かったはまりどころ                                                                               |
+| ファイル                   | 役割                                                                                                                                                                          |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `kit/START.md`             | Claude Code が従う導入手順（前提の確認 → Cloudflare → Worker → host → VM → 利用者 → 仕上げ → 更新の取り込み）                                                                 |
+| `kit/site.example.json`    | 導入先の値の雛形。`kit/site.json` にコピーして埋める。秘密情報は入れない                                                                                                      |
+| `kit/render-config.mjs`    | `site.json` を検証し、本番の Worker の設定を作る（`--check` で検証だけ）。`npm run deploy --workspace worker` が先に呼ぶ                                                      |
+| `kit/cloudflare-setup.mjs` | Cloudflare 側の資源（D1、Access のアプリ・ポリシー・サービストークン、Tunnel、DNS、内部ネットワークのルート）を作る。既定は計画だけ、`--apply` で作る。何度実行しても同じ結果 |
+| `kit/doctor.mjs`           | 導入がどこまで済んだかを確かめ、次にやることを出す（何も書き換えない）                                                                                                        |
+| `kit/test/`                | スクリプトのテスト（`npm run test:kit`。Cloudflare は偽の API で確かめる）                                                                                                    |
+| `kit/lessons.md`           | 元の構成を作ったときに分かったはまりどころ                                                                                                                                    |
 
 ## `site.json` の項目
 

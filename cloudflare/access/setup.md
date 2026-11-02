@@ -1,5 +1,7 @@
 # Cloudflare Access（Zero Trust）の設定手順
 
+> **`kit/cloudflare-setup.mjs` で作る場合はこの手順は要らない**（`kit/START.md` 3 章）。この文書は Access を手で作る・直すときの参照。
+
 ダッシュボード・エージェント API・SSH×3・VNC×3 を Access で守る（`docs/spec.md` 4.1, 8, 9）。
 
 前提
@@ -61,19 +63,19 @@ Zero Trust › Integrations › Identity providers（旧：Settings › Authenti
 
 Zero Trust › Access controls › Applications › **Create new application** › **Self-hosted and private**（旧：Add an application › Self-hosted）
 
-| 項目 | 値 |
-| --- | --- |
-| Application name | `agentstation` |
-| Session Duration | **24 hours** |
-| Public hostname | Domain `example.com`、Subdomain `mac`、Path は空 |
-| Identity providers | **Google** のみ（Accept all を外す。One-time PIN を入れない） |
+| 項目                         | 値                                                                  |
+| ---------------------------- | ------------------------------------------------------------------- |
+| Application name             | `agentstation`                                                      |
+| Session Duration             | **24 hours**                                                        |
+| Public hostname              | Domain `example.com`、Subdomain `mac`、Path は空                    |
+| Identity providers           | **Google** のみ（Accept all を外す。One-time PIN を入れない）       |
 | Apply instant authentication | オン（IdP が 1 つなので Access のログイン画面を飛ばして Google へ） |
 
 ポリシー（**Add a policy**、Action **Allow**）
 
-| Policy name | Action | Rule | Selector | Value |
-| --- | --- | --- | --- | --- |
-| `members` | Allow | Include | Emails | `taro@example.com`、Hanako のメール、Jiro のメール、閲覧者のメール |
+| Policy name | Action | Rule    | Selector | Value                                                              |
+| ----------- | ------ | ------- | -------- | ------------------------------------------------------------------ |
+| `members`   | Allow  | Include | Emails   | `taro@example.com`、Hanako のメール、Jiro のメール、閲覧者のメール |
 
 - ロールの判定は Worker 側（`MEMBERS_JSON`）で行う。Access はメール一覧で「入れる人」を絞るだけ。閲覧者もここに入れる
 - Session duration はポリシー側にも項目があるが、アプリ側と同じ 24 hours にする（ポリシー側が「Same as application session timeout」ならそのまま）
@@ -102,11 +104,11 @@ Zero Trust › Access controls › Applications › **Create new application** �
 
 Zero Trust › Access controls › Service credentials › Service Tokens（旧：Access › Service Auth › Service Tokens）› **Create Service Token**
 
-| Service token name | Service Token Duration | 渡す先 |
-| --- | --- | --- |
-| `agentstation-host` | 1 year | host の `~/.config/agentstation/token.json` |
-| `agentstation-vm1` | 1 year | vm1 の同じパス |
-| `agentstation-vm2` | 1 year | vm2 の同じパス |
+| Service token name  | Service Token Duration | 渡す先                                      |
+| ------------------- | ---------------------- | ------------------------------------------- |
+| `agentstation-host` | 1 year                 | host の `~/.config/agentstation/token.json` |
+| `agentstation-vm1`  | 1 year                 | vm1 の同じパス                              |
+| `agentstation-vm2`  | 1 year                 | vm2 の同じパス                              |
 
 **Generate token** を押すと **Client ID** と **Client Secret** が出る。**Client Secret はこの一度しか表示されない**。失くしたら Rotate secret で作り直す。
 
@@ -141,19 +143,19 @@ ls -l ~/.config/agentstation/token.json
 
 Zero Trust › Access controls › Applications › **Create new application** › **Self-hosted and private**
 
-| 項目 | 値 |
-| --- | --- |
-| Application name | `agentstation-api` |
-| Session Duration | 既定のままでよい（Service Auth ではリクエストごとに検証される） |
-| Public hostname | Domain `example.com`、Subdomain `mac`、**Path `api/agent`**（要確認：Path 欄が UI にあること。公式ページの記述は Domain のみ） |
-| Identity providers | 何も選ばない（人は入れない） |
-| Additional settings › **401 Response for Service Auth policies** | **オン**（トークンなしのリクエストにログイン画面へのリダイレクトではなく 401 を返す） |
+| 項目                                                             | 値                                                                                                                             |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Application name                                                 | `agentstation-api`                                                                                                             |
+| Session Duration                                                 | 既定のままでよい（Service Auth ではリクエストごとに検証される）                                                                |
+| Public hostname                                                  | Domain `example.com`、Subdomain `mac`、**Path `api/agent`**（要確認：Path 欄が UI にあること。公式ページの記述は Domain のみ） |
+| Identity providers                                               | 何も選ばない（人は入れない）                                                                                                   |
+| Additional settings › **401 Response for Service Auth policies** | **オン**（トークンなしのリクエストにログイン画面へのリダイレクトではなく 401 を返す）                                          |
 
 ポリシー（Action **Service Auth**。Allow を作らない）
 
-| Policy name | Action | Rule | Selector | Value |
-| --- | --- | --- | --- | --- |
-| `agents` | Service Auth | Include | Service Token | `agentstation-host`、`agentstation-vm1`、`agentstation-vm2` |
+| Policy name | Action       | Rule    | Selector      | Value                                                       |
+| ----------- | ------------ | ------- | ------------- | ----------------------------------------------------------- |
+| `agents`    | Service Auth | Include | Service Token | `agentstation-host`、`agentstation-vm1`、`agentstation-vm2` |
 
 公式（Service Auth と Service Token セレクタ）：https://developers.cloudflare.com/cloudflare-one/access-controls/policies/
 
@@ -192,21 +194,21 @@ curl -si -X POST https://workstation.example.com/api/agent/heartbeat \
 
 6 つの Self-hosted アプリを作る。共通設定：
 
-| 項目 | 値 |
-| --- | --- |
-| Session Duration | **1 hour** |
-| Identity providers | Google のみ |
-| Additional settings › **Allow access through browser-based RDP, SSH, or VNC sessions** | オン → SSH アプリは **SSH**、VNC アプリは **VNC** |
-| ポリシー | **Allow / Block のみ**（Bypass と Service Auth は使えない） |
+| 項目                                                                                   | 値                                                          |
+| -------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| Session Duration                                                                       | **1 hour**                                                  |
+| Identity providers                                                                     | Google のみ                                                 |
+| Additional settings › **Allow access through browser-based RDP, SSH, or VNC sessions** | オン → SSH アプリは **SSH**、VNC アプリは **VNC**           |
+| ポリシー                                                                               | **Allow / Block のみ**（Bypass と Service Auth は使えない） |
 
-| Application name | Public hostname | Browser rendering | Allow ポリシー（Emails） |
-| --- | --- | --- | --- |
-| `ssh-host` | `ssh-host.example.com` | SSH | `taro@example.com` |
-| `vnc-host` | `vnc-host.example.com` | VNC | `taro@example.com` |
-| `ssh-vm1` | `ssh-vm1.example.com` | SSH | Hanako、`taro@example.com` |
-| `vnc-vm1` | `vnc-vm1.example.com` | VNC | Hanako、`taro@example.com` |
-| `ssh-vm2` | `ssh-vm2.example.com` | SSH | Jiro、`taro@example.com` |
-| `vnc-vm2` | `vnc-vm2.example.com` | VNC | Jiro、`taro@example.com` |
+| Application name | Public hostname        | Browser rendering | Allow ポリシー（Emails）   |
+| ---------------- | ---------------------- | ----------------- | -------------------------- |
+| `ssh-host`       | `ssh-host.example.com` | SSH               | `taro@example.com`         |
+| `vnc-host`       | `vnc-host.example.com` | VNC               | `taro@example.com`         |
+| `ssh-vm1`        | `ssh-vm1.example.com`  | SSH               | Hanako、`taro@example.com` |
+| `vnc-vm1`        | `vnc-vm1.example.com`  | VNC               | Hanako、`taro@example.com` |
+| `ssh-vm2`        | `ssh-vm2.example.com`  | SSH               | Jiro、`taro@example.com`   |
+| `vnc-vm2`        | `vnc-vm2.example.com`  | VNC               | Jiro、`taro@example.com`   |
 
 （`docs/spec.md` 8.3 の表。閲覧者は入れない）
 
@@ -233,10 +235,10 @@ curl -si -X POST https://workstation.example.com/api/agent/heartbeat \
 
 経路 A（ブラウザ）と経路 B（WARP）で使う CA が別物なので、両方の公開鍵を各マシンの `/etc/ssh/ca.pub` に入れる（1 行 1 鍵で複数可）。
 
-| 経路 | CA の種類 | 作り方 | 本数 |
-| --- | --- | --- | --- |
-| A ブラウザ表示 | アプリごとの短期証明書 CA（legacy） | Service credentials › SSH › Add a certificate › Application を選ぶ › Generate certificate | 3（ssh-host / ssh-vm1 / ssh-vm2） |
-| B WARP | Gateway SSH CA（Access for Infrastructure） | Service credentials › SSH › Add a certificate › **Generate SSH CA**、または API `POST /accounts/{account_id}/access/gateway_ca` | 1（アカウントで共通） |
+| 経路           | CA の種類                                   | 作り方                                                                                                                          | 本数                              |
+| -------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| A ブラウザ表示 | アプリごとの短期証明書 CA（legacy）         | Service credentials › SSH › Add a certificate › Application を選ぶ › Generate certificate                                       | 3（ssh-host / ssh-vm1 / ssh-vm2） |
+| B WARP         | Gateway SSH CA（Access for Infrastructure） | Service credentials › SSH › Add a certificate › **Generate SSH CA**、または API `POST /accounts/{account_id}/access/gateway_ca` | 1（アカウントで共通）             |
 
 公式（A）：https://developers.cloudflare.com/cloudflare-one/access-controls/applications/non-http/short-lived-certificates-legacy/
 公式（B）：https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/use-cases/ssh/ssh-infrastructure-access/
@@ -300,11 +302,11 @@ sudo sshd -T | grep -i -E 'trusteduserca|pubkeyauth'
 
 ### 5-3 ユーザー名の対応
 
-| マシン | ユーザー | メール（@ 前がユーザー名） |
-| --- | --- | --- |
-| host | `taro` | `taro@example.com` |
-| vm1 | Hanako のユーザー名、`taro`（オーナー用の管理アカウント。任意） | Hanako のメール |
-| vm2 | Jiro のユーザー名、`taro`（同上） | Jiro のメール |
+| マシン | ユーザー                                                        | メール（@ 前がユーザー名） |
+| ------ | --------------------------------------------------------------- | -------------------------- |
+| host   | `taro`                                                          | `taro@example.com`         |
+| vm1    | Hanako のユーザー名、`taro`（オーナー用の管理アカウント。任意） | Hanako のメール            |
+| vm2    | Jiro のユーザー名、`taro`（同上）                               | Jiro のメール              |
 
 A（ブラウザ）は常にメールの `@` 前で入る。Taro が vm1 にブラウザから入るには vm1 に `taro` ユーザーが要る（または B の Infrastructure ポリシーの「SSH user」で別名を許可する。`cloudflare/warp/setup.md` 4 章）。
 
@@ -327,13 +329,13 @@ cloudflared access ssh-config --hostname ssh-host.example.com --short-lived-cert
 
 Zero Trust › Insights › Logs › **Access authentication logs**（旧：Logs › Access）
 
-| 見たいこと | フィルタ | 期待 |
-| --- | --- | --- |
-| ダッシュボードに誰が入ったか | Application = `agentstation` | メール、Allowed、Login method = Google |
-| 一覧外のメールが拒否されたか | Action = Blocked / Failed | 該当メールの行 |
-| エージェントが Service Auth で通っているか | Application = `agentstation-api` | 1 分ごとに 3 本のトークン名（`agentstation-host` など）で Allowed |
-| 失効したトークンが拒否されているか | Application = `agentstation-api`、Failed | トークン名で Failed（不正な Client ID や壊れたヘッダは記録されない） |
-| SSH/VNC に誰が入ったか | Application = `ssh-vm1` など | Allow ポリシーの人だけ |
+| 見たいこと                                 | フィルタ                                 | 期待                                                                 |
+| ------------------------------------------ | ---------------------------------------- | -------------------------------------------------------------------- |
+| ダッシュボードに誰が入ったか               | Application = `agentstation`             | メール、Allowed、Login method = Google                               |
+| 一覧外のメールが拒否されたか               | Action = Blocked / Failed                | 該当メールの行                                                       |
+| エージェントが Service Auth で通っているか | Application = `agentstation-api`         | 1 分ごとに 3 本のトークン名（`agentstation-host` など）で Allowed    |
+| 失効したトークンが拒否されているか         | Application = `agentstation-api`、Failed | トークン名で Failed（不正な Client ID や壊れたヘッダは記録されない） |
+| SSH/VNC に誰が入ったか                     | Application = `ssh-vm1` など             | Allow ポリシーの人だけ                                               |
 
 - ログは認証イベントだけ。SSH のコマンド内容は（Gateway の SSH コマンドログを有効にしない限り）残らない。本プロジェクトではコマンドログを**使わない**（会話内容・ファイル名を Cloudflare に送らないため。CLAUDE.md 3）
 - トークンの作成・削除や Access アプリの変更は Cloudflare アカウントの Manage Account › Audit Logs に残る

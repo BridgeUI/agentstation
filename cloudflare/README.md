@@ -4,13 +4,13 @@
 
 ## 成果物
 
-| ファイル | 内容 |
-| --- | --- |
-| `worker/setup.md` | Worker の初回デプロイ。D1 作成、`wrangler.toml` の埋め方、secret、カスタムドメイン `workstation.example.com`、`workers.dev` 無効の確認 |
-| `cloudflared/config.yml.example` | host の `/etc/cloudflared/config.yml` のテンプレート（公開ホスト名 6 本＋404）。VM の IP はプレースホルダ |
-| `cloudflared/setup.md` | Tunnel の作成、DNS ルート 6 本、内部ネットワーク `192.168.64.0/24` のルート、LaunchDaemon 化、動作確認 |
-| `access/setup.md` | Zero Trust：Google IdP、ダッシュボードのアプリ、`/api/agent` の Service Auth とサービストークン 3 本、SSH×3・VNC×3 のブラウザ表示、SSH CA、ログでの検証 |
-| `warp/setup.md` | 経路 B：端末登録、Split Tunnels、Gateway プロキシ、Access for Infrastructure（ターゲット 3 つ）、画面共有用の 5900 許可、利用者の手順、切り分け |
+| ファイル                         | 内容                                                                                                                                                    |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `worker/setup.md`                | Worker の初回デプロイ。D1 作成、`wrangler.toml` の埋め方、secret、カスタムドメイン `workstation.example.com`、`workers.dev` 無効の確認                  |
+| `cloudflared/config.yml.example` | host の `/etc/cloudflared/config.yml` のテンプレート（公開ホスト名 6 本＋404）。VM の IP はプレースホルダ                                               |
+| `cloudflared/setup.md`           | Tunnel の作成、DNS ルート 6 本、内部ネットワーク `192.168.64.0/24` のルート、LaunchDaemon 化、動作確認                                                  |
+| `access/setup.md`                | Zero Trust：Google IdP、ダッシュボードのアプリ、`/api/agent` の Service Auth とサービストークン 3 本、SSH×3・VNC×3 のブラウザ表示、SSH CA、ログでの検証 |
+| `warp/setup.md`                  | 経路 B：端末登録、Split Tunnels、Gateway プロキシ、Access for Infrastructure（ターゲット 3 つ）、画面共有用の 5900 許可、利用者の手順、切り分け         |
 
 ## 進める順番
 

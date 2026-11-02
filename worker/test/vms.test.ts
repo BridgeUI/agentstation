@@ -105,3 +105,18 @@ describe('vm2 だけ', () => {
     expect(keys).not.toContain('vm_stopped:vm1');
   });
 });
+
+describe('GET /api/agent/whoami（kit/doctor.mjs）', () => {
+  it('トークンの環境と最後の報告の時刻だけを返し、指示は受け取らない', async () => {
+    const before = await call(env, '/api/agent/whoami', { token: await agentToken('tok-vm1') });
+    expect(before.status).toBe(200);
+    expect(before.body.env).toBe('vm1');
+    expect(before.body.last_received_at).toBeNull();
+    await call(env, '/api/agent/heartbeat', {
+      token: await agentToken('tok-vm1'),
+      body: vmHeartbeat('vm1'),
+    });
+    const after = await call(env, '/api/agent/whoami', { token: await agentToken('tok-vm1') });
+    expect(typeof after.body.last_received_at).toBe('number');
+  });
+});

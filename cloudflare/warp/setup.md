@@ -11,11 +11,11 @@
 
 内部 IP
 
-| マシン | IP | ユーザー名 |
-| --- | --- | --- |
-| host | `192.168.64.1` | `taro` |
-| vm1 | `192.168.64.10`（B-2 の結果） | Hanako、`taro` |
-| vm2 | `192.168.64.11`（B-2 の結果） | Jiro、`taro` |
+| マシン | IP                            | ユーザー名     |
+| ------ | ----------------------------- | -------------- |
+| host   | `192.168.64.1`                | `taro`         |
+| vm1    | `192.168.64.10`（B-2 の結果） | Hanako、`taro` |
+| vm2    | `192.168.64.11`（B-2 の結果） | Jiro、`taro`   |
 
 順番：1 端末登録 → 2 Split Tunnels → 3 Gateway プロキシ → 4 Access for Infrastructure → 5 画面共有の許可 → 6 利用者の手順 → 7 切り分け
 
@@ -55,16 +55,16 @@ Zero Trust › Team & Resources › Devices › Device profiles › **General pr
 2. 一覧から **`192.168.0.0/16`** を削除
 3. 代わりに、`192.168.64.0/24` を**除いた**残りの範囲を **Add** で 8 本追加する：
 
-| 追加する CIDR | 含む範囲 |
-| --- | --- |
-| `192.168.0.0/18` | 192.168.0.0 〜 192.168.63.255（自宅の 192.168.1.0/24 などはここ） |
-| `192.168.65.0/24` | 192.168.65.x |
-| `192.168.66.0/23` | 192.168.66.x 〜 67.x |
-| `192.168.68.0/22` | 192.168.68.x 〜 71.x |
-| `192.168.72.0/21` | 192.168.72.x 〜 79.x |
-| `192.168.80.0/20` | 192.168.80.x 〜 95.x |
-| `192.168.96.0/19` | 192.168.96.x 〜 127.x |
-| `192.168.128.0/17` | 192.168.128.x 〜 255.x |
+| 追加する CIDR      | 含む範囲                                                          |
+| ------------------ | ----------------------------------------------------------------- |
+| `192.168.0.0/18`   | 192.168.0.0 〜 192.168.63.255（自宅の 192.168.1.0/24 などはここ） |
+| `192.168.65.0/24`  | 192.168.65.x                                                      |
+| `192.168.66.0/23`  | 192.168.66.x 〜 67.x                                              |
+| `192.168.68.0/22`  | 192.168.68.x 〜 71.x                                              |
+| `192.168.72.0/21`  | 192.168.72.x 〜 79.x                                              |
+| `192.168.80.0/20`  | 192.168.80.x 〜 95.x                                              |
+| `192.168.96.0/19`  | 192.168.96.x 〜 127.x                                             |
+| `192.168.128.0/17` | 192.168.128.x 〜 255.x                                            |
 
 （公式が案内する「Base CIDR / Subtracted CIDRs の計算機」で `192.168.0.0/16` − `192.168.64.0/24` を計算した結果と同じ）
 
@@ -111,10 +111,10 @@ Zero Trust › Traffic policies › **Traffic settings**（旧：Settings › Ne
 Zero Trust › Access controls › **Targets** › **Add a target**
 
 | Target hostname（ラベル。DNS ではない） | IP addresses（IPv4） | Virtual network |
-| --- | --- | --- |
-| `host` | `192.168.64.1` | default |
-| `vm1` | `192.168.64.10` | default |
-| `vm2` | `192.168.64.11` | default |
+| --------------------------------------- | -------------------- | --------------- |
+| `host`                                  | `192.168.64.1`       | default         |
+| `vm1`                                   | `192.168.64.10`      | default         |
+| `vm2`                                   | `192.168.64.11`      | default         |
 
 IP がドロップダウンに出ないときは Networking › Routes に `192.168.64.0/24` があるか確認。
 
@@ -126,19 +126,19 @@ Zero Trust › Access controls › Applications › **Create new application** �
 
 マシンごとにアプリを分ける（ポリシーの「入れる人」と SSH ユーザー名が違うため）。
 
-| Application name | Target criteria | Protocol / Port | Session duration |
-| --- | --- | --- | --- |
-| `ssh-infra-host` | Target hostname = `host` | SSH / 22 | 1 hour |
-| `ssh-infra-vm1` | Target hostname = `vm1` | SSH / 22 | 1 hour |
-| `ssh-infra-vm2` | Target hostname = `vm2` | SSH / 22 | 1 hour |
+| Application name | Target criteria          | Protocol / Port | Session duration |
+| ---------------- | ------------------------ | --------------- | ---------------- |
+| `ssh-infra-host` | Target hostname = `host` | SSH / 22        | 1 hour           |
+| `ssh-infra-vm1`  | Target hostname = `vm1`  | SSH / 22        | 1 hour           |
+| `ssh-infra-vm2`  | Target hostname = `vm2`  | SSH / 22        | 1 hour           |
 
 各アプリのポリシー（`docs/spec.md` 8.3）：
 
-| アプリ | Policy name | Include › Emails | Connection context › **SSH user** | Allow users to log in as their email alias |
-| --- | --- | --- | --- | --- |
-| `ssh-infra-host` | `host-only` | `taro@example.com` | `taro` | オン |
-| `ssh-infra-vm1` | `vm1-users` | Hanako のメール、`taro@example.com` | Hanako のユーザー名、`taro` | オン |
-| `ssh-infra-vm2` | `vm2-users` | Jiro のメール、`taro@example.com` | Jiro のユーザー名、`taro` | オン |
+| アプリ           | Policy name | Include › Emails                    | Connection context › **SSH user** | Allow users to log in as their email alias |
+| ---------------- | ----------- | ----------------------------------- | --------------------------------- | ------------------------------------------ |
+| `ssh-infra-host` | `host-only` | `taro@example.com`                  | `taro`                            | オン                                       |
+| `ssh-infra-vm1`  | `vm1-users` | Hanako のメール、`taro@example.com` | Hanako のユーザー名、`taro`       | オン                                       |
+| `ssh-infra-vm2`  | `vm2-users` | Jiro のメール、`taro@example.com`   | Jiro のユーザー名、`taro`         | オン                                       |
 
 - **SSH user** に書いたユーザー名でログインできる。Cloudflare はユーザーを作らないので、ゲスト側に先に作っておく（Taro が vm1 に `taro` で入るなら、vm1 に `taro` ユーザーが要る。Hanako のアカウントで入るならそのユーザー名を書く。どちらにするかは `docs/setup-mac.md` で決める）
 - Session duration はアプリ側で 1 hour（接続がこの時間で切れる）。Gateway 経由の接続は最長 10 時間で切れる仕様もある
@@ -152,9 +152,9 @@ Zero Trust › Access controls › Applications › **Create new application** �
 
 公式が「Access Infrastructure Target が Present なら Allow」のネットワークポリシーを先頭に置くよう推奨している。Traffic policies › Firewall policies › Network › Add a policy：
 
-| Policy name | Selector | Operator | Value | Action |
-| --- | --- | --- | --- | --- |
-| `allow-infra-targets` | Access Infrastructure Target | Present | — | Allow |
+| Policy name           | Selector                     | Operator | Value | Action |
+| --------------------- | ---------------------------- | -------- | ----- | ------ |
+| `allow-infra-targets` | Access Infrastructure Target | Present  | —     | Allow  |
 
 これは経路の許可だけで、Access のポリシーは別途評価される。
 
@@ -168,14 +168,14 @@ Zero Trust › Traffic policies › **Firewall policies** › **Network** › Ad
 
 ポリシー 1（許可。順序を上に）
 
-| Policy name | Traffic | Identity | Action |
-| --- | --- | --- | --- |
+| Policy name         | Traffic                                                                    | Identity                                                           | Action    |
+| ------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------ | --------- |
 | `vnc-allow-members` | Destination IP `in` `192.168.64.0/24` **And** Destination Port `is` `5900` | User Email `in` `taro@example.com`, Hanako のメール, Jiro のメール | **Allow** |
 
 ポリシー 2（その他は遮断。順序を下に）
 
-| Policy name | Traffic | Action |
-| --- | --- | --- |
+| Policy name        | Traffic                                                                | Action    |
+| ------------------ | ---------------------------------------------------------------------- | --------- |
 | `vnc-block-others` | Destination IP `in` `192.168.64.0/24` And Destination Port `is` `5900` | **Block** |
 
 式で書くと：
@@ -232,32 +232,32 @@ iPhone の SSH アプリ：ホストに `192.168.64.10`、ポート 22、ユー�
 
 ### 6-4 ダッシュボードの「接続」セクションに出す情報
 
-| 環境 | SSH（B） | VNC（B） | ファイルアプリ（B。6-5） |
-| --- | --- | --- | --- |
-| Taro | `ssh taro@192.168.64.1` | `vnc://192.168.64.1` | `smb://192.168.64.1/workspace` |
+| 環境   | SSH（B）                     | VNC（B）              | ファイルアプリ（B。6-5）        |
+| ------ | ---------------------------- | --------------------- | ------------------------------- |
+| Taro   | `ssh taro@192.168.64.1`      | `vnc://192.168.64.1`  | `smb://192.168.64.1/workspace`  |
 | Hanako | `ssh <hanako>@192.168.64.10` | `vnc://192.168.64.10` | `smb://192.168.64.10/workspace` |
-| Jiro | `ssh <jiro>@192.168.64.11` | `vnc://192.168.64.11` | `smb://192.168.64.11/workspace` |
+| Jiro   | `ssh <jiro>@192.168.64.11`   | `vnc://192.168.64.11` | `smb://192.168.64.11/workspace` |
 
 ### 6-5 iPhone の「ファイル」アプリで各自の `workspace` を開く（SMB）
 
 各マシンの利用者の `~/workspace` を SMB で共有し、WARP 経由で iPhone / iPad の「ファイル」アプリから開く。アプリの追加は不要。
 
-| マシン | 共有 | 登録ユーザ | 入れる人（Gateway） |
-| --- | --- | --- | --- |
-| host | `smb://192.168.64.1/workspace` | `taro` | taro |
-| vm1 | `smb://192.168.64.10/workspace` | `hanako` | hanako、taro |
-| vm2 | `smb://192.168.64.11/workspace` | `jiro` | jiro、taro |
+| マシン | 共有                            | 登録ユーザ | 入れる人（Gateway） |
+| ------ | ------------------------------- | ---------- | ------------------- |
+| host   | `smb://192.168.64.1/workspace`  | `taro`     | taro                |
+| vm1    | `smb://192.168.64.10/workspace` | `hanako`   | hanako、taro        |
+| vm2    | `smb://192.168.64.11/workspace` | `jiro`     | jiro、taro          |
 
 Cloudflare 側（2026-11-01 に API で確認・設定済み）：
 
 - 通すための設定は既存のもので足りる：Tunnel のルート `192.168.64.0/24`、Split Tunnels（2 章）、Gateway プロキシ TCP（3 章。`devices/settings` の `gateway_proxy_enabled: true`）
 - 絞るために Traffic policies › Firewall policies › Network に Block を 3 本追加した（マシンごとに 445 番を「その利用者と taro 以外」から遮断。SSH・VNC には影響しない）：
 
-| Policy name | Traffic | Identity | ID |
-| --- | --- | --- | --- |
-| `smb-host-taro-only` | `net.dst.ip == 192.168.64.1 and net.dst.port == 445` | `not(identity.email == "taro@example.com")` | `f7d7e787-dff3-4607-8d1b-8ee9323ee67c` |
+| Policy name           | Traffic                                               | Identity                                                           | ID                                     |
+| --------------------- | ----------------------------------------------------- | ------------------------------------------------------------------ | -------------------------------------- |
+| `smb-host-taro-only`  | `net.dst.ip == 192.168.64.1 and net.dst.port == 445`  | `not(identity.email == "taro@example.com")`                        | `f7d7e787-dff3-4607-8d1b-8ee9323ee67c` |
 | `smb-vm1-hanako-only` | `net.dst.ip == 192.168.64.10 and net.dst.port == 445` | `not(identity.email in {"hanako@example.com" "taro@example.com"})` | `0ceb1b94-b618-45df-85ed-0f0d64b23dc2` |
-| `smb-vm2-jiro-only` | `net.dst.ip == 192.168.64.11 and net.dst.port == 445` | `not(identity.email in {"jiro@example.com" "taro@example.com"})` | `71ece96e-2ccd-4d26-ba4f-24405efeb0bd` |
+| `smb-vm2-jiro-only`   | `net.dst.ip == 192.168.64.11 and net.dst.port == 445` | `not(identity.email in {"jiro@example.com" "taro@example.com"})`   | `71ece96e-2ccd-4d26-ba4f-24405efeb0bd` |
 
 Mac 側（各マシンで 1 回。`mac/scripts/smb-workspace.sh`）。やること：(1) 利用者の SMB-NT ハッシュを有効化（既定では無く、SMB ログインが通らない。現在のパスワードを受け取り、同じパスワードで設定し直してハッシュを作る。GUI の「ファイル共有 › オプション › ユーザーをオン」でパスワードを聞かれるのと同じ。パスワードは変わらない）、(2) ファイル共有（smbd）を有効化、(3) 共有ポイント `workspace` を追加（ゲスト不可）。
 
@@ -296,16 +296,16 @@ iPhone 側（ガイド「入り方」の「スマホの『ファイル』アプ�
 
 上から順に。
 
-| # | 確認 | コマンド／場所 | 直すところ |
-| --- | --- | --- | --- |
-| 1 | クライアントが Connected か | `warp-cli status`、メニューバーの表示 | 再ログイン。端末登録ポリシーのメール |
-| 2 | `192.168.64.0/24` が WARP に向いているか | `netstat -rn \| grep 192.168.64`（utun に向くか） | 2 章の Split Tunnels。自宅 LAN が `192.168.64.x` と衝突していないか |
-| 3 | Gateway が通しているか | Zero Trust › Insights › Logs › Network で宛先 IP を検索。Blocked なら Policy name を見る | 5 章の Allow の順序。3 章のプロキシ TCP |
-| 4 | ルートが Tunnel に届いているか | Networking › Routes に `192.168.64.0/24`。`cloudflared tunnel route ip show` | `cloudflare/cloudflared/setup.md` 5 |
-| 5 | Tunnel が生きているか | `cloudflared tunnel info agentstation`、Networking › Tunnels が HEALTHY | host の cloudflared を `kickstart -k` |
-| 6 | host から宛先に届くか | host で `nc -vz 192.168.64.10 22`、`nc -vz 192.168.64.1 22` | VM の起動・IP（B-2）。host の `192.168.64.1`（B-3）。macOS のファイアウォールでリモートログイン／画面共有が許可されているか |
-| 7 | SSH が証明書で拒否されるか | `ssh -v user@192.168.64.10` の `Authentications that can continue` | `/etc/ssh/ca.pub` に Gateway SSH CA が入っているか、`sshd -T \| grep trusteduserca`、ユーザーがマシンに存在するか、Infrastructure ポリシーの SSH user |
-| 8 | Access のポリシーで拒否されているか | `warp-cli target list` に出るか。Insights › Logs › Access authentication logs | 4-2 のポリシー（メール、SSH user） |
-| 9 | VNC だけだめ | `nc -vz 192.168.64.10 5900`。macOS 側で画面共有オン、VNC パスワード設定済みか | `cloudflare/access/setup.md` 4 章の VNC 設定。5 章の Gateway ポリシー |
+| #   | 確認                                     | コマンド／場所                                                                           | 直すところ                                                                                                                                            |
+| --- | ---------------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | クライアントが Connected か              | `warp-cli status`、メニューバーの表示                                                    | 再ログイン。端末登録ポリシーのメール                                                                                                                  |
+| 2   | `192.168.64.0/24` が WARP に向いているか | `netstat -rn \| grep 192.168.64`（utun に向くか）                                        | 2 章の Split Tunnels。自宅 LAN が `192.168.64.x` と衝突していないか                                                                                   |
+| 3   | Gateway が通しているか                   | Zero Trust › Insights › Logs › Network で宛先 IP を検索。Blocked なら Policy name を見る | 5 章の Allow の順序。3 章のプロキシ TCP                                                                                                               |
+| 4   | ルートが Tunnel に届いているか           | Networking › Routes に `192.168.64.0/24`。`cloudflared tunnel route ip show`             | `cloudflare/cloudflared/setup.md` 5                                                                                                                   |
+| 5   | Tunnel が生きているか                    | `cloudflared tunnel info agentstation`、Networking › Tunnels が HEALTHY                  | host の cloudflared を `kickstart -k`                                                                                                                 |
+| 6   | host から宛先に届くか                    | host で `nc -vz 192.168.64.10 22`、`nc -vz 192.168.64.1 22`                              | VM の起動・IP（B-2）。host の `192.168.64.1`（B-3）。macOS のファイアウォールでリモートログイン／画面共有が許可されているか                           |
+| 7   | SSH が証明書で拒否されるか               | `ssh -v user@192.168.64.10` の `Authentications that can continue`                       | `/etc/ssh/ca.pub` に Gateway SSH CA が入っているか、`sshd -T \| grep trusteduserca`、ユーザーがマシンに存在するか、Infrastructure ポリシーの SSH user |
+| 8   | Access のポリシーで拒否されているか      | `warp-cli target list` に出るか。Insights › Logs › Access authentication logs            | 4-2 のポリシー（メール、SSH user）                                                                                                                    |
+| 9   | VNC だけだめ                             | `nc -vz 192.168.64.10 5900`。macOS 側で画面共有オン、VNC パスワード設定済みか            | `cloudflare/access/setup.md` 4 章の VNC 設定。5 章の Gateway ポリシー                                                                                 |
 
 A（ブラウザ）が通って B だけだめなら 1〜5、両方だめなら 5〜9 から見る。

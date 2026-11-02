@@ -63,7 +63,9 @@ Claude Code に次のように頼む（`/agentstation-install` でも同じ）�
 kit/START.md を読んで、このリポジトリを私の環境に導入するのを手伝ってください。
 ```
 
-導入キットの中身と、上流の更新の取り込み方は [`kit/README.md`](kit/README.md)。手順の本体は [`docs/initial-setup.md`](docs/initial-setup.md)。
+作業の多くはスクリプトがやる。`kit/cloudflare-setup.mjs` が `kit/site.json` から Cloudflare 側（Access のアプリとポリシー、サービストークン、Tunnel、DNS、D1）を作り、`kit/doctor.mjs` が導入がどこまで済んだかと次にやることを出す。導入先の値は `kit/site.json` だけに書き、リポジトリは書き換えないので、更新は `git pull` してデプロイし直すだけ。
+
+導入キットの中身は [`kit/README.md`](kit/README.md)。手順の本体は [`docs/initial-setup.md`](docs/initial-setup.md)。
 
 ## 制約
 

@@ -13,7 +13,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "db:migrate:local": "npm run db:migrate:local --workspace worker",
-    "dev": "npm run dev --workspace worker"
+    "dev": "npm run dev --workspace worker",
+    "test:kit": "node --test kit/test/*.test.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",

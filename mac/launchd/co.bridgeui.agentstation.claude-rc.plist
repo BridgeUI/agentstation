@@ -8,16 +8,16 @@
   claude の場所が違うときは EnvironmentVariables に CLAUDE_BIN を足す。
   プレースホルダ: __USER__（その環境のユーザー名: taro / hanako / jiro）
   前提  : 作業フォルダ /Users/__USER__/workspace を作り、一度 claude を対話的に起動して信頼しておく（ホーム直下・Desktop・Documents は不可）
-  配置先: ~/Library/LaunchAgents/com.example.claude-rc.plist
+  配置先: ~/Library/LaunchAgents/co.bridgeui.agentstation.claude-rc.plist
   ログ  : ~/Library/Logs/claude-rc.log（--debug-file）、claude-rc.out.log、claude-rc.err.log
-  起動  : launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.claude-rc.plist
-  rc_restart: launchctl kickstart -k gui/$(id -u)/com.example.claude-rc
+  起動  : launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/co.bridgeui.agentstation.claude-rc.plist
+  rc_restart: launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.claude-rc
   注意  : --no-create-session-in-dir は付けない（セッションが復元できなくなる。spec 3.1）
 -->
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>com.example.claude-rc</string>
+  <string>co.bridgeui.agentstation.claude-rc</string>
   <key>ProgramArguments</key>
   <array>
     <string>/bin/bash</string>

@@ -23,7 +23,7 @@ import {
   type Row,
 } from './judge.js';
 import { MAINT, bannerHtml } from './overview.js';
-import { PEOPLE, titleOf } from './people.js';
+import { PEOPLE, SITE, titleOf } from './people.js';
 
 /**
  * 各環境の画面（host.html / vm1.html / vm2.html）。
@@ -64,6 +64,7 @@ export function renderEnvPage(ctx: EnvPageCtx): void {
   const own = down ? null : e.heartbeat;
 
   $('env-title').textContent = titleOf(env);
+  document.title = `${titleOf(env)} · agentstation`;
   const av = document.querySelector<HTMLElement>('.avatar.lg');
   if (av) av.textContent = PEOPLE[env].initial;
   const version = own?.claude.version
@@ -78,17 +79,15 @@ export function renderEnvPage(ctx: EnvPageCtx): void {
 
   // 見出し右：いちばん使う接続ボタン（本人・オーナーだけ）
   $('head-actions').innerHTML = canUse
-    ? html`<a class="btn" href="https://ssh-${env}.example.com" rel="noopener"
+    ? html`<a class="btn" href="https://ssh-${env}.${SITE.domain}" rel="noopener"
           >${raw(ICON_TERM)} SSH</a
-        ><a class="btn primary" href="https://vnc-${env}.example.com" rel="noopener"
+        ><a class="btn primary" href="https://vnc-${env}.${SITE.domain}" rel="noopener"
           >${raw(ICON_SCREEN)} 画面共有</a
         >`
     : '';
 
   // この環境に関係するバナーだけ
-  const bs = banners(s).filter(
-    (b) => b.title.includes(`（${env}）`) || b.title.startsWith('Mac'),
-  );
+  const bs = banners(s).filter((b) => b.title.includes(`（${env}）`) || b.title.startsWith('Mac'));
   const bn = $('banners');
   bn.hidden = bs.length === 0;
   bn.innerHTML = bs.map((b) => bannerHtml(b)).join('');
@@ -355,11 +354,11 @@ function renderConnection(ctx: EnvPageCtx, e: EnvStatus, canUse: boolean): void 
       </div>
       <div class="panel-body">
         <div class="routes">
-          <a class="route" href="https://ssh-${env}.example.com" rel="noopener">
-            <b>${raw(ICON_TERM)}SSH（ブラウザ）</b><span>ssh-${env}.example.com</span>
+          <a class="route" href="https://ssh-${env}.${SITE.domain}" rel="noopener">
+            <b>${raw(ICON_TERM)}SSH（ブラウザ）</b><span>ssh-${env}.${SITE.domain}</span>
           </a>
-          <a class="route" href="https://vnc-${env}.example.com" rel="noopener">
-            <b>${raw(ICON_SCREEN)}画面共有（ブラウザ）</b><span>vnc-${env}.example.com</span>
+          <a class="route" href="https://vnc-${env}.${SITE.domain}" rel="noopener">
+            <b>${raw(ICON_SCREEN)}画面共有（ブラウザ）</b><span>vnc-${env}.${SITE.domain}</span>
           </a>
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 Mac mini 1台（メモリ24GB・SSD 512GB）で3つの環境（host＋macOS VM 2台）を常駐させ、各環境で Claude Code / Codex を動かし続ける。その状態を Cloudflare 上のダッシュボードから確認・操作する仕組みのリポジトリ（OSS。MIT ライセンス）。
 
-- `main` には見本の値（example.com、利用者 Taro / Hanako / Jiro）が入っている。実際の導入先の値は `kit/site.json` を `kit/personalize.mjs` で当てた `deploy` ブランチ（導入者の private リポジトリ）に持つ。**`main` に実在のメールアドレス・ドメイン・Cloudflare の ID を入れない。**
+- リポジトリには見本の値（example.com、利用者 Taro / Hanako / Jiro）だけを入れる。導入先の値は `kit/site.json`（.gitignore 済み）に書き、`kit/render-config.mjs` が本番の Worker の設定を作る。画面の名前・ドメインは Worker の設定 `SITE_JSON` から出す。**実在のメールアドレス・ドメイン・Cloudflare の ID をコミットしない。**
 - 新しく導入する人を手伝うとき：`kit/START.md` に従う（`/agentstation-install`）。
 
 - 仕様の全体：`docs/spec.md`
@@ -52,7 +52,7 @@ agent/            各環境に常駐する監視プログラム（Node.js/TS。h
 mac/              launchd の plist テンプレート、夜間メンテ用スクリプト、sudoers 断片
 cloudflare/       cloudflared 設定テンプレート、Access 設定の手順書、wrangler 設定
 docs/             spec.md, tasks.md, 運用手順
-kit/              導入キット（personalize.mjs、update.sh、START.md）
+kit/              導入キット（render-config.mjs、START.md）
 design/           画面モック（参照用。そのまま本番には使わない）
 ```
 
@@ -60,7 +60,7 @@ design/           画面モック（参照用。そのまま本番には使わ�
 
 - 設計の変更は `docs/spec.md`（13章に判断の記録）と `docs/tasks.md` に反映する。
 - 変更したら `npm run typecheck`、`npm test --workspaces --if-present`、`npm run lint`。画面（`worker/ui/`）を直したら `npm run build:ui --workspace worker` で `worker/public/app.js` を作り直してコミットする。
-- 新しく固有の値（ドメイン・名前など）をコードに書くときは、`kit/personalize.mjs` で置き換えられる形（`kit/source.json` の値そのまま）にする。
+- 導入先ごとに変わる値（名前・ドメインなど）をコードや HTML に直接書かない。`SITE_JSON`（`shared/src/site.ts`）に足し、HTML では `data-name` などの印を付けて画面で入れる（`worker/ui/main.ts` の fillSiteDom）。
 - 実機（Mac mini）が必要な確認は、手順と期待結果を書いて利用者に依頼する。
 - 秘密情報は `wrangler secret` とmacOSのキーチェーン（またはchmod 600のファイル）で扱い、リポジトリにコミットしない。`.env*` と鍵類は `.gitignore`。
 - UI文言は日本語。トンマナは App Store Connect 風（ページ #F5F5F7 に白カード、ヘアラインの枠、角丸12px、システムフォント、影なし。2026-11-01 改定）。詳細は `design/README.md`、基準の CSS は `design/redesign/style.css`。

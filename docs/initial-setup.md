@@ -149,12 +149,12 @@ cd ~/workspace/agentstation/agent && npm run build
 
 | ラベル                          | 中身                                                                        | 備考                                                                                                                                                            |
 | ------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `com.example.agent`             | エージェント `--env=host`                                                   | ー                                                                                                                                                              |
-| `com.example.claude-rc`         | `claude-rc.sh` → `claude remote-control`。WorkingDirectory は `~/workspace` | 4.4 を先に                                                                                                                                                      |
-| `com.example.tart-vm1` / `-vm2` | `tart run --no-graphics vmN`                                                | **tart のパスをテンプレートの `/opt/homebrew/bin/tart` から実機の場所に置き換える**。VM を作ってから登録する（無い VM を KeepAlive で起動し続けると失敗ループ） |
+| `co.bridgeui.agentstation.agent`             | エージェント `--env=host`                                                   | ー                                                                                                                                                              |
+| `co.bridgeui.agentstation.claude-rc`         | `claude-rc.sh` → `claude remote-control`。WorkingDirectory は `~/workspace` | 4.4 を先に                                                                                                                                                      |
+| `co.bridgeui.agentstation.tart-vm1` / `-vm2` | `tart run --no-graphics vmN`                                                | **tart のパスをテンプレートの `/opt/homebrew/bin/tart` から実機の場所に置き換える**。VM を作ってから登録する（無い VM を KeepAlive で起動し続けると失敗ループ） |
 
 ```bash
-launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.agent.plist
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/co.bridgeui.agentstation.agent.plist
 ```
 
 ### 4.7 cloudflared（LaunchDaemon）
@@ -181,7 +181,7 @@ sudo install -m 0644 -o root -g wheel cloudflare/access/ca/ca.pub.host /etc/ssh/
 
 - `bash mac/scripts/check.sh` で NG が無い
 - ダッシュボード（Taro の環境 › 基礎設定）が全部 OK。手動の項目（FileVault、自動ログイン、画面共有…）もエージェントが確かめて表示する
-- `launchctl print gui/$(id -u)/com.example.claude-rc` が running、ダッシュボードの Remote Control が「接続中」
+- `launchctl print gui/$(id -u)/co.bridgeui.agentstation.claude-rc` が running、ダッシュボードの Remote Control が「接続中」
 
 ## 5. VM（vm1 = Hanako、vm2 = Jiro）
 
@@ -196,7 +196,7 @@ tart clone ghcr.io/cirruslabs/macos-tahoe-base:latest vm1 && tart set vm1 --cpu 
 ```
 
 ```bash
-sed -e 's#__USER__#taro#g' -e 's#/opt/homebrew/bin/tart#/Users/taro/Applications/tart.app/Contents/MacOS/tart#' mac/launchd/com.example.tart-vm1.plist > ~/Library/LaunchAgents/com.example.tart-vm1.plist && launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.tart-vm1.plist
+sed -e 's#__USER__#taro#g' -e 's#/opt/homebrew/bin/tart#/Users/taro/Applications/tart.app/Contents/MacOS/tart#' mac/launchd/co.bridgeui.agentstation.tart-vm1.plist > ~/Library/LaunchAgents/co.bridgeui.agentstation.tart-vm1.plist && launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/co.bridgeui.agentstation.tart-vm1.plist
 ```
 
 1〜2 分待って DHCP の IP を取る（最初は `192.168.64.2` のような番号）：
@@ -320,7 +320,7 @@ vm2 は `.11`、`vm2-secrets`、`jiro`。期待：`smbd が 445 で待受中`、
 - [ ] 3 環境とも Remote Control が「接続中」（利用者の初期設定後）
 - [ ] `ssh-host.example.com` のブラウザ版 SSH で taro が入れる。`vnc-vm1.example.com` で hanako の画面が見える
 - [ ] `tart stop vm1` → launchd が起動し直し、2 分後に報告が戻る
-- [ ] `launchctl kickstart -k gui/$(id -u)/com.example.agent` → 1 分後に報告が戻る
+- [ ] `launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.agent` → 1 分後に報告が戻る
 - [ ] フォルダごとの Remote Control：作成 → 起動 → 停止ができる
 
 ## 9. 構築後に残る作業

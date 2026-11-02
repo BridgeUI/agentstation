@@ -11,6 +11,9 @@ import {
   isRcPermissionMode,
   isVmEnv,
   parseMembersConfig,
+  parseSiteConfig,
+  siteView,
+  type MeResponse,
   summarizeSetup,
   type Command,
   type CommandArgs,
@@ -53,7 +56,12 @@ const MEM_ERROR = 90;
 
 export async function getMe(request: Request, env: Bindings): Promise<Response> {
   const me = await authenticateUser(request, env);
-  return json(me);
+  // 画面に出す名前・ドメインなど（SITE_JSON）。使っている環境の人だけ
+  const res: MeResponse = {
+    ...me,
+    site: siteView(parseSiteConfig(env.SITE_JSON), me.enabled_envs),
+  };
+  return json(res);
 }
 
 /** 画面が見られている印の書き込みは isolate ごとに 20 秒に 1 回まで（D1 の書き込みを抑える） */

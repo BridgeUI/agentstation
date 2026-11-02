@@ -4,7 +4,7 @@
 
 ## エージェントを再起動すると、そのマシンの作業中の Claude セッションも切れる
 
-フォルダごとの Remote Control はエージェントの子プロセス（`docs/spec.md` 13章 #13）。host で `launchctl kickstart -k gui/$(id -u)/<label_prefix>.agent` を打つと一緒に止まる（メインの claude-rc は別の LaunchAgent なので無事）。
+フォルダごとの Remote Control はエージェントの子プロセス（`docs/spec.md` 13章 #13）。host で `launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.agent` を打つと一緒に止まる（メインの claude-rc は別の LaunchAgent なので無事）。
 
 → 導入作業を host の Remote Control 越しの Claude Code でしているなら、エージェントの再起動は **応答の最後** に置き、先に確認手順（`launchctl print …` とダッシュボードの最終報告時刻）を書いておく。
 

@@ -23,9 +23,9 @@
         </a>
         <div class="nav-links">
           <a href="/">一覧</a>
-          <a href="/host.html">Taro</a>
-          <a href="/vm1.html">Hanako</a>
-          <a href="/vm2.html">Jiro</a>
+          <a href="/host.html"><span data-name="host">Taro</span></a>
+          <a href="/vm1.html"><span data-name="vm1">Hanako</span></a>
+          <a href="/vm2.html"><span data-name="vm2">Jiro</span></a>
           <a href="/guide/" aria-current="page">使い方ガイド</a>
         </div>
       </div>
@@ -81,14 +81,14 @@
           <div class="account-box">
             <div>
               <span class="k">Mac のユーザー名</span>
-              <span class="v">Hanako さん → <code>hanako</code></span>
-              <span class="v">Jiro さん → <code>jiro</code></span>
+              <span class="v"><span data-name="vm1">Hanako</span> さん → <code><span data-login="vm1">hanako</span></code></span>
+              <span class="v"><span data-name="vm2">Jiro</span> さん → <code><span data-login="vm2">jiro</span></code></span>
               <span class="d">メールアドレスの @ より前と同じです。SSH のユーザー名もこれです。</span>
             </div>
             <div>
               <span class="k">① Mac のログインパスワード</span>
-              <span class="v">Taro から受け取ります</span>
-              <span class="d">ロック画面（名前の下にパスワード欄がある画面）で使います。変えたときは Taro に伝えてください。</span>
+              <span class="v"><span data-name="host">Taro</span> から受け取ります</span>
+              <span class="d">ロック画面（名前の下にパスワード欄がある画面）で使います。変えたときは <span data-name="host">Taro</span> に伝えてください。</span>
             </div>
             <div>
               <span class="k">② 画面共有（VNC）のパスワード</span>
@@ -122,11 +122,11 @@
               <rect x="480" y="22" width="264" height="190" rx="14" fill="#f5f5f7" stroke="#d2d2d7" />
               <text x="612" y="46" text-anchor="middle" font-size="13" fill="#6e6e73" font-weight="600">会社の Mac</text>
               <rect x="498" y="60" width="228" height="40" rx="8" fill="#fff" stroke="#d2d2d7" />
-              <text x="612" y="85" text-anchor="middle" font-size="13" fill="#1d1d1f">Taro の Mac（本体）</text>
+              <text x="612" y="85" text-anchor="middle" font-size="13" fill="#1d1d1f"><span data-name="host">Taro</span> の Mac（本体）</text>
               <rect x="498" y="108" width="228" height="40" rx="8" fill="#fff" stroke="#1d1d1f" stroke-width="1.5" />
-              <text x="612" y="133" text-anchor="middle" font-size="13" fill="#1d1d1f" font-weight="700">Hanako の Mac（仮想マシン vm1）</text>
+              <text x="612" y="133" text-anchor="middle" font-size="13" fill="#1d1d1f" font-weight="700"><span data-name="vm1">Hanako</span> の Mac（仮想マシン vm1）</text>
               <rect x="498" y="156" width="228" height="40" rx="8" fill="#fff" stroke="#1d1d1f" stroke-width="1.5" />
-              <text x="612" y="181" text-anchor="middle" font-size="13" fill="#1d1d1f" font-weight="700">Jiro の Mac（仮想マシン vm2）</text>
+              <text x="612" y="181" text-anchor="middle" font-size="13" fill="#1d1d1f" font-weight="700"><span data-name="vm2">Jiro</span> の Mac（仮想マシン vm2）</text>
             </svg>
             <figcaption>
               入り口は Cloudflare です。会社の Google アカウントで本人確認が済むと、自分の Mac につながります。インターネットから Mac へ直接はつなげません。
@@ -135,7 +135,7 @@
           <div class="tips">
             <div>
               <strong>自分の Mac はどれか</strong>
-              <span class="d">Hanako さんは「vm1」、Jiro さんは「vm2」です。ダッシュボードでは「Hanako の環境」「Jiro の環境」と表示します。</span>
+              <span class="d"><span data-name="vm1">Hanako</span> さんは「vm1」、<span data-name="vm2">Jiro</span> さんは「vm2」です。ダッシュボードでは「<span data-name="vm1">Hanako</span> の環境」「<span data-name="vm2">Jiro</span> の環境」と表示します。</span>
             </div>
             <div>
               <strong>普段の使い方</strong>
@@ -154,7 +154,7 @@
 
     <footer class="footer">
       <div class="wrap">
-        <span>Example Inc.</span>
+        <span><span data-org-footer>Example Inc.</span></span>
         <span>Cloudflare Access で保護されています</span>
       </div>
     </footer>

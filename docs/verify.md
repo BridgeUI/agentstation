@@ -187,13 +187,13 @@ curl -sS -o /dev/null -w "%{http_code}\n" https://www.cloudflare.com/
 1. 作業フォルダを作る（ホーム直下・Desktop・Documents は避ける。例：`~/work/rc`）
 2. そのフォルダで一度 `claude` を対話的に起動し、信頼の質問に答えて終了する
 3. `which claude` で絶対パスを控える
-4. 次の plist を `~/Library/LaunchAgents/com.example.claude-rc.plist` に置く（パスと `<ユーザー名>` を置き換える）
+4. 次の plist を `~/Library/LaunchAgents/co.bridgeui.agentstation.claude-rc.plist` に置く（パスと `<ユーザー名>` を置き換える）
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-  <key>Label</key><string>com.example.claude-rc</string>
+  <key>Label</key><string>co.bridgeui.agentstation.claude-rc</string>
   <key>ProgramArguments</key><array>
     <string>/Users/<ユーザー名>/.local/bin/claude</string>
     <string>remote-control</string>
@@ -214,8 +214,8 @@ curl -sS -o /dev/null -w "%{http_code}\n" https://www.cloudflare.com/
 ```
 
 ```bash
-launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.claude-rc.plist
-launchctl print gui/$(id -u)/com.example.claude-rc | grep -E "state|pid"
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/co.bridgeui.agentstation.claude-rc.plist
+launchctl print gui/$(id -u)/co.bridgeui.agentstation.claude-rc | grep -E "state|pid"
 tail -50 ~/Library/Logs/claude-rc.err.log
 ```
 
@@ -226,7 +226,7 @@ tail -50 ~/Library/Logs/claude-rc.err.log
 ### C-2 ★ 停止→再起動でセッションが戻るか。セッション ID とタイトルの取り方
 
 ```bash
-launchctl kickstart -k gui/$(id -u)/com.example.claude-rc
+launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.claude-rc
 ```
 
 期待：スマホで同じセッションが続いている（停止から約 4 時間以内）。あわせて、セッション ID とタイトルがどこで分かるかを書く（`claude remote-control --help` の出力、ログの行、`~/.claude/` 配下のファイル名など。**ファイル名やタイトル本文はここに貼らず、形だけ書く**）。

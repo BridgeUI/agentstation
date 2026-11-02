@@ -27,5 +27,6 @@ build/
 .claude/settings.local.json
 worker/public/version.json
 
-# 導入先の値（deploy ブランチでだけ git add -f でコミットする。kit/START.md 2 章）
+# 導入先の値と、そこから作る本番の設定（リポジトリには入れない。kit/README.md）
 kit/site.json
+worker/wrangler.deploy.toml

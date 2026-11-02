@@ -270,7 +270,7 @@ var SETUP_CHECK_SPECS = {
   "launchd.claude_rc": {
     label: "Remote Control \u306E\u5E38\u99D0\uFF08launchd\uFF09",
     manual: false,
-    how: "launchctl bootstrap gui/<uid> ~/Library/LaunchAgents/com.example.claude-rc.plist",
+    how: "launchctl bootstrap gui/<uid> ~/Library/LaunchAgents/co.bridgeui.agentstation.claude-rc.plist",
     envs: ALL
   },
   "launchd.codex": {
@@ -282,13 +282,13 @@ var SETUP_CHECK_SPECS = {
   "launchd.vm1": {
     label: "vm1 \u306E\u81EA\u52D5\u8D77\u52D5\uFF08launchd\uFF09",
     manual: false,
-    how: "launchctl bootstrap gui/<uid> ~/Library/LaunchAgents/com.example.tart-vm1.plist",
+    how: "launchctl bootstrap gui/<uid> ~/Library/LaunchAgents/co.bridgeui.agentstation.tart-vm1.plist",
     envs: HOST
   },
   "launchd.vm2": {
     label: "vm2 \u306E\u81EA\u52D5\u8D77\u52D5\uFF08launchd\uFF09",
     manual: false,
-    how: "launchctl bootstrap gui/<uid> ~/Library/LaunchAgents/com.example.tart-vm2.plist",
+    how: "launchctl bootstrap gui/<uid> ~/Library/LaunchAgents/co.bridgeui.agentstation.tart-vm2.plist",
     envs: HOST
   },
   "cloudflared.running": {
@@ -338,6 +338,20 @@ function summarizeSetup(checks) {
   }
   return s;
 }
+
+// ../shared/src/site.ts
+var DEFAULT_SITE = {
+  org_name: "Example",
+  org_footer: "Example Inc.",
+  domain: "example.com",
+  dashboard_host: "workstation.example.com",
+  access_team: "example",
+  people: {
+    host: { name: "Taro", login: "taro" },
+    vm1: { name: "Hanako", login: "hanako" },
+    vm2: { name: "Jiro", login: "jiro" }
+  }
+};
 
 // ui/api.ts
 var ApiFailure = class extends Error {
@@ -609,33 +623,27 @@ async function sessionDialog(sessions, now) {
 }
 
 // ui/people.ts
-var PEOPLE = {
-  host: {
-    env: "host",
-    name: "Taro",
-    login: "taro",
-    initial: "T",
-    account: "\u30A2\u30AB\u30A6\u30F3\u30C8A",
-    shade: "p1",
-    fixedIp: "192.168.64.1"
-  },
-  vm1: {
-    env: "vm1",
-    name: "Hanako",
-    login: "hanako",
-    initial: "H",
-    account: "\u30A2\u30AB\u30A6\u30F3\u30C8B",
-    shade: "p2"
-  },
-  vm2: {
-    env: "vm2",
-    name: "Jiro",
-    login: "jiro",
-    initial: "J",
-    account: "\u30A2\u30AB\u30A6\u30F3\u30C8C",
-    shade: "p3"
-  }
+var STATIC = {
+  host: { account: "\u30A2\u30AB\u30A6\u30F3\u30C8A", shade: "p1", fixedIp: "192.168.64.1" },
+  vm1: { account: "\u30A2\u30AB\u30A6\u30F3\u30C8B", shade: "p2" },
+  vm2: { account: "\u30A2\u30AB\u30A6\u30F3\u30C8C", shade: "p3" }
 };
+function personOf(env, name, login) {
+  return { env, name, login, initial: (name[0] ?? env[0] ?? "?").toUpperCase(), ...STATIC[env] };
+}
+var PEOPLE = Object.fromEntries(
+  ENVS.map((e) => [e, personOf(e, DEFAULT_SITE.people[e].name, DEFAULT_SITE.people[e].login)])
+);
+var SITE = DEFAULT_SITE;
+var OWNER_NAME = PEOPLE.host.name;
+function applySite(site) {
+  SITE = site;
+  for (const e of ENVS) {
+    const p = site.people[e];
+    PEOPLE[e] = p ? personOf(e, p.name, p.login) : personOf(e, e, e);
+  }
+  OWNER_NAME = PEOPLE.host.name;
+}
 function titleOf(env) {
   return `${PEOPLE[env].name} \u306E\u74B0\u5883`;
 }
@@ -1497,6 +1505,7 @@ function renderEnvPage(ctx) {
   const down = hostLiveness(s) === "unresponsive";
   const own = down ? null : e.heartbeat;
   $("env-title").textContent = titleOf(env);
+  document.title = `${titleOf(env)} \xB7 agentstation`;
   const av = document.querySelector(".avatar.lg");
   if (av) av.textContent = PEOPLE[env].initial;
   const version = own?.claude.version ? `Claude Code ${own.claude.version}${own.claude.channel ? `\uFF08${own.claude.channel}\uFF09` : ""}` : null;
@@ -1504,14 +1513,12 @@ function renderEnvPage(ctx) {
   const pill = $("overall");
   pill.className = `pill s-${v.tone}`;
   pill.innerHTML = html`<span class="dot"></span>${v.label}`;
-  $("head-actions").innerHTML = canUse ? html`<a class="btn" href="https://ssh-${env}.example.com" rel="noopener"
+  $("head-actions").innerHTML = canUse ? html`<a class="btn" href="https://ssh-${env}.${SITE.domain}" rel="noopener"
           >${raw(ICON_TERM)} SSH</a
-        ><a class="btn primary" href="https://vnc-${env}.example.com" rel="noopener"
+        ><a class="btn primary" href="https://vnc-${env}.${SITE.domain}" rel="noopener"
           >${raw(ICON_SCREEN)} 画面共有</a
         >` : "";
-  const bs = banners(s).filter(
-    (b) => b.title.includes(`\uFF08${env}\uFF09`) || b.title.startsWith("Mac")
-  );
+  const bs = banners(s).filter((b) => b.title.includes(`\uFF08${env}\uFF09`) || b.title.startsWith("Mac"));
   const bn = $("banners");
   bn.hidden = bs.length === 0;
   bn.innerHTML = bs.map((b) => bannerHtml(b)).join("");
@@ -1716,11 +1723,11 @@ function renderConnection(ctx, e, canUse) {
       </div>
       <div class="panel-body">
         <div class="routes">
-          <a class="route" href="https://ssh-${env}.example.com" rel="noopener">
-            <b>${raw(ICON_TERM)}SSH（ブラウザ）</b><span>ssh-${env}.example.com</span>
+          <a class="route" href="https://ssh-${env}.${SITE.domain}" rel="noopener">
+            <b>${raw(ICON_TERM)}SSH（ブラウザ）</b><span>ssh-${env}.${SITE.domain}</span>
           </a>
-          <a class="route" href="https://vnc-${env}.example.com" rel="noopener">
-            <b>${raw(ICON_SCREEN)}画面共有（ブラウザ）</b><span>vnc-${env}.example.com</span>
+          <a class="route" href="https://vnc-${env}.${SITE.domain}" rel="noopener">
+            <b>${raw(ICON_SCREEN)}画面共有（ブラウザ）</b><span>vnc-${env}.${SITE.domain}</span>
           </a>
         </div>
       </div>
@@ -2131,7 +2138,7 @@ async function checkBuild() {
     if (!res.ok) return;
     const body = await res.json();
     const build = typeof body.build === "string" ? body.build : null;
-    if (!build || build === "31ffda6-mvz1u0ak" || reloadedFor === build) return;
+    if (!build || build === "cfd09cf-mvz2b6xz" || reloadedFor === build) return;
     reloadedFor = build;
     location.reload();
   } catch {
@@ -2193,8 +2200,12 @@ async function boot() {
   registerServiceWorker();
   if (page === "guide") {
     api.me().then(
-      (m) => applyEnabledEnvs(m.enabled_envs),
-      () => void 0
+      (m) => {
+        applySite(m.site);
+        fillSiteDom();
+        applyEnabledEnvs(m.enabled_envs);
+      },
+      () => fillSiteDom()
     );
     return;
   }
@@ -2202,9 +2213,12 @@ async function boot() {
   try {
     me = await api.me();
   } catch (e) {
+    fillSiteDom();
     fail(e);
     return;
   }
+  applySite(me.site);
+  fillSiteDom();
   applyEnabledEnvs(me.enabled_envs);
   if (pageEnv && !me.enabled_envs.includes(pageEnv)) {
     showUnusedEnv(pageEnv);
@@ -2257,6 +2271,28 @@ function render() {
     renderEnvPage({ env: pageEnv, me, s: status, audit, serverOffset });
     selectTab();
   }
+}
+function fillSiteDom() {
+  const set = (sel, value) => {
+    for (const el of document.querySelectorAll(sel)) {
+      const v = value(el);
+      if (v !== null) el.textContent = v;
+    }
+  };
+  const env = (el, key) => {
+    const e = el.dataset[key];
+    return isEnv(e) ? PEOPLE[e][key] : null;
+  };
+  set("[data-name]", (el) => env(el, "name"));
+  set("[data-login]", (el) => env(el, "login"));
+  set("[data-domain]", () => SITE.domain);
+  set("[data-dashboard-host]", () => SITE.dashboard_host);
+  set("[data-team]", () => SITE.access_team);
+  set("[data-org]", () => SITE.org_name);
+  set("[data-org-footer]", () => SITE.org_footer);
+  for (const img of document.querySelectorAll('img[src="/logo.png"]'))
+    img.alt = SITE.org_name;
+  document.documentElement.classList.add("site-ready");
 }
 function applyEnabledEnvs(enabled) {
   for (const env of ["vm1", "vm2"]) {

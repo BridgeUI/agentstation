@@ -14,6 +14,7 @@ import { showVncPassword } from './vncpw.js';
 import { $, setupExplainButtons, show } from './dom.js';
 import { renderEnvPage } from './envpage.js';
 import { renderOverview } from './overview.js';
+import { PEOPLE, SITE, applySite } from './people.js';
 
 /**
  * 画面の入口。body の data-page で分岐する。
@@ -124,10 +125,14 @@ async function boot(): Promise<void> {
   setupExplainButtons();
   registerServiceWorker();
   if (page === 'guide') {
-    // ガイドはログインの確認だけ。使っていない VM へのリンクを隠す（取れなければそのまま）
+    // ガイドは名前などを入れ、使っていない VM へのリンクを隠すだけ（取れなければ見本の値のまま見せる）
     api.me().then(
-      (m) => applyEnabledEnvs(m.enabled_envs),
-      () => undefined,
+      (m) => {
+        applySite(m.site);
+        fillSiteDom();
+        applyEnabledEnvs(m.enabled_envs);
+      },
+      () => fillSiteDom(),
     );
     return;
   }
@@ -136,9 +141,12 @@ async function boot(): Promise<void> {
   try {
     me = await api.me();
   } catch (e) {
+    fillSiteDom();
     fail(e);
     return;
   }
+  applySite(me.site);
+  fillSiteDom();
   applyEnabledEnvs(me.enabled_envs);
   if (pageEnv && !me.enabled_envs.includes(pageEnv)) {
     showUnusedEnv(pageEnv);
@@ -196,6 +204,34 @@ function render(): void {
     renderEnvPage({ env: pageEnv, me, s: status, audit, serverOffset });
     selectTab();
   }
+}
+
+/**
+ * HTML の印に導入先の値を入れる（SITE_JSON。リポジトリの HTML は見本の値のまま）。
+ * data-name / data-login="host|vm1|vm2"、data-domain、data-dashboard-host、data-team、data-org、data-org-footer。
+ * 入れ終わるまで、それらは CSS で隠しておく（見本の名前が一瞬見えないように）
+ */
+function fillSiteDom(): void {
+  const set = (sel: string, value: (el: HTMLElement) => string | null) => {
+    for (const el of document.querySelectorAll<HTMLElement>(sel)) {
+      const v = value(el);
+      if (v !== null) el.textContent = v;
+    }
+  };
+  const env = (el: HTMLElement, key: 'name' | 'login') => {
+    const e = el.dataset[key];
+    return isEnv(e) ? PEOPLE[e][key] : null;
+  };
+  set('[data-name]', (el) => env(el, 'name'));
+  set('[data-login]', (el) => env(el, 'login'));
+  set('[data-domain]', () => SITE.domain);
+  set('[data-dashboard-host]', () => SITE.dashboard_host);
+  set('[data-team]', () => SITE.access_team);
+  set('[data-org]', () => SITE.org_name);
+  set('[data-org-footer]', () => SITE.org_footer);
+  for (const img of document.querySelectorAll<HTMLImageElement>('img[src="/logo.png"]'))
+    img.alt = SITE.org_name;
+  document.documentElement.classList.add('site-ready');
 }
 
 /**

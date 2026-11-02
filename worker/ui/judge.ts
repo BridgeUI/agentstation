@@ -115,11 +115,7 @@ export function banners(
   const out: { level: 'warn' | 'error'; title: string; body: string }[] = [];
   const hostLive = hostLiveness(s);
   for (const a of s.alerts) {
-    if (
-      a.message.startsWith('Mac') &&
-      hostLive === 'unresponsive' &&
-      s.host_received_at !== null
-    ) {
+    if (a.message.startsWith('Mac') && hostLive === 'unresponsive' && s.host_received_at !== null) {
       out.push({
         level: 'error',
         title: `Macから${minutesSince(s.host_received_at, s.now)}分間応答がありません`,

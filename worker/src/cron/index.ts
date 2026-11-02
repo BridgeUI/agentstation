@@ -28,6 +28,7 @@ import type { Bindings } from '../env.js';
 import { switchbotConfig } from '../switchbot.js';
 import { plugLine, plugStage } from './plug.js';
 import {
+  dashboardUrl,
   createSlackNotifier,
   envLabel,
   formatDuration,
@@ -67,7 +68,12 @@ export const PLUG_UNREACHABLE_MS = 15 * 60 * 1000;
 const OBSERVING = 'observing';
 
 export async function runCron(env: Bindings, now: Millis = Date.now()): Promise<void> {
-  const notifier = createSlackNotifier(env.SLACK_WEBHOOK_URL, now, env.TZ_DISPLAY);
+  const notifier = createSlackNotifier(
+    env.SLACK_WEBHOOK_URL,
+    now,
+    env.TZ_DISPLAY,
+    dashboardUrl(env.SITE_JSON),
+  );
   await stage('スマートプラグ', () => plugStage(env, now));
   await stage('指示の期限切れと結果の通知', () => notifyCommands(env, notifier, now));
   await stage('途絶・資源の判定', () => checkConditions(env, notifier, now));

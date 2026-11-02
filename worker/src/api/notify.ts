@@ -1,5 +1,5 @@
 import { authenticateUser } from '../auth.js';
-import { createSlackNotifier, localPart } from '../cron/slack.js';
+import { dashboardUrl, createSlackNotifier, localPart } from '../cron/slack.js';
 import { audit } from '../db.js';
 import type { Bindings } from '../env.js';
 import { HttpError, json } from '../http.js';
@@ -19,7 +19,12 @@ export async function postNotifyTest(request: Request, env: Bindings): Promise<R
     );
   }
   const now = Date.now();
-  const notifier = createSlackNotifier(env.SLACK_WEBHOOK_URL, now, env.TZ_DISPLAY);
+  const notifier = createSlackNotifier(
+    env.SLACK_WEBHOOK_URL,
+    now,
+    env.TZ_DISPLAY,
+    dashboardUrl(env.SITE_JSON),
+  );
   const ok = await notifier.send({
     title: 'テスト通知（ダッシュボードから手で送信）',
     lines: [`送信: ${localPart(me.email)}`],

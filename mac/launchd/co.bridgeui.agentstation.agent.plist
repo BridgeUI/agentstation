@@ -3,17 +3,17 @@
 <!--
   監視エージェント（docs/spec.md 3.6）。host / vm1 / vm2 の 3 か所に同じテンプレートを置き、__ENV__ だけ変える。
   プレースホルダ: __USER__（その環境のユーザー名: taro / hanako / jiro）、__ENV__（host / vm1 / vm2）
-  配置先: ~/Library/LaunchAgents/com.example.agent.plist
+  配置先: ~/Library/LaunchAgents/co.bridgeui.agentstation.agent.plist
   ログ  : ~/Library/Logs/agentstation/（先に mkdir -p しておく）
   設定  : ~/.config/agentstation/config.json と token.json（agent/src/config.ts。token.json は chmod 600）
-  起動  : launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.agent.plist
-  更新後: launchctl kickstart -k gui/$(id -u)/com.example.agent
+  起動  : launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/co.bridgeui.agentstation.agent.plist
+  更新後: launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.agent
   ExitTimeOut 35: エージェントは SIGTERM で実行中の操作を最大 30 秒待ってから止まる（agent/src/index.ts）。launchd の既定 20 秒だと途中で SIGKILL される。
 -->
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>com.example.agent</string>
+  <string>co.bridgeui.agentstation.agent</string>
   <key>ProgramArguments</key>
   <array>
     <string>/Users/__USER__/.nodebrew/current/bin/node</string>

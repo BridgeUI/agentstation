@@ -23,9 +23,9 @@
         </a>
         <div class="nav-links">
           <a href="/">一覧</a>
-          <a href="/host.html">Taro</a>
-          <a href="/vm1.html">Hanako</a>
-          <a href="/vm2.html">Jiro</a>
+          <a href="/host.html"><span data-name="host">Taro</span></a>
+          <a href="/vm1.html"><span data-name="vm1">Hanako</span></a>
+          <a href="/vm2.html"><span data-name="vm2">Jiro</span></a>
           <a href="/guide/" aria-current="page">使い方ガイド</a>
         </div>
       </div>
@@ -94,7 +94,7 @@
                 <span class="n">1</span>
                 <div>
                   <strong>自分の環境 › 「接続」タブ › 「画面共有（ブラウザ）」を押します</strong>
-                  <span class="d">新しいタブで vnc-vm1.example.com（Jiro さんは vm2）が開きます。</span>
+                  <span class="d">新しいタブで vnc-vm1.<span data-domain>example.com</span>（<span data-name="vm2">Jiro</span> さんは vm2）が開きます。</span>
                 </div>
               </div>
             </li>
@@ -128,7 +128,7 @@
             <li>
               <div class="pic">
                 <pre class="term" aria-label="ブラウザの中に開いたターミナルの例"><span class="o">Last login: Sun Nov  1 01:00:50 2026</span>
-<span class="p">hanako@vm1 ~ %</span> <span class="k">▌</span></pre>
+<span class="p"><span data-login="vm1">hanako</span>@vm1 ~ %</span> <span class="k">▌</span></pre>
               </div>
               <div class="txt">
                 <span class="n">1</span>
@@ -152,15 +152,15 @@
               <div class="pic">
                 <div class="mock-dialog" aria-hidden="true">
                   <div class="t">Cloudflare One</div>
-                  <div class="f">チーム名：example</div>
+                  <div class="f">チーム名：<span data-team>example</span></div>
                   <div class="b"><span class="on">次へ</span></div>
                 </div>
               </div>
               <div class="txt">
                 <span class="n">1</span>
                 <div>
-                  <strong>アプリを入れて、チーム名「example」でログインします</strong>
-                  <span class="d">Mac は <a href="https://one.one.one.one/" rel="noopener">Cloudflare One のダウンロードページ</a>から、iPhone と Android は App Store / Play ストアで「Cloudflare One」（旧 WARP）を入れます。初回に「Zero Trust にログイン」を選び、チーム名に <code>example</code> と入力して、Google で会社のアカウントを選びます。</span>
+                  <strong>アプリを入れて、チーム名「<span data-team>example</span>」でログインします</strong>
+                  <span class="d">Mac は <a href="https://one.one.one.one/" rel="noopener">Cloudflare One のダウンロードページ</a>から、iPhone と Android は App Store / Play ストアで「Cloudflare One」（旧 WARP）を入れます。初回に「Zero Trust にログイン」を選び、チーム名に <code><span data-team>example</span></code> と入力して、Google で会社のアカウントを選びます。</span>
                 </div>
               </div>
             </li>
@@ -168,7 +168,7 @@
               <div class="pic">
                 <div class="mock-toggle" aria-hidden="true">
                   <div class="sw"><i></i></div>
-                  <div class="lbl">接続済み<small>Zero Trust · example</small></div>
+                  <div class="lbl">接続済み<small>Zero Trust · <span data-team>example</span></small></div>
                 </div>
               </div>
               <div class="txt">
@@ -198,7 +198,7 @@
                 <span class="n">1</span>
                 <div>
                   <strong>Finder › 移動 › サーバへ接続 で、宛先を入力します</strong>
-                  <span class="d">Hanako さんは <code>vnc://192.168.64.10</code>、Jiro さんは <code>vnc://192.168.64.11</code> です。ダッシュボードの「接続」タブ › 「VNC アプリ」の行にも書いてあります。</span>
+                  <span class="d"><span data-name="vm1">Hanako</span> さんは <code>vnc://192.168.64.10</code>、<span data-name="vm2">Jiro</span> さんは <code>vnc://192.168.64.11</code> です。ダッシュボードの「接続」タブ › 「VNC アプリ」の行にも書いてあります。</span>
                 </div>
               </div>
             </li>
@@ -227,16 +227,16 @@
           <ol class="steps">
             <li>
               <div class="pic">
-                <pre class="term" aria-label="ターミナルの例"><span class="p">mac ~ %</span> ssh hanako@192.168.64.10
+                <pre class="term" aria-label="ターミナルの例"><span class="p">mac ~ %</span> ssh <span data-login="vm1">hanako</span>@192.168.64.10
 <span class="o">Last login: Sun Nov  1 01:00:50 2026</span>
-<span class="p">hanako@vm1 ~ %</span></pre>
+<span class="p"><span data-login="vm1">hanako</span>@vm1 ~ %</span></pre>
               </div>
               <div class="txt">
                 <span class="n">1</span>
                 <div>
                   <strong>ターミナル（Mac は「ターミナル」、Windows は「Windows ターミナル」か PowerShell）を開き、次の 1 行を入力して Enter を押します</strong>
-                  <code class="cmd-line">ssh hanako@192.168.64.10</code>
-                  <span class="d">Jiro さんは <code>ssh jiro@192.168.64.11</code> です。ダッシュボードの「接続」タブ › 「SSH アプリ」の行の「コピー」でも同じコマンドをコピーできます。パスワードも鍵も要りません。WARP でログインした本人に証明書が渡されます。初回だけホスト鍵の確認が出るので yes と入力します。</span>
+                  <code class="cmd-line">ssh <span data-login="vm1">hanako</span>@192.168.64.10</code>
+                  <span class="d"><span data-name="vm2">Jiro</span> さんは <code>ssh <span data-login="vm2">jiro</span>@192.168.64.11</code> です。ダッシュボードの「接続」タブ › 「SSH アプリ」の行の「コピー」でも同じコマンドをコピーできます。パスワードも鍵も要りません。WARP でログインした本人に証明書が渡されます。初回だけホスト鍵の確認が出るので yes と入力します。</span>
                   <span class="d warn">WARP がオフだと 192.168.64.〜 には届かず、つながりません。</span>
                 </div>
               </div>
@@ -256,7 +256,7 @@
                   <div class="t">WebSSH · 新しい接続</div>
                   <div class="f">ホスト: 192.168.64.10</div>
                   <div class="f">ポート: 22</div>
-                  <div class="f">ユーザー名: hanako</div>
+                  <div class="f">ユーザー名: <span data-login="vm1">hanako</span></div>
                   <div class="r"><span class="radio"></span>パスワード / 鍵: 空のまま</div>
                   <div class="b"><span class="on">保存</span></div>
                 </div>
@@ -265,7 +265,7 @@
                 <span class="n">1</span>
                 <div>
                   <strong>WebSSH（SSH）：接続先を 1 つ登録します</strong>
-                  <span class="d">新しい接続で、ホストに <code>192.168.64.10</code>（Jiro さんは <code>192.168.64.11</code>）、ポートに <code>22</code>、ユーザー名に <code>hanako</code>（Jiro さんは <code>jiro</code>）を入れます。パスワードと鍵は空のまま保存します。WARP でログインした本人に証明書が渡されるので、パスワードも鍵も要りません。</span>
+                  <span class="d">新しい接続で、ホストに <code>192.168.64.10</code>（<span data-name="vm2">Jiro</span> さんは <code>192.168.64.11</code>）、ポートに <code>22</code>、ユーザー名に <code><span data-login="vm1">hanako</span></code>（<span data-name="vm2">Jiro</span> さんは <code><span data-login="vm2">jiro</span></code>）を入れます。パスワードと鍵は空のまま保存します。WARP でログインした本人に証明書が渡されるので、パスワードも鍵も要りません。</span>
                   <span class="d">接続すると、初回だけ「ホスト鍵を信頼するか」と聞かれるので「Continue」を選びます。</span>
                 </div>
               </div>
@@ -284,7 +284,7 @@
                 <span class="n">2</span>
                 <div>
                   <strong>DualMac（画面共有）：接続先を 1 つ登録します</strong>
-                  <span class="d">新規接続で、ホストに <code>192.168.64.10</code>（Jiro さんは <code>192.168.64.11</code>）、ポートに <code>5900</code> を入れます。認証は「VNC パスワード」で、ダッシュボードの「パスワードを表示」で出る 8 文字を入れます。ユーザー名の欄があれば空のままにします。</span>
+                  <span class="d">新規接続で、ホストに <code>192.168.64.10</code>（<span data-name="vm2">Jiro</span> さんは <code>192.168.64.11</code>）、ポートに <code>5900</code> を入れます。認証は「VNC パスワード」で、ダッシュボードの「パスワードを表示」で出る 8 文字を入れます。ユーザー名の欄があれば空のままにします。</span>
                   <span class="d">ロック画面が出たら Mac のログインパスワードを入れます。画面の向きや拡大はアプリ側で調整します。</span>
                 </div>
               </div>
@@ -293,7 +293,7 @@
               <div class="pic">
                 <div class="mock-toggle" aria-hidden="true">
                   <div class="sw"><i></i></div>
-                  <div class="lbl">接続済み<small>Cloudflare One · example</small></div>
+                  <div class="lbl">接続済み<small>Cloudflare One · <span data-team>example</span></small></div>
                 </div>
               </div>
               <div class="txt">
@@ -334,7 +334,7 @@
                 <span class="n">1</span>
                 <div>
                   <strong>「ファイル」を開き、右上の「…」から「サーバへ接続」</strong>
-                  <span class="d">サーバに <code>smb://192.168.64.10</code>（Jiro さんは <code>smb://192.168.64.11</code>）を入れて「接続」。アドレスはダッシュボードの「接続」にも出ています（「ファイルアプリ」の行）。</span>
+                  <span class="d">サーバに <code>smb://192.168.64.10</code>（<span data-name="vm2">Jiro</span> さんは <code>smb://192.168.64.11</code>）を入れて「接続」。アドレスはダッシュボードの「接続」にも出ています（「ファイルアプリ」の行）。</span>
                 </div>
               </div>
             </li>
@@ -344,7 +344,7 @@
                   <div class="t">ファイル · 接続方法</div>
                   <div class="r"><span class="radio"></span>ゲスト</div>
                   <div class="r"><span class="radio on"></span>登録ユーザ</div>
-                  <div class="f">名前: hanako</div>
+                  <div class="f">名前: <span data-login="vm1">hanako</span></div>
                   <div class="f">パスワード: ••••••••</div>
                   <div class="b"><span class="on">次へ</span></div>
                 </div>
@@ -353,7 +353,7 @@
                 <span class="n">2</span>
                 <div>
                   <strong>「登録ユーザ」を選び、Mac のユーザー名とログインパスワード</strong>
-                  <span class="d">名前に <code>hanako</code>（Jiro さんは <code>jiro</code>）、パスワードは画面共有のロック画面で使う Mac のログインパスワードです（画面共有の 8 文字ではありません）。「ゲスト」では入れません。</span>
+                  <span class="d">名前に <code><span data-login="vm1">hanako</span></code>（<span data-name="vm2">Jiro</span> さんは <code><span data-login="vm2">jiro</span></code>）、パスワードは画面共有のロック画面で使う Mac のログインパスワードです（画面共有の 8 文字ではありません）。「ゲスト」では入れません。</span>
                 </div>
               </div>
             </li>
@@ -378,25 +378,25 @@
             </thead>
             <tbody>
               <tr>
-                <td>Hanako（vm1）</td>
-                <td><code>vnc-vm1.example.com</code><br /><code>ssh-vm1.example.com</code></td>
-                <td><code>vnc://192.168.64.10</code><br /><code>ssh hanako@192.168.64.10</code></td>
+                <td><span data-name="vm1">Hanako</span>（vm1）</td>
+                <td><code>vnc-vm1.<span data-domain>example.com</span></code><br /><code>ssh-vm1.<span data-domain>example.com</span></code></td>
+                <td><code>vnc://192.168.64.10</code><br /><code>ssh <span data-login="vm1">hanako</span>@192.168.64.10</code></td>
                 <td><code>smb://192.168.64.10/workspace</code></td>
-                <td>Hanako</td>
+                <td><span data-name="vm1">Hanako</span></td>
               </tr>
               <tr>
-                <td>Jiro（vm2）</td>
-                <td><code>vnc-vm2.example.com</code><br /><code>ssh-vm2.example.com</code></td>
-                <td><code>vnc://192.168.64.11</code><br /><code>ssh jiro@192.168.64.11</code></td>
+                <td><span data-name="vm2">Jiro</span>（vm2）</td>
+                <td><code>vnc-vm2.<span data-domain>example.com</span></code><br /><code>ssh-vm2.<span data-domain>example.com</span></code></td>
+                <td><code>vnc://192.168.64.11</code><br /><code>ssh <span data-login="vm2">jiro</span>@192.168.64.11</code></td>
                 <td><code>smb://192.168.64.11/workspace</code></td>
-                <td>Jiro</td>
+                <td><span data-name="vm2">Jiro</span></td>
               </tr>
               <tr>
-                <td>Taro（本体）</td>
-                <td><code>vnc-host.example.com</code><br /><code>ssh-host.example.com</code></td>
-                <td><code>vnc://192.168.64.1</code><br /><code>ssh taro@192.168.64.1</code></td>
+                <td><span data-name="host">Taro</span>（本体）</td>
+                <td><code>vnc-host.<span data-domain>example.com</span></code><br /><code>ssh-host.<span data-domain>example.com</span></code></td>
+                <td><code>vnc://192.168.64.1</code><br /><code>ssh <span data-login="host">taro</span>@192.168.64.1</code></td>
                 <td><code>smb://192.168.64.1/workspace</code></td>
-                <td>Taro</td>
+                <td><span data-name="host">Taro</span></td>
               </tr>
             </tbody>
           </table>
@@ -409,7 +409,7 @@
 
     <footer class="footer">
       <div class="wrap">
-        <span>Example Inc.</span>
+        <span><span data-org-footer>Example Inc.</span></span>
         <span>Cloudflare Access で保護されています</span>
       </div>
     </footer>

@@ -2,9 +2,10 @@ import type { Command } from './commands.js';
 import type { Env, Millis } from './env.js';
 import type { Heartbeat, VmView } from './heartbeat.js';
 import type { Identity } from './members.js';
+import type { SiteView } from './site.js';
 
 /** GET /api/me */
-export type MeResponse = Identity;
+export type MeResponse = Identity & { site: SiteView };
 
 export type Liveness = 'ok' | 'delayed' | 'unresponsive' | 'unknown';
 

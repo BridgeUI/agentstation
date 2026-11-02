@@ -98,6 +98,16 @@ code,
 [hidden] {
   display: none !important;
 }
+/* 導入先の値（SITE_JSON）を入れるまで、見本の名前などを見せない（ui/main.ts の fillSiteDom） */
+html:not(.site-ready) [data-name],
+html:not(.site-ready) [data-login],
+html:not(.site-ready) [data-domain],
+html:not(.site-ready) [data-dashboard-host],
+html:not(.site-ready) [data-team],
+html:not(.site-ready) [data-org],
+html:not(.site-ready) [data-org-footer] {
+  visibility: hidden;
+}
 .sr-only {
   position: absolute;
   width: 1px;

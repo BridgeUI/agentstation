@@ -23,9 +23,9 @@
         </a>
         <div class="nav-links">
           <a href="/">一覧</a>
-          <a href="/host.html">Taro</a>
-          <a href="/vm1.html">Hanako</a>
-          <a href="/vm2.html">Jiro</a>
+          <a href="/host.html"><span data-name="host">Taro</span></a>
+          <a href="/vm1.html"><span data-name="vm1">Hanako</span></a>
+          <a href="/vm2.html"><span data-name="vm2">Jiro</span></a>
           <a href="/guide/" aria-current="page">使い方ガイド</a>
         </div>
       </div>
@@ -69,14 +69,14 @@
           <div class="account-box">
             <div>
               <span class="k">Mac のユーザー名</span>
-              <span class="v">Hanako さん → <code>hanako</code></span>
-              <span class="v">Jiro さん → <code>jiro</code></span>
+              <span class="v"><span data-name="vm1">Hanako</span> さん → <code><span data-login="vm1">hanako</span></code></span>
+              <span class="v"><span data-name="vm2">Jiro</span> さん → <code><span data-login="vm2">jiro</span></code></span>
               <span class="d">メールアドレスの @ より前と同じです。SSH のユーザー名もこれです。</span>
             </div>
             <div>
               <span class="k">① Mac のログインパスワード</span>
-              <span class="v">Taro から受け取ります</span>
-              <span class="d">ロック画面（名前の下にパスワード欄がある画面）で使います。変えたときは Taro に伝えてください。</span>
+              <span class="v"><span data-name="host">Taro</span> から受け取ります</span>
+              <span class="d">ロック画面（名前の下にパスワード欄がある画面）で使います。変えたときは <span data-name="host">Taro</span> に伝えてください。</span>
             </div>
             <div>
               <span class="k">② 画面共有（VNC）のパスワード</span>
@@ -94,8 +94,8 @@
               <div class="txt">
                 <span class="n">1</span>
                 <div>
-                  <strong><a href="https://workstation.example.com/">workstation.example.com</a> を開き、「Google」を押します</strong>
-                  <span class="d">会社の Google アカウント（@example.com）を選びます。下の「Send login code」は、メールに届く番号で入る方法です。どちらでも入れます。</span>
+                  <strong><a href="https://workstation.example.com/"><span data-dashboard-host>workstation.example.com</span></a> を開き、「Google」を押します</strong>
+                  <span class="d">会社の Google アカウントを選びます。下の「Send login code」は、メールに届く番号で入る方法です。どちらでも入れます。</span>
                 </div>
               </div>
             </li>
@@ -105,7 +105,7 @@
                 <span class="n">2</span>
                 <div>
                   <strong>一覧が出たら、上のメニューで自分の名前を押します</strong>
-                  <span class="d">「Hanako」または「Jiro」です。自分の環境のページが開きます。</span>
+                  <span class="d">「<span data-name="vm1">Hanako</span>」または「<span data-name="vm2">Jiro</span>」です。自分の環境のページが開きます。</span>
                 </div>
               </div>
             </li>
@@ -121,7 +121,7 @@
                 <span class="n">1</span>
                 <div>
                   <strong>「接続」タブ › 「画面共有（ブラウザ）」を押します</strong>
-                  <span class="d">新しいタブで vnc-vm1.example.com（Jiro さんは vm2）が開きます。右側の「アプリで入る」はここでは使いません。</span>
+                  <span class="d">新しいタブで vnc-vm1.<span data-domain>example.com</span>（<span data-name="vm2">Jiro</span> さんは vm2）が開きます。右側の「アプリで入る」はここでは使いません。</span>
                 </div>
               </div>
             </li>
@@ -190,16 +190,16 @@
           <ol class="steps">
             <li>
               <div class="pic">
-                <pre class="term" aria-label="ターミナルの例"><span class="p">hanako@vm1 ~ %</span> claude auth login
+                <pre class="term" aria-label="ターミナルの例"><span class="p"><span data-login="vm1">hanako</span>@vm1 ~ %</span> claude auth login
 <span class="o">Opening browser to sign in…</span>
-<span class="o">✓ Logged in as hanako@example.com</span></pre>
+<span class="o">✓ Logged in as <span data-login="vm1">hanako</span>@example.com</span></pre>
               </div>
               <div class="txt">
                 <span class="n">1</span>
                 <div>
                   <strong>次の 1 行を入力して Enter を押します</strong>
                   <code class="cmd-line">claude auth login</code>
-                  <span class="d">ブラウザが開くので、自分の Claude アカウント（Hanako さんはアカウント B、Jiro さんはアカウント C）でログインします。Taro のアカウントは使いません。「Logged in」と出たらターミナルは閉じて構いません。手で起動するものはありません。</span>
+                  <span class="d">ブラウザが開くので、自分の Claude アカウント（<span data-name="vm1">Hanako</span> さんはアカウント B、<span data-name="vm2">Jiro</span> さんはアカウント C）でログインします。<span data-name="host">Taro</span> のアカウントは使いません。「Logged in」と出たらターミナルは閉じて構いません。手で起動するものはありません。</span>
                 </div>
               </div>
             </li>
@@ -221,7 +221,7 @@
                 <span class="n">1</span>
                 <div>
                   <strong>ダッシュボードで「接続中」になり、Claude アプリに名前が出ます</strong>
-                  <span class="d">ログインが済むと、Mac 側の仕組みが Remote Control を自動で起動します（作業フォルダの信頼と Remote Control の許可は、Mac 側があなたの代わりに記録済みです）。1〜2 分後、自分の環境の Remote Control が「接続中」に変わります。スマホや PC の Claude アプリの Remote Control に <code>vm1-…</code>（Jiro さんは <code>vm2-…</code>）が出れば完了です。画面共有のタブは閉じて構いません。macOS からはログアウトしないでください。</span>
+                  <span class="d">ログインが済むと、Mac 側の仕組みが Remote Control を自動で起動します（作業フォルダの信頼と Remote Control の許可は、Mac 側があなたの代わりに記録済みです）。1〜2 分後、自分の環境の Remote Control が「接続中」に変わります。スマホや PC の Claude アプリの Remote Control に <code>vm1-…</code>（<span data-name="vm2">Jiro</span> さんは <code>vm2-…</code>）が出れば完了です。画面共有のタブは閉じて構いません。macOS からはログアウトしないでください。</span>
                 </div>
               </div>
             </li>
@@ -237,7 +237,7 @@
 
     <footer class="footer">
       <div class="wrap">
-        <span>Example Inc.</span>
+        <span><span data-org-footer>Example Inc.</span></span>
         <span>Cloudflare Access で保護されています</span>
       </div>
     </footer>

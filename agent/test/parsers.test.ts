@@ -21,9 +21,9 @@ import {
 } from '../src/collect/usage.js';
 
 describe('launchctl print', () => {
-  const running = `gui/501/com.example.claude-rc = {
+  const running = `gui/501/co.bridgeui.agentstation.claude-rc = {
 	active count = 1
-	path = /Users/x/Library/LaunchAgents/com.example.claude-rc.plist
+	path = /Users/x/Library/LaunchAgents/co.bridgeui.agentstation.claude-rc.plist
 	state = running
 	program = /Users/x/.local/bin/claude
 	pid = 4321

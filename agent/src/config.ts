@@ -15,9 +15,9 @@ import { isEnv, isVmEnv, VM_ENVS, type Env, type VmEnv } from '@agentstation/sha
  *   "codex_app": "/Applications/ChatGPT.app",          // Codex を ChatGPT アプリで動かすとき（任意）
  *   "work_dir": "/Users/<user>/work/rc",               // claude remote-control の作業フォルダ
  *   "rc_debug_log": "/Users/<user>/Library/Logs/claude-rc.log",  // --debug-file のパス
- *   "labels": { "claude_rc": "com.example.claude-rc", "codex": "com.example.codex",
- *               "vm1": "com.example.tart-vm1", "vm2": "com.example.tart-vm2" },
- *   "vm_plists": { "vm1": "/Users/<user>/Library/LaunchAgents/com.example.tart-vm1.plist", ... },
+ *   "labels": { "claude_rc": "co.bridgeui.agentstation.claude-rc", "codex": "co.bridgeui.agentstation.codex",
+ *               "vm1": "co.bridgeui.agentstation.tart-vm1", "vm2": "co.bridgeui.agentstation.tart-vm2" },
+ *   "vm_plists": { "vm1": "/Users/<user>/Library/LaunchAgents/co.bridgeui.agentstation.tart-vm1.plist", ... },
  *   "vm_names": { "vm1": "vm1", "vm2": "vm2" },        // tart 上の VM 名
  *   "vm_ips": { "vm1": "192.168.64.10", "vm2": "192.168.64.11" },  // 固定 IP（あれば tart ip より優先）
  *   "tart_vms_dir": "/Users/<user>/.tart/vms",
@@ -79,10 +79,10 @@ export interface AgentConfig {
 export const CONFIG_DIR = join(homedir(), '.config', 'agentstation');
 
 export const DEFAULT_LABELS = {
-  claude_rc: 'com.example.claude-rc',
-  codex: 'com.example.codex',
-  vm1: 'com.example.tart-vm1',
-  vm2: 'com.example.tart-vm2',
+  claude_rc: 'co.bridgeui.agentstation.claude-rc',
+  codex: 'co.bridgeui.agentstation.codex',
+  vm1: 'co.bridgeui.agentstation.tart-vm1',
+  vm2: 'co.bridgeui.agentstation.tart-vm2',
 } as const;
 
 export function parseEnvArg(argv: readonly string[]): Env {

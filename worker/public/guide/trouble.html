@@ -23,9 +23,9 @@
         </a>
         <div class="nav-links">
           <a href="/">一覧</a>
-          <a href="/host.html">Taro</a>
-          <a href="/vm1.html">Hanako</a>
-          <a href="/vm2.html">Jiro</a>
+          <a href="/host.html"><span data-name="host">Taro</span></a>
+          <a href="/vm1.html"><span data-name="vm1">Hanako</span></a>
+          <a href="/vm2.html"><span data-name="vm2">Jiro</span></a>
           <a href="/guide/" aria-current="page">使い方ガイド</a>
         </div>
       </div>
@@ -44,7 +44,7 @@
               <li><a href="#t-claude">Claude アプリからつながらない</a></li>
               <li><a href="#t-connect">画面共有・SSH・ファイルアプリで入れない</a></li>
               <li><a href="#t-password">パスワードが通らない</a></li>
-              <li><a href="#t-taro">Taro に連絡するとき</a></li>
+              <li><a href="#t-taro"><span data-name="host">Taro</span> に連絡するとき</a></li>
             </ul>
           </div>
         </nav>
@@ -55,7 +55,7 @@
         <header class="guide-head">
           <p class="eyebrow">使い方ガイド · うまくいかないとき</p>
           <h1>困ったとき</h1>
-          <p class="lead-p">まずダッシュボードの一覧を見てください。「応答なし」なら Mac 側の問題なので、Taro に連絡します。それ以外はここから探します。</p>
+          <p class="lead-p">まずダッシュボードの一覧を見てください。「応答なし」なら Mac 側の問題なので、<span data-name="host">Taro</span> に連絡します。それ以外はここから探します。</p>
         </header>
 
         <section class="sec" id="t-claude" aria-labelledby="claude-h">
@@ -105,7 +105,7 @@
             </div>
             <div>
               <strong>一覧で「応答なし」になっている</strong>
-              <span class="d">接続ではなく Mac 側の問題です。Taro に連絡してください。</span>
+              <span class="d">接続ではなく Mac 側の問題です。<span data-name="host">Taro</span> に連絡してください。</span>
             </div>
           </div>
         </section>
@@ -119,19 +119,19 @@
             </div>
             <div>
               <strong>ロック画面（名前の下の欄）</strong>
-              <span class="d">Mac のログインパスワード（Taro から受け取ったもの）を入れます。日本語入力がオンになっていると通らないので、英数に切り替えてください。</span>
+              <span class="d">Mac のログインパスワード（<span data-name="host">Taro</span> から受け取ったもの）を入れます。日本語入力がオンになっていると通らないので、英数に切り替えてください。</span>
             </div>
             <div>
               <strong>Mac のパスワードを変えた</strong>
-              <span class="d">Taro に伝えてください。自動ログインの設定を直さないと、次の再起動でログイン画面のまま止まります。</span>
+              <span class="d"><span data-name="host">Taro</span> に伝えてください。自動ログインの設定を直さないと、次の再起動でログイン画面のまま止まります。</span>
             </div>
           </div>
         </section>
 
         <section class="sec" id="t-taro" aria-labelledby="taro-h">
-          <h2 id="taro-h">Taro に連絡するとき</h2>
+          <h2 id="taro-h"><span data-name="host">Taro</span> に連絡するとき</h2>
           <div class="callout">
-            一覧に何と出ているか、どのボタンを押したか、何分前からかを添えてください。「履歴」タブ（誰がいつ何を押したか）は Taro 側でも見えます。
+            一覧に何と出ているか、どのボタンを押したか、何分前からかを添えてください。「履歴」タブ（誰がいつ何を押したか）は <span data-name="host">Taro</span> 側でも見えます。
           </div>
           <div class="callout">
             <b>やらないでほしいこと：</b>ログアウト、macOS の再起動・シャットダウン（ダッシュボードの「VM を再起動」は使ってよい）、スリープや自動アップデートの設定変更、Claude Code の自動更新をオンにすること。
@@ -144,7 +144,7 @@
 
     <footer class="footer">
       <div class="wrap">
-        <span>Example Inc.</span>
+        <span><span data-org-footer>Example Inc.</span></span>
         <span>Cloudflare Access で保護されています</span>
       </div>
     </footer>

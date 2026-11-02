@@ -31,4 +31,4 @@ node -e 'const s=JSON.parse(require("fs").readFileSync(process.env.HOME+"/.claud
 
 `jq` が入っていれば `jq -s '.[0] * .[1]' ~/.claude/settings.json settings.fragment.json` でも同じ（`*` は再帰マージ）。
 
-設定を変えたあとは `launchctl kickstart -k gui/$(id -u)/com.example.claude-rc` で Remote Control を起動し直す。
+設定を変えたあとは `launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.claude-rc` で Remote Control を起動し直す。

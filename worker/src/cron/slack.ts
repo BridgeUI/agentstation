@@ -1,4 +1,4 @@
-import type { Env, Millis } from '@agentstation/shared';
+import { DEFAULT_SITE, parseSiteConfig, type Env, type Millis } from '@agentstation/shared';
 
 /**
  * Slack Incoming Webhook への送信と本文の組み立て。
@@ -6,11 +6,17 @@ import type { Env, Millis } from '@agentstation/shared';
  * ログ・パス・セッションのタイトル・メールアドレスの @ 以降は入れない。
  */
 
-export const DASHBOARD_URL = 'https://workstation.example.com/';
+/** SITE_JSON が無いときのダッシュボードの URL（見本の値） */
+export const DASHBOARD_URL = `https://${DEFAULT_SITE.dashboard_host}/`;
+
+/** ダッシュボードの URL（SITE_JSON の dashboard_host） */
+export function dashboardUrl(siteJson: string | undefined): string {
+  return `https://${parseSiteConfig(siteJson).dashboard_host}/`;
+}
 
 /** 環境ページの URL（画面は /host.html, /vm1.html, /vm2.html の静的ページ） */
-export function envPageUrl(env: Env): string {
-  return `${DASHBOARD_URL}${env}.html`;
+export function envPageUrl(env: Env, base = DASHBOARD_URL): string {
+  return `${base}${env}.html`;
 }
 
 /** 環境の表示名。人の名前は MEMBERS_JSON（メール）からしか引けないので、マシン名で固定する */
@@ -73,7 +79,12 @@ export interface SlackMessage {
   kind: 'alert' | 'recover' | 'info';
 }
 
-export function renderMessage(m: SlackMessage, now: Millis, tz?: string): string {
+export function renderMessage(
+  m: SlackMessage,
+  now: Millis,
+  tz?: string,
+  base = DASHBOARD_URL,
+): string {
   const mark =
     m.kind === 'alert'
       ? ':red_circle:'
@@ -81,7 +92,7 @@ export function renderMessage(m: SlackMessage, now: Millis, tz?: string): string
         ? ':large_green_circle:'
         : ':white_circle:';
   const lines = [`${mark} ${m.title}`, ...(m.lines ?? []), `時刻: ${formatTime(now, tz)}`];
-  lines.push(m.env ? envPageUrl(m.env) : DASHBOARD_URL);
+  lines.push(m.env ? envPageUrl(m.env, base) : base);
   return lines.join('\n');
 }
 
@@ -94,11 +105,12 @@ export function createSlackNotifier(
   webhookUrl: string | undefined,
   now: Millis,
   tz?: string,
+  base = DASHBOARD_URL,
 ): Notifier {
   let warned = false;
   return {
     async send(m) {
-      const text = renderMessage(m, now, tz);
+      const text = renderMessage(m, now, tz, base);
       if (!webhookUrl) {
         if (!warned) {
           warned = true;

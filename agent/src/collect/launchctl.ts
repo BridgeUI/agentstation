@@ -4,7 +4,7 @@ import type { ExecResult, Runner } from '../exec.js';
 /**
  * `launchctl print gui/<uid>/<label>` の出力から state と pid を取る。
  * 出力例（抜粋）:
- *   gui/501/com.example.claude-rc = {
+ *   gui/501/co.bridgeui.agentstation.claude-rc = {
  *     active count = 1
  *     state = running
  *     pid = 1234

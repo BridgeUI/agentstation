@@ -21,7 +21,7 @@
 
 ### 文書の読み替え
 
-`docs/` と `cloudflare/` の文書、コードのコメントでは、利用者を見本の名前で書いている。`personalize.mjs` は画面・ガイド・スクリプトの名前を置き換えるが、文書の中の名前はそのまま残るので、次のとおり読み替える。
+`docs/` と `cloudflare/` の文書、コードのコメント、`worker/wrangler.toml` では、見本の値（利用者 Taro / Hanako / Jiro、ドメイン example.com）を使っている。導入先の値は `kit/site.json` に書き、リポジトリのファイルは書き換えない（画面は Worker の設定 `SITE_JSON` から名前などを出す）。文書を読むときは次のとおり読み替える。
 
 | 文書の表記            | 導入先では                                                      |
 | --------------------- | --------------------------------------------------------------- |
@@ -56,49 +56,41 @@ VM の台数：**0〜2 台から選べる**（host は必須）。macOS の使�
 - サービストークン、SSH と VNC の Access アプリ、DNS、cloudflared の ingress、WARP のターゲットを作らない
 - `AGENT_TOKEN_NAMES` と `VNC_PASSWORDS_JSON` に書かない
 - host のエージェントの `config.json` の `vms` に入れない（VM なしなら `"vms": []`。`tart_path` も要らない）
-- `mac/launchd/<label_prefix>.tart-<vm>.plist` を置かない
+- `mac/launchd/co.bridgeui.agentstation.tart-<vm>.plist` を置かない
 - 6 章をその VM の分だけ飛ばす
 
 聞き取ったら `kit/site.example.json` を `kit/site.json` にコピーして埋める（秘密情報は入らない）。
 
-| キー                      | 意味                                                                                         | 例                                   |
-| ------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------ |
-| `org_name` / `org_footer` | 画面・ガイドに出る組織名 / フッター                                                          | `Example` / `Example Inc.`           |
-| `domain`                  | Cloudflare に置いたドメイン                                                                  | `example.com`                        |
-| `dashboard_host`          | ダッシュボードのホスト名（`domain` の 1 階層下）                                             | `workstation.example.com`            |
-| `access_team`             | Zero Trust のチーム名                                                                        | `example`                            |
-| `label_prefix`            | launchd のラベルの接頭辞（逆ドメイン）                                                       | `com.example`                        |
-| `timezone`                | 表示用タイムゾーン                                                                           | `Asia/Tokyo`                         |
-| `people.host / vm1 / vm2` | 表示名・macOS ユーザー名・Google ログインのメール。host は必須、vm1 / vm2 は使う VM だけ書く | `Taro` / `taro` / `taro@example.com` |
-| `viewers`                 | 閲覧だけの人のメール                                                                         | `[]`                                 |
+| キー                      | 意味                                                                                              | 例                                   |
+| ------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| `org_name` / `org_footer` | 画面・ガイドに出る組織名 / フッター                                                               | `Example` / `Example Inc.`           |
+| `domain`                  | Cloudflare に置いたドメイン                                                                       | `example.com`                        |
+| `dashboard_host`          | ダッシュボードのホスト名（`domain` の 1 階層下）                                                  | `workstation.example.com`            |
+| `access_team`             | Zero Trust のチーム名                                                                             | `example`                            |
+| `timezone`                | 表示用タイムゾーン                                                                                | `Asia/Tokyo`                         |
+| `people.host / vm1 / vm2` | 表示名・macOS ユーザー名・Google ログインのメール。host は必須、vm1 / vm2 は使う VM だけ書く      | `Taro` / `taro` / `taro@example.com` |
+| `viewers`                 | 閲覧だけの人のメール                                                                              | `[]`                                 |
+| `cloudflare.*`            | D1 の ID、Access の AUD タグ 2 つ、SwitchBot の deviceId（3〜4 章で分かったら書く。秘密ではない） |                                      |
 
 SSH / VNC のホスト名は `ssh-host.<domain>`、`vnc-vm1.<domain>` のように自動で決まる。
 
-## 2. リポジトリを導入先用にする
+## 2. リポジトリを置く
 
 置き場所は **`~/workspace/agentstation`** に固定（launchd のラッパーと Remote Control の作業フォルダ `~/workspace` がこのパスを前提にしている）。
 
-ブランチの考え方：OSS の `main` には見本の値（example.com、Taro など）が入っている。導入先の値を当てたものは **`deploy` ブランチ** に 1 コミットで持つ。上流の更新は `kit/update.sh` で `deploy` を作り直して取り込む（9 章）。`deploy` はメールアドレスや構成が入るので、置くなら導入者の **private リポジトリ**（GitHub の public な fork にはしない）。
+リポジトリのファイルは書き換えない。導入先の値は `kit/site.json` だけに書き、デプロイのときに `kit/render-config.mjs` がそこから本番の Worker の設定（`worker/wrangler.deploy.toml`）を作る。どちらも `.gitignore` 済みでリポジトリには入らない。`kit/site.json` は秘密ではないが導入先の構成そのものなので、導入者のパスワードマネージャーや private な場所にも控えてもらう（無くすと作り直しになる）。
 
 ```bash
 mkdir -p ~/workspace && cd ~/workspace
 git clone https://github.com/BridgeUI/agentstation.git   # 既に clone 済みなら不要
 cd agentstation
-git remote rename origin upstream
-git checkout -b deploy
 npm ci
-node kit/personalize.mjs kit/site.json --dry-run   # 変わるファイルの一覧を導入者に見せる
-node kit/personalize.mjs kit/site.json
-npm run build:ui --workspace worker
-npm run typecheck && npm test --workspaces --if-present
-git add -A && git add -f kit/site.json && git commit -m "導入先の値を適用"
+cp kit/site.example.json kit/site.json   # 1 章で聞き取った値を書く
+node kit/render-config.mjs --check       # 形の確認（D1 の ID などはまだ空でよい）
 ```
 
-- テストが全部通ることを確かめる。通らなければ `git diff` を見て原因を直す。
-- 最後に出る「元の値が残っている行」はコードのコメントか利用者に見える文言。見える文言なら手で直す（直したものは `site.json` で表せないので、上流に PR で直すのが本筋）。
-- `worker/public/logo.png` は見本のロゴ。導入者のロゴ（横長でも可、高さ 30px 程度で表示される PNG）に差し替えてよい。
-- `worker/public/guide/*.jpg` は見本データの画面写真。導入が終わってから撮り直してよい（8 章）。
-- 導入者の private リポジトリがあれば `git remote add origin <URL> && git push -u origin deploy`。
+- `worker/public/logo.png` は見本のロゴ。導入者のロゴに差し替える場合は、上流の更新（9 章）で戻らないよう、差し替えたことを導入者に伝えておく（今は差し替えの仕組みが無い。TODO：ロゴも設定で持つ）。
+- ガイドの画面写真（`worker/public/guide/*.jpg`）は見本データのもの。名前などは写っているが、導入先で撮り直さなくても使える。
 
 ## 3. Cloudflare（`docs/initial-setup.md` 2 章、`cloudflare/access/setup.md`、`cloudflare/cloudflared/setup.md`）
 
@@ -106,7 +98,7 @@ git add -A && git add -f kit/site.json && git commit -m "導入先の値を適�
 
 1. Zero Trust のチーム名を `site.json` の `access_team` と揃える。
 2. Google の IdP：Google Cloud にプロジェクトを作り、同意画面は **外部**、公開ステータスは本番、スコープは openid / email / profile。OAuth クライアントの Client ID / Secret は Zero Trust の画面に直接貼る（チャットに貼らない）。
-3. Access アプリ（Self-hosted）：ダッシュボード（`dashboard_host`）と、エージェント API（`dashboard_host/api/agent`、Service Auth）。それぞれの **AUD タグ** を `kit/site.json` の `cloudflare.access_aud_dashboard` / `access_aud_agent` に書く（AUD は秘密ではない。4 章で `wrangler.toml` に反映する）。
+3. Access アプリ（Self-hosted）：ダッシュボード（`dashboard_host`）と、エージェント API（`dashboard_host/api/agent`、Service Auth）。それぞれの **AUD タグ** を `kit/site.json` の `cloudflare.access_aud_dashboard` / `access_aud_agent` に書く（AUD は秘密ではない）。
 4. サービストークン 3 本（host / vm1 / vm2）。Secret は表示されたその場で各マシンの `~/.config/agentstation/token.json`（chmod 600）に入れる。VM 用は host の一時ファイルに置いて 5 章で配る。**Client ID**（トークン名ではない）を `AGENT_TOKEN_NAMES` に使う。
 5. SSH / VNC の Access アプリ 6 つと SSH CA。CA 公開鍵を `cloudflare/access/ca/` に置き直す（`README.md` の表と同じ名前で）。
 6. Tunnel（`cloudflared tunnel create agentstation`）、DNS 6 本、内部ネットワーク `192.168.64.0/24`、ingress は `cloudflare/cloudflared/config.yml.example`。
@@ -119,16 +111,16 @@ git add -A && git add -f kit/site.json && git commit -m "導入先の値を適�
 ```bash
 cd ~/workspace/agentstation/worker
 npx wrangler login
-npx wrangler d1 create agentstation        # 出力の database_id を site.json の cloudflare.d1_database_id に書く
-npx wrangler d1 migrations apply agentstation --remote
-npx wrangler secret put AGENT_TOKEN_NAMES       # {"host":"<Client ID>","vm1":"…","vm2":"…"}
-npx wrangler secret put VNC_PASSWORDS_JSON      # 5 章で VNC パスワードを決めてからでもよい
-npx wrangler secret put SLACK_WEBHOOK_URL       # 任意
-npm run build:ui && npx wrangler deploy
+npx wrangler d1 create agentstation        # 出力の database_id を kit/site.json の cloudflare.d1_database_id に書く
+npm run db:migrate:remote                  # kit/site.json から本番の設定を作ってマイグレーション
+npx wrangler secret put AGENT_TOKEN_NAMES  # {"host":"<Client ID>","vm1":"…"}（使う環境の分だけ）
+npx wrangler secret put VNC_PASSWORDS_JSON # 6 章で VNC パスワードを決めてからでもよい
+npx wrangler secret put SLACK_WEBHOOK_URL  # 任意
+npm run build:ui && npm run deploy         # kit/site.json から本番の設定を作ってデプロイ
 ```
 
-- D1 の ID と AUD タグ 2 つは `kit/site.json` の `cloudflare` に書き、`node kit/personalize.mjs kit/site.json` をもう一度実行して `wrangler.toml` に入れる（`wrangler.toml` を直接直すと、9 章の更新のたびに消える）。`grep REPLACE_WITH worker/wrangler.toml` で何も出ないことを確かめてからデプロイし、`deploy` にコミットする。
-- 確認：ダッシュボードに Google でログインでき、3 環境が「未報告」で並ぶ。`/api/health` が 200。
+- `npm run deploy` と `npm run db:migrate:remote` は、先に `kit/render-config.mjs` を実行する。D1 の ID と AUD タグ 2 つが `kit/site.json` に無ければ止まって知らせる。
+- 確認：ダッシュボードに Google でログインでき、使う環境が「未報告」で並ぶ。名前・ドメインが `site.json` の値になっている。`/api/health` が 200。
 
 ## 5. host（`docs/initial-setup.md` 4 章）
 
@@ -137,14 +129,14 @@ npm run build:ui && npx wrangler deploy
 - システム設定での手作業（自動ログイン、FileVault オフ、画面共有・リモートログイン、Full Disk Access）は導入者が行う。
 - `mac/scripts/pmset-setup.sh`、Homebrew・Node・Tart・cloudflared・Claude Code の導入、`claude auth login` と初回の同意（対話）。
 - エージェントの `~/.config/agentstation/config.json` は `agent/src/config.ts` 冒頭のコメントの形。`base_url` は `https://<dashboard_host>`。
-- launchd：`mac/launchd/<label_prefix>.*.plist` の `__USER__` / `__ENV__` を置換して配置（`mac/launchd/README.md`）。
+- launchd：`mac/launchd/co.bridgeui.agentstation.*.plist` の `__USER__` / `__ENV__` を置換して配置（`mac/launchd/README.md`）。ラベルは導入先によらず固定。
 - `mac/scripts/check.sh` で抜けを確認。ダッシュボードの host の「基礎設定」が全部 OK になること。
 
 `kit/lessons.md` の「エージェントの再起動でこのセッションが切れる」に注意（host で Claude Code を動かしながら導入しているとき）。
 
 ## 6. VM（使う台数だけ。0 台なら飛ばす。`docs/initial-setup.md` 5 章）
 
-`tart clone` → 構築用の鍵 → `mac/scripts/vm-guest-stage1.sh`〜`stage3.sh`。利用者のパスワードと VNC パスワードは host の `~/.config/agentstation/vm1-secrets` などに置き、本人には安全な経路で伝える。IP は vm1 = `192.168.64.10`、vm2 = `192.168.64.11`（Tart の既定のネットワーク。変えると cloudflared・ガイド・エージェントの設定も変える必要がある）。
+`tart clone` → 構築用の鍵 → `mac/scripts/vm-guest-stage1.sh`〜`stage3.sh`（stage2 には `BASE_URL=https://<dashboard_host>` を渡す）。利用者のパスワードと VNC パスワードは host の `~/.config/agentstation/vm1-secrets` などに置き、本人には安全な経路で伝える。IP は vm1 = `192.168.64.10`、vm2 = `192.168.64.11`（Tart の既定のネットワーク。変えると cloudflared・ガイド・エージェントの設定も変える必要がある）。
 
 ## 7. 利用者の初期設定と確認
 
@@ -157,16 +149,18 @@ npm run build:ui && npx wrangler deploy
 - ガイドの画面写真を撮り直す：`worker/scripts/guide-shots.mjs`（ダッシュボードに実データが出てから）。
 - `docs/initial-setup.md` 9 章の「構築後に残る作業」を導入先の状況で見直し、残りを導入者に伝える。
 - 導入先の決めごと（通知先チャンネル、スマートプラグの有無など）を `docs/runbook.md` 9 章に書く。
-- 変更を `deploy` にコミットする（private リポジトリへ push）。
+- `kit/site.json` を導入者の private な場所に控えてもらう。
 
 ## 9. 上流の更新を取り込む
 
 ```bash
 cd ~/workspace/agentstation
-git checkout deploy
-bash kit/update.sh     # upstream/main から deploy を作り直し、site.json を当て、テストまで通してコミット
+git pull
+npm ci
+npm run typecheck && npm test --workspaces --if-present
+cd worker && npm run db:migrate:remote && npm run build:ui && npm run deploy
 ```
 
-そのあと、スクリプトが最後に出す手順（D1 のマイグレーション、`wrangler deploy`、private リポジトリへの push、各マシンでの `git reset --hard origin/deploy`・エージェントのビルドと再起動）を導入者と順に行う。`deploy` は毎回作り直すので、各マシンでは `git pull` ではなく `git fetch` ＋ `git reset --hard` で揃える。
+そのあと各マシン（host と VM）で `git pull`（VM は host から rsync）→ `npm ci && npm run build --workspace agent` → エージェントの再起動（`launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.agent`。`kit/lessons.md` の注意を先に読む）。
 
-`deploy` で直接コードを直さない（次の更新で消える）。直したいところは上流に issue か PR を出す。
+リポジトリのファイルを導入先で直さない（次の `git pull` でぶつかる）。直したいところは上流に issue か PR を出す。

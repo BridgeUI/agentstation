@@ -1,7 +1,7 @@
 #!/bin/bash
 # VM ゲストの基礎設定・第 2 段（docs/setup-mac.md 3 / 5 / 6 / 8.3）。ゲストの中で、利用者（hanako / jiro）として実行する。
 #
-#   ssh hanako@<vm の IP> 'GUEST_ENV=vm1 bash -s' < mac/scripts/vm-guest-stage2.sh
+#   ssh hanako@<vm の IP> 'GUEST_ENV=vm1 BASE_URL=https://<dashboard_host> bash -s' < mac/scripts/vm-guest-stage2.sh
 #
 # 先に host から置いておくもの:
 #   ~/workspace/agentstation          リポジトリ（rsync。node_modules と dist は不要）
@@ -12,6 +12,7 @@
 # やらないこと: Claude のログイン、作業フォルダの信頼、Remote Control の初回同意（利用者が一度対話で行う。5.2）。
 set -euo pipefail
 : "${GUEST_ENV:?GUEST_ENV（vm1 / vm2）が必要}"
+: "${BASE_URL:?BASE_URL（https://<kit/site.json の dashboard_host>）が必要}"
 ME="$(whoami)"
 step() { printf '\n== %s\n' "$1"; }
 
@@ -56,7 +57,7 @@ step "config.json"
 if [ ! -f ~/.config/agentstation/config.json ]; then
   cat > ~/.config/agentstation/config.json <<JSON
 {
-  "base_url": "https://workstation.example.com",
+  "base_url": "${BASE_URL}",
   "claude_path": "/Users/$ME/.local/bin/claude",
   "work_dir": "/Users/$ME/workspace",
   "rc_debug_log": "/Users/$ME/Library/Logs/claude-rc.log",
@@ -69,20 +70,20 @@ fi
 
 step "launchd（エージェント・claude-rc）"
 cd ~/workspace/agentstation/mac/launchd
-sed -e "s/__USER__/$ME/g" -e "s/__ENV__/$GUEST_ENV/g" com.example.agent.plist > ~/Library/LaunchAgents/com.example.agent.plist
-sed -e "s/__USER__/$ME/g" com.example.claude-rc.plist > ~/Library/LaunchAgents/com.example.claude-rc.plist
-plutil -lint ~/Library/LaunchAgents/com.example.agent.plist ~/Library/LaunchAgents/com.example.claude-rc.plist
+sed -e "s/__USER__/$ME/g" -e "s/__ENV__/$GUEST_ENV/g" co.bridgeui.agentstation.agent.plist > ~/Library/LaunchAgents/co.bridgeui.agentstation.agent.plist
+sed -e "s/__USER__/$ME/g" co.bridgeui.agentstation.claude-rc.plist > ~/Library/LaunchAgents/co.bridgeui.agentstation.claude-rc.plist
+plutil -lint ~/Library/LaunchAgents/co.bridgeui.agentstation.agent.plist ~/Library/LaunchAgents/co.bridgeui.agentstation.claude-rc.plist
 UID_="$(id -u)"
 # この利用者が GUI にログインしていない（自動ログインは次の再起動から）と gui/<uid> が無く、bootstrap は 125 で失敗する。
 # その場合は何もしない。再起動すると ~/Library/LaunchAgents は自動で読み込まれる。
 if launchctl print "gui/$UID_" >/dev/null 2>&1; then
-  launchctl bootout "gui/$UID_/com.example.agent" 2>/dev/null || true
-  launchctl bootstrap "gui/$UID_" ~/Library/LaunchAgents/com.example.agent.plist
+  launchctl bootout "gui/$UID_/co.bridgeui.agentstation.agent" 2>/dev/null || true
+  launchctl bootstrap "gui/$UID_" ~/Library/LaunchAgents/co.bridgeui.agentstation.agent.plist
   # claude-rc は Claude にログインするまで起動と終了を繰り返す（ダッシュボードには「要ログイン」と出る）。
-  launchctl bootout "gui/$UID_/com.example.claude-rc" 2>/dev/null || true
-  launchctl bootstrap "gui/$UID_" ~/Library/LaunchAgents/com.example.claude-rc.plist
+  launchctl bootout "gui/$UID_/co.bridgeui.agentstation.claude-rc" 2>/dev/null || true
+  launchctl bootstrap "gui/$UID_" ~/Library/LaunchAgents/co.bridgeui.agentstation.claude-rc.plist
   sleep 3
-  launchctl print "gui/$UID_/com.example.agent" | grep -E '^\s*(state|pid) '
+  launchctl print "gui/$UID_/co.bridgeui.agentstation.agent" | grep -E '^\s*(state|pid) '
   tail -3 ~/Library/Logs/agentstation/out.log 2>/dev/null || true
 else
   echo "$ME は GUI にログインしていないので launchd には載せない（再起動後の自動ログインで自動的に読み込まれる）"

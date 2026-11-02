@@ -3,6 +3,8 @@ export interface Bindings {
   DB: D1Database;
   ASSETS: Fetcher;
   MEMBERS_JSON: string;
+  /** 導入先ごとの表示の値（名前・ドメイン・チーム名。shared/src/site.ts）。無ければ見本の値 */
+  SITE_JSON?: string;
   ACCESS_TEAM_DOMAIN: string;
   ACCESS_AUD_DASHBOARD: string;
   ACCESS_AUD_AGENT: string;

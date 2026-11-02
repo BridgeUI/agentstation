@@ -1,5 +1,5 @@
 #!/bin/bash
-# claude remote-control のラッパー。com.example.claude-rc.plist の ProgramArguments から呼ばれる。
+# claude remote-control のラッパー。co.bridgeui.agentstation.claude-rc.plist の ProgramArguments から呼ばれる。
 #
 # やること（agent/src/actions/rc.ts の session_restore と対になる）:
 #   1. ~/.config/agentstation/session.json（{"session_id": "..."}）があれば、その ID を読んでファイルを消し、

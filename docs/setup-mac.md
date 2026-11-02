@@ -293,7 +293,7 @@ ssh hanako@192.168.64.10 uptime
 
 **(b) ブリッジ**（`--net-bridged=en0`。ルーターの DHCP 予約で固定。VM が家庭の LAN に直接出る）
 
-`mac/launchd/com.example.tart-vm1.plist` の `ProgramArguments` に `<string>--net-bridged=en0</string>` を足す。この場合 WARP 経由の内部 IP は家庭の LAN のものになり、spec 3.4 の「`192.168.64.0/24` に揃える」が成り立たないので、cloudflare 担当の設定（Tunnel の内部ネットワーク、Split Tunnel）も合わせて変える。
+`mac/launchd/co.bridgeui.agentstation.tart-vm1.plist` の `ProgramArguments` に `<string>--net-bridged=en0</string>` を足す。この場合 WARP 経由の内部 IP は家庭の LAN のものになり、spec 3.4 の「`192.168.64.0/24` に揃える」が成り立たないので、cloudflare 担当の設定（Tunnel の内部ネットワーク、Split Tunnel）も合わせて変える。
 
 期待する結果：VM を 3 回再起動しても同じ IP で SSH できる。採用した方を `docs/verify.md` B-2 に書く。
 
@@ -422,7 +422,7 @@ vm1 の例（`tart_path` は不要。`claude_path` などはそのユーザー�
 | （`session.json`） | エージェントが書く | `session_restore` のとき `{"session_id": "..."}` を書き、`claude-rc.sh` が読んで消す |
 | `work_dir` | 任意（既定 `~/work/rc`。実機は `~/workspace`） | Remote Control の作業フォルダ |
 | `rc_debug_log` | 任意（既定 `~/Library/Logs/claude-rc.log`） | `--debug-file` のパス |
-| `labels` | 任意 | launchd のラベル。既定は `com.example.claude-rc`、`com.example.codex`、`com.example.tart-vm1`、`com.example.tart-vm2`（`mac/launchd/` と一致） |
+| `labels` | 任意 | launchd のラベル。既定は `co.bridgeui.agentstation.claude-rc`、`co.bridgeui.agentstation.codex`、`co.bridgeui.agentstation.tart-vm1`、`co.bridgeui.agentstation.tart-vm2`（`mac/launchd/` と一致） |
 | `vm_plists` / `vm_names` / `tart_vms_dir` | 任意 | 既定どおりなら書かない |
 | `vm_ips` | 任意（host） | VM の固定 IP（`{"vm1":"192.168.64.10","vm2":"192.168.64.11"}`）。あれば `tart ip` より優先。IP 変更直後は ARP に旧 IP が残るため、静的 IP にしたら書く |
 | `interval_ms` | 任意（既定 60000） | 報告間隔 |
@@ -458,8 +458,8 @@ cd ~/workspace/agentstation/agent
 ```bash
 cd ~/workspace/agentstation/mac/launchd
 mkdir -p ~/Library/LaunchAgents ~/Library/Logs/agentstation
-sed -e "s/__USER__/$(whoami)/g" -e "s/__ENV__/host/g" com.example.agent.plist > ~/Library/LaunchAgents/com.example.agent.plist
-plutil -lint ~/Library/LaunchAgents/com.example.agent.plist
+sed -e "s/__USER__/$(whoami)/g" -e "s/__ENV__/host/g" co.bridgeui.agentstation.agent.plist > ~/Library/LaunchAgents/co.bridgeui.agentstation.agent.plist
+plutil -lint ~/Library/LaunchAgents/co.bridgeui.agentstation.agent.plist
 ```
 
 ---
@@ -505,21 +505,21 @@ LaunchAgent 同士の順序は launchd が保証しないので、各プロセ�
 ```bash
 cd ~/workspace/agentstation/mac/launchd
 mkdir -p ~/Library/LaunchAgents ~/Library/Logs/agentstation ~/Library/Logs/agentstation-vm ~/workspace
-sed -e "s/__USER__/$(whoami)/g" -e "s/__ENV__/host/g" com.example.agent.plist > ~/Library/LaunchAgents/com.example.agent.plist
-sed -e "s/__USER__/$(whoami)/g" com.example.claude-rc.plist > ~/Library/LaunchAgents/com.example.claude-rc.plist
-sed -e "s/__USER__/$(whoami)/g" com.example.tart-vm1.plist > ~/Library/LaunchAgents/com.example.tart-vm1.plist
-sed -e "s/__USER__/$(whoami)/g" com.example.tart-vm2.plist > ~/Library/LaunchAgents/com.example.tart-vm2.plist
-plutil -lint ~/Library/LaunchAgents/com.example.*.plist
-grep -l "__" ~/Library/LaunchAgents/com.example.*.plist || echo "置換漏れなし"
+sed -e "s/__USER__/$(whoami)/g" -e "s/__ENV__/host/g" co.bridgeui.agentstation.agent.plist > ~/Library/LaunchAgents/co.bridgeui.agentstation.agent.plist
+sed -e "s/__USER__/$(whoami)/g" co.bridgeui.agentstation.claude-rc.plist > ~/Library/LaunchAgents/co.bridgeui.agentstation.claude-rc.plist
+sed -e "s/__USER__/$(whoami)/g" co.bridgeui.agentstation.tart-vm1.plist > ~/Library/LaunchAgents/co.bridgeui.agentstation.tart-vm1.plist
+sed -e "s/__USER__/$(whoami)/g" co.bridgeui.agentstation.tart-vm2.plist > ~/Library/LaunchAgents/co.bridgeui.agentstation.tart-vm2.plist
+plutil -lint ~/Library/LaunchAgents/co.bridgeui.agentstation.*.plist
+grep -l "__" ~/Library/LaunchAgents/co.bridgeui.agentstation.*.plist || echo "置換漏れなし"
 ```
 
 手動で起動していた `tart run` / `claude remote-control` / `node dist/index.js` が残っていれば先に止める。
 
 ```bash
-launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.agent.plist
-launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.tart-vm1.plist
-launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.tart-vm2.plist
-launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.claude-rc.plist
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/co.bridgeui.agentstation.agent.plist
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/co.bridgeui.agentstation.tart-vm1.plist
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/co.bridgeui.agentstation.tart-vm2.plist
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/co.bridgeui.agentstation.claude-rc.plist
 ```
 
 ### 8.3 vm1 / vm2 に置くもの（ゲストの中で、そのユーザーで）
@@ -527,24 +527,24 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.claude-rc.pl
 ```bash
 cd ~/workspace/agentstation/mac/launchd
 mkdir -p ~/Library/LaunchAgents ~/Library/Logs/agentstation ~/workspace
-sed -e "s/__USER__/$(whoami)/g" -e "s/__ENV__/vm1/g" com.example.agent.plist > ~/Library/LaunchAgents/com.example.agent.plist
-sed -e "s/__USER__/$(whoami)/g" com.example.claude-rc.plist > ~/Library/LaunchAgents/com.example.claude-rc.plist
-plutil -lint ~/Library/LaunchAgents/com.example.*.plist
-launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.agent.plist
-launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.claude-rc.plist
+sed -e "s/__USER__/$(whoami)/g" -e "s/__ENV__/vm1/g" co.bridgeui.agentstation.agent.plist > ~/Library/LaunchAgents/co.bridgeui.agentstation.agent.plist
+sed -e "s/__USER__/$(whoami)/g" co.bridgeui.agentstation.claude-rc.plist > ~/Library/LaunchAgents/co.bridgeui.agentstation.claude-rc.plist
+plutil -lint ~/Library/LaunchAgents/co.bridgeui.agentstation.*.plist
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/co.bridgeui.agentstation.agent.plist
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/co.bridgeui.agentstation.claude-rc.plist
 ```
 
 vm2 は `--env=vm2`。
 
-Codex の plist（`com.example.codex.plist`）は常駐できることが分かるまで置かない（要確認 verify.md C-5）。
+Codex の plist（`co.bridgeui.agentstation.codex.plist`）は常駐できることが分かるまで置かない（要確認 verify.md C-5）。
 
 ### 8.4 動作確認
 
 ```bash
-launchctl print gui/$(id -u)/com.example.agent | grep -E "state|pid"
-launchctl print gui/$(id -u)/com.example.claude-rc | grep -E "state|pid"
-launchctl print gui/$(id -u)/com.example.tart-vm1 | grep -E "state|pid"
-launchctl print gui/$(id -u)/com.example.tart-vm2 | grep -E "state|pid"
+launchctl print gui/$(id -u)/co.bridgeui.agentstation.agent | grep -E "state|pid"
+launchctl print gui/$(id -u)/co.bridgeui.agentstation.claude-rc | grep -E "state|pid"
+launchctl print gui/$(id -u)/co.bridgeui.agentstation.tart-vm1 | grep -E "state|pid"
+launchctl print gui/$(id -u)/co.bridgeui.agentstation.tart-vm2 | grep -E "state|pid"
 tail -20 ~/Library/Logs/agentstation/err.log
 tail -20 ~/Library/Logs/claude-rc.err.log
 tart list
@@ -569,8 +569,8 @@ bash ~/workspace/agentstation/mac/scripts/check.sh
 ### 8.5 止め方・やり直し方
 
 ```bash
-launchctl bootout gui/$(id -u)/com.example.claude-rc
-launchctl kickstart -k gui/$(id -u)/com.example.claude-rc
+launchctl bootout gui/$(id -u)/co.bridgeui.agentstation.claude-rc
+launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.claude-rc
 ```
 
 plist を書き換えたら `bootout` → `bootstrap`。`kickstart -k` は再起動だけで plist は読み直さない。
@@ -636,7 +636,7 @@ sudo shutdown -r now
 5 分待ってから、別の端末で：
 
 ```bash
-ssh taro@<Mac mini の LAN IP> "uptime; launchctl print gui/\$(id -u)/com.example.agent | grep state; tart list"
+ssh taro@<Mac mini の LAN IP> "uptime; launchctl print gui/\$(id -u)/co.bridgeui.agentstation.agent | grep state; tart list"
 ```
 
 期待する結果：ログイン画面を経ずに戻り、エージェント・VM・Remote Control が `running`。スマホで 3 環境のセッションが見え、ダッシュボードが 3 環境「正常」になる（フェーズ2の完了条件）。
@@ -653,7 +653,7 @@ ssh taro@<Mac mini の LAN IP> "uptime; launchctl print gui/\$(id -u)/com.exampl
 
 試験（Mac で作業中のものが無いことを確認してから）：
 
-1. host のエージェントを止める（`launchctl bootout gui/$(id -u)/com.example.agent`）か、Mac の有線 LAN を抜いて、一覧が「応答なし」になるまで 10 分待つ（ボタンはそれまで押せない）
+1. host のエージェントを止める（`launchctl bootout gui/$(id -u)/co.bridgeui.agentstation.agent`）か、Mac の有線 LAN を抜いて、一覧が「応答なし」になるまで 10 分待つ（ボタンはそれまで押せない）
 2. ダッシュボードの Taro の環境 › 操作 › **電源を入れ直す** → ホスト名 `host` を入力 → 1 分の猶予 → プラグがオフ → 約 1 分でオン
 3. 3〜5 分待つ
 4. **停電の模擬**：戻ったら、プラグ本体をコンセントから抜いて 30 秒後に差し直す。プラグがオンで戻り（一覧の「電源プラグ」がオン、またはアプリ）、Mac が起動すること。オフのまま戻るなら、本当の停電のあと Mac が上がらないので、プラグの使い方を見直す（spec 11章）
@@ -675,11 +675,11 @@ ssh taro@<Mac mini の LAN IP> "uptime; launchctl print gui/\$(id -u)/com.exampl
 for t in hanako@192.168.64.10 jiro@192.168.64.11; do
   rsync -az --delete --exclude node_modules --exclude dist --exclude .wrangler --exclude '.dev.vars*' --exclude .DS_Store \
     ~/workspace/agentstation "$t":workspace/
-  ssh "$t" 'export PATH=$HOME/.nodebrew/current/bin:$PATH; cd ~/workspace/agentstation && npm run build --workspace agent && launchctl kickstart -k gui/$(id -u)/com.example.agent && sleep 3 && launchctl print gui/$(id -u)/com.example.agent | grep -E "^\s*(state|pid) "'
+  ssh "$t" 'export PATH=$HOME/.nodebrew/current/bin:$PATH; cd ~/workspace/agentstation && npm run build --workspace agent && launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.agent && sleep 3 && launchctl print gui/$(id -u)/co.bridgeui.agentstation.agent | grep -E "^\s*(state|pid) "'
 done
 ```
 
-依存（`package.json` / `package-lock.json`）を変えたときだけ、ビルドの前に `npm install` を足す。host は `npm run build --workspace agent` のあと同じく `launchctl kickstart -k gui/$(id -u)/com.example.agent`（host でフォルダごとの RC から作業していると、その Claude のセッションも一緒に切れる。エージェントの子プロセスのため）。
+依存（`package.json` / `package-lock.json`）を変えたときだけ、ビルドの前に `npm install` を足す。host は `npm run build --workspace agent` のあと同じく `launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.agent`（host でフォルダごとの RC から作業していると、その Claude のセッションも一緒に切れる。エージェントの子プロセスのため）。
 
 期待する結果：`state = running`、`~/Library/Logs/agentstation/out.log` に新しい「agentstation 起動」の行。plist を変えたときは `bootout` → `bootstrap`。
 
@@ -689,12 +689,12 @@ done
 
 ```bash
 claude update
-launchctl kickstart -k gui/$(id -u)/com.example.claude-rc
+launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.claude-rc
 ```
 
 ### 11.3 サービストークンの更新（spec 9章）
 
-`cloudflare/access/setup.md` 3章の手順で新しいトークンを発行し、その環境の `~/.config/agentstation/token.json` を書き換えて `chmod 600`、`launchctl kickstart -k gui/$(id -u)/com.example.agent`。古いトークンは Cloudflare 側で失効する。VM が乗っ取られた疑いがあればその VM のトークンだけ失効する。
+`cloudflare/access/setup.md` 3章の手順で新しいトークンを発行し、その環境の `~/.config/agentstation/token.json` を書き換えて `chmod 600`、`launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.agent`。古いトークンは Cloudflare 側で失効する。VM が乗っ取られた疑いがあればその VM のトークンだけ失効する。
 
 ### 11.4 macOS・Tart・cloudflared・Homebrew
 

@@ -3,7 +3,7 @@
 # sudo が要る項目は `sudo -n`（パスワードを聞かない）で試し、権限が無ければ SKIP にする。
 # 先に `sudo -v` しておくと sudo の項目も確認できる。
 #
-# 環境（host / vm1 / vm2）は ~/Library/LaunchAgents/com.example.agent.plist の --env= から判定する。
+# 環境（host / vm1 / vm2）は ~/Library/LaunchAgents/co.bridgeui.agentstation.agent.plist の --env= から判定する。
 # 出力の各行: 「OK   項目」「NG   項目: 詳細」「SKIP 項目: 理由」「要確認 項目: 理由」
 set -u
 
@@ -17,7 +17,7 @@ H()    { echo; echo "## $1"; }
 ME=$(whoami)
 HOME_DIR=${HOME:-/Users/$ME}
 UID_NUM=$(id -u)
-AGENT_PLIST="$HOME_DIR/Library/LaunchAgents/com.example.agent.plist"
+AGENT_PLIST="$HOME_DIR/Library/LaunchAgents/co.bridgeui.agentstation.agent.plist"
 
 # ---- 環境の判定 ----
 ENV_NAME=unknown
@@ -32,7 +32,7 @@ case "$ENV_NAME" in
 esac
 echo "環境: $ENV_NAME（ユーザー: $ME、uid: $UID_NUM）"
 if [ "$ENV_NAME" = unknown ]; then
-  echo "com.example.agent.plist が無いか --env= が読めない。host として扱わず、host 限定の項目は SKIP にする。"
+  echo "co.bridgeui.agentstation.agent.plist が無いか --env= が読めない。host として扱わず、host 限定の項目は SKIP にする。"
 fi
 
 can_sudo() { sudo -n true 2>/dev/null; }
@@ -169,16 +169,16 @@ check_agent() {
   elif [ -z "$st" ]; then NG "$label" "読み込まれていない（launchctl bootstrap gui/$UID_NUM $plist）"
   else NG "$label" "state = $st"; fi
 }
-check_agent com.example.agent
-check_agent com.example.claude-rc
+check_agent co.bridgeui.agentstation.agent
+check_agent co.bridgeui.agentstation.claude-rc
 if [ "$ENV_NAME" = host ]; then
   # VM は 0〜2 台。plist を置いていない VM は使っていないものとして飛ばす
   for vm in vm1 vm2; do
-    if [ -f "$HOME_DIR/Library/LaunchAgents/com.example.tart-$vm.plist" ]; then check_agent "com.example.tart-$vm"
-    else SKIP "com.example.tart-$vm" "未配置（この VM は使っていない）"; fi
+    if [ -f "$HOME_DIR/Library/LaunchAgents/co.bridgeui.agentstation.tart-$vm.plist" ]; then check_agent "co.bridgeui.agentstation.tart-$vm"
+    else SKIP "co.bridgeui.agentstation.tart-$vm" "未配置（この VM は使っていない）"; fi
   done
 fi
-if [ -f "$HOME_DIR/Library/LaunchAgents/com.example.codex.plist" ]; then check_agent com.example.codex; else SKIP "com.example.codex" "未配置（要確認 verify C-5）"; fi
+if [ -f "$HOME_DIR/Library/LaunchAgents/co.bridgeui.agentstation.codex.plist" ]; then check_agent co.bridgeui.agentstation.codex; else SKIP "co.bridgeui.agentstation.codex" "未配置（要確認 verify C-5）"; fi
 if [ "$ENV_NAME" = host ]; then
   if [ -f /Library/LaunchDaemons/com.cloudflare.cloudflared.plist ]; then
     if can_sudo; then

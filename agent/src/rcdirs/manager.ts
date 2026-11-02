@@ -17,7 +17,7 @@ import type { Logger } from '../log.js';
  *   ログインした人）が「起動」を押した rc_start_dir の結果なので、その意思を端末に反映するだけ。エージェントが
  *   自発的に y を押す経路は無い（起動要求は必ず指示経由。state.json からの復元も元は指示）。書いたことはログに残す
  * - 希望する dir の集合は呼び出し側が state.json に保存し、起動時に restore() で戻す
- * - host の既定 RC（launchd の com.example.claude-rc）はこの仕組みの対象外
+ * - host の既定 RC（launchd の co.bridgeui.agentstation.claude-rc）はこの仕組みの対象外
  */
 
 export const RC_DIR_RESTART_DELAY_MS = 30 * 1000;

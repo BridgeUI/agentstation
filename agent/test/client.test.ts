@@ -110,7 +110,7 @@ describe('設定', () => {
     expect(c.tartPath).toBeNull();
     expect(c.labels.claudeRc).toBe(DEFAULT_LABELS.claude_rc);
     expect(c.labels.vm.vm2).toBe(DEFAULT_LABELS.vm2);
-    expect(c.vmPlists.vm1).toBe('/Users/t/Library/LaunchAgents/com.example.tart-vm1.plist');
+    expect(c.vmPlists.vm1).toBe('/Users/t/Library/LaunchAgents/co.bridgeui.agentstation.tart-vm1.plist');
     expect(c.rcDebugLog).toBe('/Users/t/Library/Logs/claude-rc.log');
     expect(c.stateFile).toBe('/Users/t/.config/agentstation/state.json');
     expect(c.intervalMs).toBe(60_000);

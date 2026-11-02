@@ -23,9 +23,9 @@
         </a>
         <div class="nav-links">
           <a href="/">一覧</a>
-          <a href="/host.html">Taro</a>
-          <a href="/vm1.html">Hanako</a>
-          <a href="/vm2.html">Jiro</a>
+          <a href="/host.html"><span data-name="host">Taro</span></a>
+          <a href="/vm1.html"><span data-name="vm1">Hanako</span></a>
+          <a href="/vm2.html"><span data-name="vm2">Jiro</span></a>
           <a href="/guide/" aria-current="page">使い方ガイド</a>
         </div>
       </div>
@@ -80,7 +80,7 @@
                 <span class="n">1</span>
                 <div>
                   <strong>Claude アプリ › Remote Control › 自分の環境を選びます</strong>
-                  <span class="d">名前は <code>vm1-…</code>（Jiro さんは <code>vm2-…</code>）です。あとは普通に会話します。Claude は自分の Mac の中のファイルを読み書きしながら作業します。作業フォルダは <code>~/workspace</code> で、その下のプロジェクトがすべて対象です。</span>
+                  <span class="d">名前は <code>vm1-…</code>（<span data-name="vm2">Jiro</span> さんは <code>vm2-…</code>）です。あとは普通に会話します。Claude は自分の Mac の中のファイルを読み書きしながら作業します。作業フォルダは <code>~/workspace</code> で、その下のプロジェクトがすべて対象です。</span>
                 </div>
               </div>
             </li>
@@ -164,7 +164,7 @@
                 <span class="n">2</span>
                 <div>
                   <strong>自分の環境のページには 6 つのタブがあります</strong>
-                  <span class="d">概要（Claude と Remote Control の状態）、Remote Control（フォルダごとの起動・停止。開いたときに最初に出ます）、接続（画面共有・SSH・ファイルアプリの入り口）、操作（直すボタン）、基礎設定（Taro が見る管理項目）、履歴（誰がいつ何を押したか）。普段見るのは Remote Control と操作です。</span>
+                  <span class="d">概要（Claude と Remote Control の状態）、Remote Control（フォルダごとの起動・停止。開いたときに最初に出ます）、接続（画面共有・SSH・ファイルアプリの入り口）、操作（直すボタン）、基礎設定（<span data-name="host">Taro</span> が見る管理項目）、履歴（誰がいつ何を押したか）。普段見るのは Remote Control と操作です。</span>
                 </div>
               </div>
             </li>
@@ -291,7 +291,7 @@
           <ol class="steps">
             <li>
               <div class="pic">
-                <pre class="term" aria-label="ターミナルの例"><span class="p">hanako@vm1 ~ %</span> claude auth login
+                <pre class="term" aria-label="ターミナルの例"><span class="p"><span data-login="vm1">hanako</span>@vm1 ~ %</span> claude auth login
 <span class="o">Opening browser to sign in…</span>
 <span class="o">✓ Logged in</span></pre>
               </div>
@@ -330,7 +330,7 @@
           <div class="tips">
             <div>
               <strong>ログアウトしない</strong>
-              <span class="d">画面共有は閉じるだけにしてください。macOS からログアウトすると Remote Control が止まり、Taro の作業が必要になります。</span>
+              <span class="d">画面共有は閉じるだけにしてください。macOS からログアウトすると Remote Control が止まり、<span data-name="host">Taro</span> の作業が必要になります。</span>
             </div>
             <div>
               <strong>再起動・シャットダウンしない</strong>
@@ -338,11 +338,11 @@
             </div>
             <div>
               <strong>設定を変えない</strong>
-              <span class="d">スリープ・省電力・ソフトウェアアップデートの設定と、Claude Code の自動更新は Taro が管理しています。</span>
+              <span class="d">スリープ・省電力・ソフトウェアアップデートの設定と、Claude Code の自動更新は <span data-name="host">Taro</span> が管理しています。</span>
             </div>
             <div>
               <strong>パスワードを変えたら伝える</strong>
-              <span class="d">Mac のログインパスワードを変えたら Taro に伝えてください。自動ログインの設定を直さないと、次の再起動でログイン画面のまま止まります。</span>
+              <span class="d">Mac のログインパスワードを変えたら <span data-name="host">Taro</span> に伝えてください。自動ログインの設定を直さないと、次の再起動でログイン画面のまま止まります。</span>
             </div>
           </div>
           <div class="callout">
@@ -356,7 +356,7 @@
 
     <footer class="footer">
       <div class="wrap">
-        <span>Example Inc.</span>
+        <span><span data-org-footer>Example Inc.</span></span>
         <span>Cloudflare Access で保護されています</span>
       </div>
     </footer>

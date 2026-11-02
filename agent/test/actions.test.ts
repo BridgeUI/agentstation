@@ -127,7 +127,7 @@ describe('操作の実行（execFile の引数配列だけ）', () => {
     );
     expect(r.status).toBe('done');
     expect(calls).toEqual([
-      { cmd: '/bin/launchctl', args: ['kickstart', '-k', 'gui/501/com.example.claude-rc'] },
+      { cmd: '/bin/launchctl', args: ['kickstart', '-k', 'gui/501/co.bridgeui.agentstation.claude-rc'] },
     ]);
     expect(ctx.state.rc_last_restart).toBe(ctx.now());
   });
@@ -146,7 +146,7 @@ describe('操作の実行（execFile の引数配列だけ）', () => {
     expect(r.status).toBe('done');
     expect(calls.map((c) => [c.cmd, ...c.args])).toEqual([
       ['/opt/claude/bin/claude', 'update'],
-      ['/bin/launchctl', 'kickstart', '-k', 'gui/501/com.example.claude-rc'],
+      ['/bin/launchctl', 'kickstart', '-k', 'gui/501/co.bridgeui.agentstation.claude-rc'],
     ]);
   });
 
@@ -197,15 +197,15 @@ describe('操作の実行（execFile の引数配列だけ）', () => {
     });
     expect(r.status).toBe('done');
     expect(calls.map((c) => [c.cmd, ...c.args])).toEqual([
-      ['/bin/launchctl', 'disable', 'gui/501/com.example.tart-vm1'],
-      ['/bin/launchctl', 'bootout', 'gui/501/com.example.tart-vm1'],
+      ['/bin/launchctl', 'disable', 'gui/501/co.bridgeui.agentstation.tart-vm1'],
+      ['/bin/launchctl', 'bootout', 'gui/501/co.bridgeui.agentstation.tart-vm1'],
       ['/opt/homebrew/bin/tart', 'stop', 'vm1'],
-      ['/bin/launchctl', 'enable', 'gui/501/com.example.tart-vm1'],
+      ['/bin/launchctl', 'enable', 'gui/501/co.bridgeui.agentstation.tart-vm1'],
       [
         '/bin/launchctl',
         'bootstrap',
         'gui/501',
-        '/Users/tester/Library/LaunchAgents/com.example.tart-vm1.plist',
+        '/Users/tester/Library/LaunchAgents/co.bridgeui.agentstation.tart-vm1.plist',
       ],
       ['/opt/homebrew/bin/tart', 'ip', 'vm1'],
     ]);

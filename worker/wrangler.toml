@@ -12,13 +12,13 @@ preview_urls = false
 directory = "./public"
 binding = "ASSETS"
 # /api/* は Worker が先に処理する。それ以外は静的ファイル。
-run_worker_first = ["/api/*"]
+run_worker_first = ["/api/*", "/manifest.webmanifest"]
 not_found_handling = "404-page"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "agentstation"
-# TODO(導入時): `wrangler d1 create agentstation` の出力の database_id に置き換える
+# 本番の値は kit/site.json の cloudflare.d1_database_id（kit/render-config.mjs が入れる）
 database_id = "REPLACE_WITH_D1_DATABASE_ID"
 migrations_dir = "../db/migrations"
 
@@ -31,8 +31,12 @@ pattern = "workstation.example.com"
 custom_domain = true
 
 [vars]
-# メンバーとロール。形は shared/src/members.ts。本番は Cloudflare のダッシュボードか `wrangler deploy --var` で上書きする。
+# この wrangler.toml は見本の値（ローカル開発・テスト用）。本番は kit/render-config.mjs が kit/site.json から
+# worker/wrangler.deploy.toml を作り、npm run deploy がそれを使う（このファイルは書き換えない）。
+# メンバーとロール。形は shared/src/members.ts
 MEMBERS_JSON = '{"owner":"taro@example.com","envs":{"host":"taro@example.com","vm1":"hanako@example.com","vm2":"jiro@example.com"},"viewers":[]}'
+# 画面に出す名前・ドメイン・チーム名など（shared/src/site.ts）。見本の値。本番は kit/render-config.mjs が kit/site.json から入れる
+SITE_JSON = '{"org_name":"Example","org_footer":"Example Inc.","domain":"example.com","dashboard_host":"workstation.example.com","access_team":"example","people":{"host":{"name":"Taro","login":"taro"},"vm1":{"name":"Hanako","login":"hanako"},"vm2":{"name":"Jiro","login":"jiro"}}}'
 # Access のチームドメインと、ダッシュボード用 Access アプリの Audience タグ（JWT の aud）
 ACCESS_TEAM_DOMAIN = "example.cloudflareaccess.com"
 ACCESS_AUD_DASHBOARD = "REPLACE_WITH_DASHBOARD_AUD"

@@ -1,11 +1,10 @@
 {
-  "_comment": "kit/site.json にコピーして埋める。秘密情報（パスワード・トークン・Webhook URL）はここに書かない。people の host は必須、vm1 / vm2 は使う VM だけ書く（0〜2 台）。メールアドレスと cloudflare の値は秘密ではない（cloudflare は分かった段階で埋める。空なら wrangler.toml の今の値のまま）。",
+  "_comment": "kit/site.json にコピーして埋める（kit/render-config.mjs が本番の Worker の設定を作るときに読む）。秘密情報（パスワード・トークン・Webhook URL）は書かない。people の host は必須、vm1 / vm2 は使う VM だけ（0〜2 台）。cloudflare の値は分かった段階で埋める（秘密ではない）。",
   "org_name": "Example",
   "org_footer": "Example Inc.",
   "domain": "example.com",
   "dashboard_host": "workstation.example.com",
   "access_team": "example",
-  "label_prefix": "com.example",
   "timezone": "Asia/Tokyo",
   "people": {
     "host": {

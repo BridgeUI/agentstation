@@ -7,14 +7,14 @@
 
   プレースホルダ: __USER__（その環境のユーザー名）、__CODEX_ARGS__（常駐用のサブコマンド。要確認）
   想定する実行ファイル: npm -g で入れた場合 /Users/__USER__/.nodebrew/current/bin/codex（`which codex` で確認する）
-  配置先: ~/Library/LaunchAgents/com.example.codex.plist
+  配置先: ~/Library/LaunchAgents/co.bridgeui.agentstation.codex.plist
   ログ  : ~/Library/Logs/codex.out.log、codex.err.log
-  codex_restart: launchctl kickstart -k gui/$(id -u)/com.example.codex
+  codex_restart: launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.codex
 -->
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>com.example.codex</string>
+  <string>co.bridgeui.agentstation.codex</string>
   <key>ProgramArguments</key>
   <array>
     <string>/Users/__USER__/.nodebrew/current/bin/codex</string>

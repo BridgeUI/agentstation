@@ -169,7 +169,7 @@ export const SETUP_CHECK_SPECS: Record<SetupCheckKey, SetupCheckSpec> = {
   'launchd.claude_rc': {
     label: 'Remote Control の常駐（launchd）',
     manual: false,
-    how: 'launchctl bootstrap gui/<uid> ~/Library/LaunchAgents/com.example.claude-rc.plist',
+    how: 'launchctl bootstrap gui/<uid> ~/Library/LaunchAgents/co.bridgeui.agentstation.claude-rc.plist',
     envs: ALL,
   },
   'launchd.codex': {
@@ -181,13 +181,13 @@ export const SETUP_CHECK_SPECS: Record<SetupCheckKey, SetupCheckSpec> = {
   'launchd.vm1': {
     label: 'vm1 の自動起動（launchd）',
     manual: false,
-    how: 'launchctl bootstrap gui/<uid> ~/Library/LaunchAgents/com.example.tart-vm1.plist',
+    how: 'launchctl bootstrap gui/<uid> ~/Library/LaunchAgents/co.bridgeui.agentstation.tart-vm1.plist',
     envs: HOST,
   },
   'launchd.vm2': {
     label: 'vm2 の自動起動（launchd）',
     manual: false,
-    how: 'launchctl bootstrap gui/<uid> ~/Library/LaunchAgents/com.example.tart-vm2.plist',
+    how: 'launchctl bootstrap gui/<uid> ~/Library/LaunchAgents/co.bridgeui.agentstation.tart-vm2.plist',
     envs: HOST,
   },
   'cloudflared.running': {

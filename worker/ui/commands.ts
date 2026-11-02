@@ -1,5 +1,10 @@
 import type { Command, CommandAction, Env, MeResponse } from '@agentstation/shared';
-import { COMMAND_SPECS, canOperate, isRcDirName, type RcPermissionMode } from '@agentstation/shared';
+import {
+  COMMAND_SPECS,
+  canOperate,
+  isRcDirName,
+  type RcPermissionMode,
+} from '@agentstation/shared';
 import { ApiFailure, api } from './api.js';
 import { confirmDialog, hostnameDialog, sessionDialog } from './dialogs.js';
 import { html } from './dom.js';

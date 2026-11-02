@@ -24,9 +24,9 @@
         </a>
         <div class="nav-links">
           <a href="/" aria-current="page">一覧</a>
-          <a href="/host.html">Taro</a>
-          <a href="/vm1.html">Hanako</a>
-          <a href="/vm2.html">Jiro</a>
+          <a href="/host.html"><span data-name="host">Taro</span></a>
+          <a href="/vm1.html"><span data-name="vm1">Hanako</span></a>
+          <a href="/vm2.html"><span data-name="vm2">Jiro</span></a>
           <a href="/guide/">使い方ガイド</a>
         </div>
       </div>
@@ -105,7 +105,7 @@
         </div>
         <div class="panel-note" data-explain-body="envs" hidden>
           VM は Mac の上で動くため、そのままでは host の値に VM
-          の分が混ざります。Taro（本体）は、全体から VM
+          の分が混ざります。<span data-name="host">Taro</span>（本体）は、全体から VM
           の分を引いた値です。基礎設定に未完了があるときは、状態の下に件数を出します。
         </div>
       </section>
@@ -135,9 +135,9 @@
           </div>
           <div class="tools">
             <span class="legend" aria-hidden="true">
-              <span><i class="p1"></i>Taro（本体）</span>
-              <span data-env-only="vm1"><i class="p2"></i>Hanako</span>
-              <span data-env-only="vm2"><i class="p3"></i>Jiro</span>
+              <span><i class="p1"></i><span data-name="host">Taro</span>（本体）</span>
+              <span data-env-only="vm1"><i class="p2"></i><span data-name="vm1">Hanako</span></span>
+              <span data-env-only="vm2"><i class="p3"></i><span data-name="vm2">Jiro</span></span>
               <span><i class="free"></i>空き</span>
             </span>
             <div class="seg" role="group" aria-label="表示" data-seg="total">
@@ -210,7 +210,7 @@
 
     <footer class="footer">
       <div class="wrap">
-        <span>Example Inc.</span>
+        <span><span data-org-footer>Example Inc.</span></span>
         <span>Cloudflare Access で保護されています</span>
       </div>
     </footer>

@@ -32,7 +32,7 @@ claude auth login
 ブラウザで開く URL とコードが表示されるので、その環境の Claude アカウント（A/B/C）でログインする。終わったら Remote Control を立て直す（ダッシュボードのボタンか、下のコマンド）。
 
 ```bash
-launchctl kickstart -k gui/$(id -u)/com.example.claude-rc
+launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.claude-rc
 ```
 
 期待：3 分以内にダッシュボードが「接続中」になる。
@@ -40,7 +40,7 @@ launchctl kickstart -k gui/$(id -u)/com.example.claude-rc
 ## 2. エージェントが止まった（SSH は通る）
 
 ```bash
-launchctl print gui/$(id -u)/com.example.agent | grep -E "state|pid|last exit"
+launchctl print gui/$(id -u)/co.bridgeui.agentstation.agent | grep -E "state|pid|last exit"
 ```
 
 ```bash
@@ -50,7 +50,7 @@ tail -50 ~/Library/Logs/agentstation/err.log
 起動し直す：
 
 ```bash
-launchctl kickstart -k gui/$(id -u)/com.example.agent
+launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.agent
 ```
 
 期待：1〜2 分で「最終受信」が更新される。`launchctl print` に `state = running` が出ない場合は、plist が読み込まれていない（`docs/setup-mac.md` の launchd の章で `bootstrap` し直す）。
@@ -82,7 +82,7 @@ tart list
 ```
 
 ```bash
-launchctl print gui/$(id -u)/com.example.tart-vm1 | grep -E "state|pid|last exit"
+launchctl print gui/$(id -u)/co.bridgeui.agentstation.tart-vm1 | grep -E "state|pid|last exit"
 ```
 
 ```bash
@@ -92,7 +92,7 @@ tail -50 ~/Library/Logs/agentstation-vm/vm1.err.log
 手で起動して様子を見る（launchd を止めてから）：
 
 ```bash
-launchctl bootout gui/$(id -u)/com.example.tart-vm1
+launchctl bootout gui/$(id -u)/co.bridgeui.agentstation.tart-vm1
 ```
 
 ```bash
@@ -104,7 +104,7 @@ tart run --no-graphics vm1
 戻すとき：
 
 ```bash
-launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.tart-vm1.plist
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/co.bridgeui.agentstation.tart-vm1.plist
 ```
 
 ## 5. Mac か回線が落ちた（SSH も通らない）
@@ -177,8 +177,8 @@ sudo /sbin/shutdown -r now
 | 訓練                    | やること                                           | 期待                                          | 日付 | 結果 |
 | ----------------------- | -------------------------------------------------- | --------------------------------------------- | ---- | ---- |
 | 電源断→復帰             | スマートプラグでオフ→オン                          | 5 分以内に全環境「正常」                      | | |
-| host のエージェント停止 | `launchctl bootout gui/$(id -u)/com.example.agent` | 10 分以内に Slack「応答なし」、戻すと復旧通知 | | |
-| VM のエージェント停止   | vm2 内で `launchctl bootout gui/$(id -u)/com.example.agent` | vm2 だけ「要確認（エージェント停止）」と通知  | | |
+| host のエージェント停止 | `launchctl bootout gui/$(id -u)/co.bridgeui.agentstation.agent` | 10 分以内に Slack「応答なし」、戻すと復旧通知 | | |
+| VM のエージェント停止   | vm2 内で `launchctl bootout gui/$(id -u)/co.bridgeui.agentstation.agent` | vm2 だけ「要確認（エージェント停止）」と通知  | | |
 | ログアウト              | vm2 で jiro の GUI セッションを強制終了（ログアウト相当） | その環境だけ報告が止まる。ダッシュボードの「VM を再起動」で復帰 | | |
 | Claude 更新             | 「Claude Code を更新」                             | 数分以内に Remote Control とセッションが戻る  | | |
 | Codex 再起動            | 「Codex を再起動」（host）                          | ChatGPT アプリが終了して開き直し、Codex が「稼働中」のまま | | |

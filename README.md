@@ -2,21 +2,23 @@
 
 **English** | [日本語](README.ja.md)
 
-Keep Claude Code running on your own Mac (a Mac mini, Mac Studio or any Apple Silicon Mac you can dedicate to it), and watch and control it from your phone. The Mac itself plus zero to two [Tart](https://tart.run) macOS VMs each run Claude Code's Remote Control (and optionally Codex); a dashboard on Cloudflare shows their status, starts Remote Control for any folder, and fixes problems with one tap.
+Keep Claude Code running on your own Mac, and watch and control it from your phone.
 
-It is built for up to three people sharing one Mac, each using Claude Code in their own environment from the Claude app on their phone. One person using only the Mac itself works too.
+The Mac itself and zero to two macOS VMs (run with [Tart](https://tart.run)) each keep Claude Code's Remote Control running, optionally alongside Codex. A dashboard on Cloudflare shows their status, and from there you can start Remote Control in any folder or fix a problem with one tap. Any Apple Silicon Mac you can dedicate to Claude works, such as a Mac mini or Mac Studio.
+
+It is designed for up to three people sharing one Mac, each using Claude Code in their own environment from the Claude app on their phone. A single person using only the Mac itself works too.
 
 <p align="center"><img src="docs/media/overview.en.gif" width="960" alt="How it works: each environment's agent reports to Cloudflare, you check status on your phone, a disconnect is detected and sent to Slack, one tap fixes it, and you can start Remote Control for any folder from your phone"></p>
 <p align="center"><sub>MP4 version: <a href="docs/media/overview.en.mp4"><code>docs/media/overview.en.mp4</code></a></sub></p>
 
 ## Features
 
-- **Start Claude Code Remote Control from your phone**: pick a folder (or create one) in the dashboard and start Remote Control there, then continue the session in the Claude app. No terminal needed
-- One view of every environment: Claude Code, Remote Control, Codex, VM and agent health; CPU / memory / disk
+- **Start Remote Control from your phone**: pick a folder in the dashboard (or create one), and Remote Control starts there so you can continue in the Claude app. No terminal needed
+- See every environment at a glance: whether Claude Code, Remote Control, Codex, the VM and the agent are running, plus CPU / memory / disk usage
 - One-tap recovery: restart Remote Control, update Claude Code, restart a VM, restart the host (with a grace period), power-cycle via a smart plug (SwitchBot, optional)
 - Per-folder Remote Control: stop it, restore previous sessions, choose the permission mode
-- Slack notifications for outages, login required, etc. (optional)
-- SSH and screen sharing in the browser (Cloudflare Access), and over WARP from iPhone SSH / VNC / Files apps
+- Slack notifications when reports stop arriving or a login is required (optional)
+- SSH and screen sharing in the browser (Cloudflare Access). With WARP, you can also connect from SSH, VNC and Files apps on iPhone
 - A built-in guide for the people using each environment
 
 ![Dashboard overview](worker/public/guide/dashboard-overview.jpg)
@@ -24,8 +26,8 @@ It is built for up to three people sharing one Mac, each using Claude Code in th
 ## How it works
 
 ```
-Phone / PC ──(Cloudflare Access: Google login)──> Worker + D1 (UI, API, 1-minute Cron)
-                                                       ↑ heartbeat every 60 s: report status, receive commands
+Phone / PC ──(log in via Cloudflare Access)──> Worker + D1 (UI, API, 1-minute Cron)
+                                                     ↑ heartbeat every 60 s: report status, receive commands
 Mac
  ├─ host: agent, claude remote-control, cloudflared (Tunnel; exposes SSH / VNC over outbound connections)
  ├─ vm1 (Tart, optional): agent, claude remote-control
@@ -43,7 +45,7 @@ Design details (Japanese): [`docs/spec.md`](docs/spec.md).
 
 - An Apple Silicon Mac you can **dedicate to Claude** (FileVault off, automatic login, no sleep). 24 GB of memory or more is recommended for two VMs.
 - A Cloudflare account and a domain whose DNS is on Cloudflare (Workers, D1 and Zero Trust free plans are enough)
-- A Google account (Gmail is fine) and a Claude account for each person
+- An email address for each person (you start with one-time codes sent by email; Google login can be added later) and a Claude account
 - Optional: a Slack Incoming Webhook, a SwitchBot Plug Mini
 
 ## Installation
@@ -65,7 +67,9 @@ Read kit/START.md and help me install this repository in my environment.
 
 The installation guide, the dashboard UI and most documentation are in **Japanese**. Claude Code can follow them and explain each step in English if you ask it to.
 
-Most of the work is done by scripts: `kit/cloudflare-setup.mjs` creates the Cloudflare resources (Access apps and policies, service tokens, Tunnel, DNS, D1) from `kit/site.json`, and `kit/doctor.mjs` checks how far the setup has got and tells you what to do next. Your settings live only in `kit/site.json`; the repository itself is never modified, so updating is `git pull` and redeploy.
+Most of the work is done by scripts. `kit/cloudflare-setup.mjs` creates the Cloudflare resources (Access apps and policies, service tokens, Tunnel, DNS, D1) from `kit/site.json`, and `kit/doctor.mjs` checks how far the setup has got and tells you what to do next.
+
+Your settings live only in `kit/site.json`, and the repository files are never modified, so updating is just `git pull` and a redeploy.
 
 What the kit contains: [`kit/README.md`](kit/README.md). The step-by-step procedure: [`docs/initial-setup.md`](docs/initial-setup.md).
 

@@ -6,7 +6,8 @@ Keep macOS environments running on a single Mac mini — the Mac itself plus zer
 
 It is built for up to three people sharing one Mac mini, each using Claude Code in their own environment from the Claude app on their phone. One person using only the Mac itself works too.
 
-<p align="center"><img src="docs/media/overview.en.svg" width="960" alt="How it works: each environment's agent reports to Cloudflare, you check status on your phone, a disconnect is detected and sent to Slack, and one tap fixes it"></p>
+<p align="center"><img src="docs/media/overview.en.gif" width="960" alt="How it works: each environment's agent reports to Cloudflare, you check status on your phone, a disconnect is detected and sent to Slack, and one tap fixes it"></p>
+<p align="center"><sub>MP4 version: <a href="docs/media/overview.en.mp4"><code>docs/media/overview.en.mp4</code></a></sub></p>
 
 ## Features
 
@@ -77,7 +78,7 @@ What the kit contains and how to take in upstream updates: [`kit/README.md`](kit
 npm ci
 npm run typecheck && npm test --workspaces --if-present && npm run lint
 npm run dev    # wrangler dev; local sample data: docs/dev.md
-node docs/media/overview.mjs   # regenerate the animation above
+node docs/media/overview.mjs   # regenerate the animation (SVG); MP4 / GIF: docs/media/render-video.mjs
 ```
 
 Development rules are in [`CLAUDE.md`](CLAUDE.md). Keep only sample values on `main`; never commit real email addresses, domains or Cloudflare IDs.

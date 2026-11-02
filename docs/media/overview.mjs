@@ -1,4 +1,4 @@
-// README の先頭に置く動作概要のアニメーション（SVG）を作る。英語版と日本語版。
+// README の先頭に置く動作概要のアニメーション（SVG）を作る。英語版と日本語版。README には render-video.mjs で書き出した GIF を載せる。
 //   node docs/media/overview.mjs   → docs/media/overview.en.svg / overview.ja.svg
 // 外部のツールは使わない（CSS の keyframes だけ）。GitHub の README の <img> でそのまま再生される。
 import { writeFileSync } from 'node:fs';
@@ -19,7 +19,7 @@ const TEXT = {
     ],
     overview: 'Overview',
     connected: 'Connected',
-    lost: 'Disconnected',
+    lost: 'Offline',
     restarting: 'Restarting',
     button: 'Restart Remote Control',
     queued: 'rc_restart → vm1',

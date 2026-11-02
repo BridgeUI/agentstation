@@ -6,7 +6,8 @@ Mac mini 1 台で macOS 環境（本体と、Tart の VM 0〜2 台）を常駐�
 
 1 台の Mac mini を最大 3 人で分け合い、各自がスマホの Claude アプリから自分の環境の Claude Code を使う、という使い方を想定している。1 人で本体だけを使ってもよい。
 
-<p align="center"><img src="docs/media/overview.ja.svg" width="960" alt="動作の流れ：各環境のエージェントが Cloudflare に報告し、スマホで状態を見て、切断を検知して Slack に通知し、ボタンで復旧する"></p>
+<p align="center"><img src="docs/media/overview.ja.gif" width="960" alt="動作の流れ：各環境のエージェントが Cloudflare に報告し、スマホで状態を見て、切断を検知して Slack に通知し、ボタンで復旧する"></p>
+<p align="center"><sub>MP4 版：<a href="docs/media/overview.ja.mp4"><code>docs/media/overview.ja.mp4</code></a></sub></p>
 
 ## できること
 
@@ -75,7 +76,7 @@ kit/START.md を読んで、このリポジトリを私の環境に導入する�
 npm ci
 npm run typecheck && npm test --workspaces --if-present && npm run lint
 npm run dev    # wrangler dev。ローカルの見本データは docs/dev.md
-node docs/media/overview.mjs   # README のアニメーションを作り直す
+node docs/media/overview.mjs   # アニメーション（SVG）を作り直す。MP4 / GIF は docs/media/render-video.mjs
 ```
 
 開発のルールは [`CLAUDE.md`](CLAUDE.md)。`main` には見本の値だけを入れ、実在のメールアドレス・ドメイン・Cloudflare の ID はコミットしない。

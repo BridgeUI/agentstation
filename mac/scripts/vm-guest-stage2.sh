@@ -8,7 +8,7 @@
 #   ~/.config/agentstation/token.json     その VM のサービストークン（chmod 600）
 #
 # やること: nodebrew と Node 24、Claude Code（ネイティブ版）、Claude の settings.json（自動更新オフ）、
-#           エージェントのビルドと config.json、launchd（エージェント・claude-rc）。
+#           エージェントのビルドと常駐用の配置（~/.local/share/agentstation）、config.json、launchd（エージェント・claude-rc）。
 # やらないこと: Claude のログイン、作業フォルダの信頼、Remote Control の初回同意（利用者が一度対話で行う。5.2）。
 set -euo pipefail
 : "${GUEST_ENV:?GUEST_ENV（vm1 / vm2）が必要}"
@@ -52,6 +52,8 @@ cd ~/workspace/agentstation
 npm ci --no-audit --no-fund >/dev/null
 (cd agent && npm run build >/dev/null)
 ls -la agent/dist/index.js
+# 常駐はリポジトリではなくここを指す（作業フォルダを消しても止まらないように）
+bash mac/scripts/install-runtime.sh
 
 step "config.json"
 if [ ! -f ~/.config/agentstation/config.json ]; then

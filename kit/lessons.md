@@ -8,6 +8,12 @@
 
 → 導入作業を host の Remote Control 越しの Claude Code でしているなら、エージェントの再起動は **応答の最後** に置き、先に確認手順（`launchctl print …` とダッシュボードの最終報告時刻）を書いておく。
 
+## launchd にリポジトリの checkout を直接指させない
+
+元の構成ではエージェントの plist が `~/workspace/agentstation/agent/dist/index.js` を指していた。作業フォルダを整理してリポジトリを消しても、動いているプロセスはそのまま報告を続けるので気づけない。次に Mac を再起動したとき、launchd が WorkingDirectory に入れず `EX_CONFIG(78)` で起動に失敗し、ログにも何も出ないままダッシュボードへの報告が途絶えた（2026-11-19）。
+
+→ 常駐が使うファイルは `bash mac/scripts/install-runtime.sh` で `~/.local/share/agentstation/` にコピーし、plist はそこを指す（テンプレートは対応済み）。更新はビルドのあと `install-runtime.sh --restart`。`mac/scripts/check.sh` が古い plist を見つけると NG を出す。
+
 ## Claude のフォルダの信頼は git リポジトリの境界で切れる
 
 `claude remote-control` は、cwd 自身が `~/.claude.json` で信頼済みか、信頼済みの祖先が cwd の git ルート以下にあるときだけ起動する。空フォルダは親（`~/workspace`）の信頼を引き継ぐが、中で `git clone` / `git init` した瞬間に別の境界になり、次の起動で「Workspace not trusted」で終わる（stdout にだけ出て `--debug-file` には残らない）。

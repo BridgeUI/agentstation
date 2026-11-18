@@ -124,7 +124,10 @@ cd ~/workspace && claude auth login
 
 ```bash
 cd ~/workspace/agentstation/agent && npm run build
+cd ~/workspace/agentstation && bash mac/scripts/install-runtime.sh   # 常駐用に ~/.local/share/agentstation へコピー
 ```
+
+launchd はリポジトリではなく `~/.local/share/agentstation/` を指す。リポジトリを消しても動かしても常駐は止まらない。更新のたびに `install-runtime.sh --restart`。
 
 `~/.config/agentstation/config.json`（600）。実機の値：
 

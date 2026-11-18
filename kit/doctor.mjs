@@ -40,7 +40,7 @@ async function main() {
     ? ok(`置き場所 ${ROOT}`)
     : ng(
         `置き場所 ${ROOT}`,
-        `~/workspace/agentstation に置く（launchd のラッパーがこのパスを前提にしている）`,
+        `~/workspace/agentstation に置く（手順書と VM への rsync がこのパスを前提にしている。常駐は ~/.local/share/agentstation のコピーを使うので、ここを動かしても止まりはしない）`,
       );
   existsSync(join(ROOT, 'node_modules'))
     ? ok('依存（node_modules）')

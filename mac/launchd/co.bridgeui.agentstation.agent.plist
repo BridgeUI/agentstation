@@ -7,7 +7,9 @@
   ログ  : ~/Library/Logs/agentstation/（先に mkdir -p しておく）
   設定  : ~/.config/agentstation/config.json と token.json（agent/src/config.ts。token.json は chmod 600）
   起動  : launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/co.bridgeui.agentstation.agent.plist
-  更新後: launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.agent
+  実体  : ~/.local/share/agentstation/agent/index.js（mac/scripts/install-runtime.sh が置く。リポジトリの checkout は指さない。
+          作業フォルダを消す・移すと次の再起動で起動できなくなるため。2026-11-19）
+  更新後: bash mac/scripts/install-runtime.sh --restart（ビルドのあと）
   ExitTimeOut 35: エージェントは SIGTERM で実行中の操作を最大 30 秒待ってから止まる（agent/src/index.ts）。launchd の既定 20 秒だと途中で SIGKILL される。
 -->
 <plist version="1.0">
@@ -17,11 +19,11 @@
   <key>ProgramArguments</key>
   <array>
     <string>/Users/__USER__/.nodebrew/current/bin/node</string>
-    <string>/Users/__USER__/workspace/agentstation/agent/dist/index.js</string>
+    <string>/Users/__USER__/.local/share/agentstation/agent/index.js</string>
     <string>--env=__ENV__</string>
   </array>
   <key>WorkingDirectory</key>
-  <string>/Users/__USER__/workspace/agentstation/agent</string>
+  <string>/Users/__USER__</string>
   <key>EnvironmentVariables</key>
   <dict>
     <key>HOME</key>

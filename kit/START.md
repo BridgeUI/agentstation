@@ -64,7 +64,7 @@ cp kit/site.example.json kit/site.json   # 1 章の値を書く
 node kit/doctor.mjs
 ```
 
-- 置き場所は `~/workspace/agentstation` に固定（launchd のラッパーと Remote Control の作業フォルダがこのパスを前提にしている）。
+- 置き場所は `~/workspace/agentstation` に揃える（手順書と VM への rsync がこのパスを前提にしている）。常駐（launchd）はここを直接は指さず、`mac/scripts/install-runtime.sh` が `~/.local/share/agentstation/` に置いたコピーを使う。
 - `kit/site.json` は `.gitignore` 済み。秘密ではないが導入先の構成そのものなので、導入者の private な場所にも控えてもらう。
 - 確認：`doctor.mjs` の「2. 導入先の値」が ✓（「まだ空の値」は 3 章で埋まる）。
 
@@ -115,7 +115,7 @@ npx wrangler secret put SLACK_WEBHOOK_URL -c wrangler.deploy.toml    # 任意。
 2. `sudo bash mac/scripts/pmset-setup.sh` と自動更新の停止（4.2）
 3. ツール：Homebrew、Node、Tart（VM を使うときだけ）、cloudflared、Claude Code（4.3）。`claude auth login`（4.4）
 4. **cloudflared**（導入者。sudo）：`sudo cloudflared service install "$(cat ~/.config/agentstation/cloudflare/tunnel-token)"`。3.2 で Cloudflare 側に設定を持つ Tunnel を作ったので、`/etc/cloudflared/config.yml` は要らない（4.7 の手順は手で Tunnel を作った場合）
-5. **エージェント**：`mv ~/.config/agentstation/cloudflare/token.host.json ~/.config/agentstation/token.json`。`config.json` を作る（4.5。`base_url` は `https://<dashboard_host>`、`vms` は使う VM、VM なしなら `"vms": []`）。`npm run build --workspace agent`
+5. **エージェント**：`mv ~/.config/agentstation/cloudflare/token.host.json ~/.config/agentstation/token.json`。`config.json` を作る（4.5。`base_url` は `https://<dashboard_host>`、`vms` は使う VM、VM なしなら `"vms": []`）。`npm run build --workspace agent && bash mac/scripts/install-runtime.sh`
 6. launchd（4.6）、sudoers・newsyslog・sshd（4.8。sshd の CA は `~/.config/agentstation/cloudflare/ca/ssh-host.pub` を `/etc/ssh/ca.pub` に）
 7. 確認：`bash mac/scripts/check.sh` と `node kit/doctor.mjs` の「5. この Mac」が ✓。ダッシュボードの host が「正常」、基礎設定が全部 OK
 
@@ -147,7 +147,7 @@ npm run typecheck && npm test --workspaces --if-present
 cd worker && npm run db:migrate:remote && npm run build:ui && npm run deploy
 ```
 
-そのあと各マシンで `git pull`（VM は host から rsync）→ `npm ci && npm run build --workspace agent` → `launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.agent`（`kit/lessons.md` の注意を先に読む）→ `node kit/doctor.mjs`。
+そのあと各マシンで `git pull`（VM は host から rsync）→ `npm ci && npm run build --workspace agent` → `bash mac/scripts/install-runtime.sh --restart`（`kit/lessons.md` の注意を先に読む）→ `node kit/doctor.mjs`。
 
 導入先でリポジトリのファイルを直さない（次の `git pull` でぶつかる）。直したいところは上流に issue か PR を出す。
 

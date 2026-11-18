@@ -57,6 +57,8 @@ launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.agent
 
 ログの見方：設定ファイルが読めない（`~/.config/agentstation/` の config.json / token.json）、サービストークンの失効（HTTP 403）、`node` のパスが変わった（nodebrew で入れ直したとき）、のどれかが多い。
 
+`last exit code = 78: EX_CONFIG` で `state = spawn scheduled` のまま、ログに何も増えない：launchd が起動する前に失敗している（plist が指すファイルか WorkingDirectory が無い）。`grep -A3 ProgramArguments ~/Library/LaunchAgents/co.bridgeui.agentstation.agent.plist` のパスを確かめる。`~/.local/share/agentstation/agent/index.js` が無ければ、リポジトリで `npm run build --workspace agent && bash mac/scripts/install-runtime.sh --restart`。古い plist がまだ `~/workspace/agentstation/agent/dist/index.js` を指していたらテンプレートから置き直して `bootout` → `bootstrap`（2026-11-19、作業フォルダを消したあとの再起動でこれが起きた）。
+
 ## 3. GUI セッションが落ちた（ログアウトしてしまった等）
 
 LaunchAgent（エージェント、VM、Remote Control）はログインセッションごと止まる。SSH は通る（cloudflared は LaunchDaemon）。
@@ -150,7 +152,7 @@ sudo /sbin/shutdown -r now
 | 対象                      | やり方                                                                                                                                                                           | 誰が           |
 | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
 | Claude Code               | 毎晩の夜間メンテナンスで自動。急ぐときはダッシュボードの「Claude Code を更新」                                                                                                   | 本人・オーナー |
-| エージェント              | host でコミット → VM へは rsync（リポジトリに remote は無い）→ 3 環境それぞれでビルドと `launchctl kickstart`。手順は `docs/setup-mac.md` 11.1 | オーナー       |
+| エージェント              | host でコミット → VM へは rsync（リポジトリに remote は無い）→ 3 環境それぞれでビルドと `bash mac/scripts/install-runtime.sh --restart`。手順は `docs/setup-mac.md` 11.1 | オーナー       |
 | Worker（ダッシュボード）  | 手元で `npm run deploy --workspace worker`                                                                                                                                       | オーナー       |
 | macOS                     | 自動更新はオフ。Taro が時間を決めて手動で。VM を止めてから                                                                                                                       | オーナー       |
 | cloudflared / Tart / Node | `brew upgrade` を Taro が手動で。終わったら 6 の再起動                                                                                                                           | オーナー       |

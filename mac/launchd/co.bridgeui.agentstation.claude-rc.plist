@@ -6,6 +6,7 @@
   claude-rc.sh を指す（session_restore のため。agent/src/actions/rc.ts）。ラッパーは
   ~/.local/bin/claude remote-control --debug-file ~/Library/Logs/claude-rc.log を exec する。
   claude の場所が違うときは EnvironmentVariables に CLAUDE_BIN を足す。
+  ラッパーの実体は ~/.local/share/agentstation/bin/claude-rc.sh（mac/scripts/install-runtime.sh が置く。リポジトリは指さない）。
   プレースホルダ: __USER__（その環境のユーザー名: taro / hanako / jiro）
   前提  : 作業フォルダ /Users/__USER__/workspace を作り、一度 claude を対話的に起動して信頼しておく（ホーム直下・Desktop・Documents は不可）
   配置先: ~/Library/LaunchAgents/co.bridgeui.agentstation.claude-rc.plist
@@ -21,7 +22,7 @@
   <key>ProgramArguments</key>
   <array>
     <string>/bin/bash</string>
-    <string>/Users/__USER__/workspace/agentstation/mac/launchd/claude-rc.sh</string>
+    <string>/Users/__USER__/.local/share/agentstation/bin/claude-rc.sh</string>
   </array>
   <key>WorkingDirectory</key>
   <string>/Users/__USER__/workspace</string>

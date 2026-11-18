@@ -370,7 +370,7 @@ launchd からは `mac/launchd/claude-rc.sh`（ラッパー）経由で同じコ
 
 ### 6.1 取得とビルド
 
-plist が参照するパスは `~/workspace/agentstation`。ここに clone する。各環境の git 認証はその環境のものを使い、他の環境の鍵を持ち込まない（spec 3.1）。
+リポジトリは `~/workspace/agentstation` に clone する。launchd はリポジトリを直接は指さず、ビルドしたものを `mac/scripts/install-runtime.sh` で `~/.local/share/agentstation/` にコピーして使う（作業フォルダを消す・移すと、次の再起動で常駐が起動できなくなるため。2026-11-19）。各環境の git 認証はその環境のものを使い、他の環境の鍵を持ち込まない（spec 3.1）。
 
 ```bash
 mkdir -p ~/workspace
@@ -379,10 +379,11 @@ git clone <リポジトリの URL> agentstation
 cd agentstation
 npm install
 npm run build --workspace agent
-ls -l agent/dist/index.js
+bash mac/scripts/install-runtime.sh
+ls -l ~/.local/share/agentstation/agent/index.js ~/.local/share/agentstation/bin/claude-rc.sh
 ```
 
-期待する結果：`agent/dist/index.js` が 1 ファイルできる。
+期待する結果：`agent/dist/index.js` が 1 ファイルでき、`~/.local/share/agentstation/` に `agent/index.js` と `bin/claude-rc.sh` が置かれる（`VERSION` にコミット）。
 
 ### 6.2 設定ファイル（`agent/src/config.ts` が正。キーが増えたら `agent/README.md` を参照）
 
@@ -675,13 +676,13 @@ ssh taro@<Mac mini の LAN IP> "uptime; launchctl print gui/\$(id -u)/co.bridgeu
 for t in hanako@192.168.64.10 jiro@192.168.64.11; do
   rsync -az --delete --exclude node_modules --exclude dist --exclude .wrangler --exclude '.dev.vars*' --exclude .DS_Store \
     ~/workspace/agentstation "$t":workspace/
-  ssh "$t" 'export PATH=$HOME/.nodebrew/current/bin:$PATH; cd ~/workspace/agentstation && npm run build --workspace agent && launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.agent && sleep 3 && launchctl print gui/$(id -u)/co.bridgeui.agentstation.agent | grep -E "^\s*(state|pid) "'
+  ssh "$t" 'export PATH=$HOME/.nodebrew/current/bin:$PATH; cd ~/workspace/agentstation && npm run build --workspace agent && bash mac/scripts/install-runtime.sh --restart && sleep 3 && launchctl print gui/$(id -u)/co.bridgeui.agentstation.agent | grep -E "^\s*(state|pid) "'
 done
 ```
 
-依存（`package.json` / `package-lock.json`）を変えたときだけ、ビルドの前に `npm install` を足す。host は `npm run build --workspace agent` のあと同じく `launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.agent`（host でフォルダごとの RC から作業していると、その Claude のセッションも一緒に切れる。エージェントの子プロセスのため）。
+依存（`package.json` / `package-lock.json`）を変えたときだけ、ビルドの前に `npm install` を足す。host は `npm run build --workspace agent` のあと同じく `bash mac/scripts/install-runtime.sh --restart`（ビルドしただけでは常駐は変わらない。host でフォルダごとの RC から作業していると、その Claude のセッションも一緒に切れる。エージェントの子プロセスのため）。
 
-期待する結果：`state = running`、`~/Library/Logs/agentstation/out.log` に新しい「agentstation 起動」の行。plist を変えたときは `bootout` → `bootstrap`。
+期待する結果：`state = running`、`~/Library/Logs/agentstation/out.log` に新しい「agentstation 起動」の行、`~/.local/share/agentstation/VERSION` が今のコミット。`claude-rc.sh` を変えたときも `install-runtime.sh` で置き直し、`launchctl kickstart -k gui/$(id -u)/co.bridgeui.agentstation.claude-rc`。plist を変えたときは `bootout` → `bootstrap`。
 
 ### 11.2 Claude Code
 

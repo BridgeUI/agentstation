@@ -129,7 +129,6 @@ fi
 H "ツールの絶対パス（plist が参照する。spec 3.1）"
 [ -x "$HOME_DIR/.nodebrew/current/bin/node" ] && OK "node: $HOME_DIR/.nodebrew/current/bin/node ($("$HOME_DIR/.nodebrew/current/bin/node" -v))" || NG "node" "$HOME_DIR/.nodebrew/current/bin/node が無い"
 [ -x "$HOME_DIR/.local/bin/claude" ] && OK "claude: $HOME_DIR/.local/bin/claude" || NG "claude" "$HOME_DIR/.local/bin/claude が無い（which claude で場所を確認し plist の CLAUDE_BIN を直す）"
-[ -x "$HOME_DIR/workspace/agentstation/mac/launchd/claude-rc.sh" ] && OK "claude-rc.sh（ラッパー）がある" || NG "claude-rc.sh" "$HOME_DIR/workspace/agentstation/mac/launchd/claude-rc.sh が無いか実行権が無い"
 if [ "$ENV_NAME" = host ]; then
   [ -x /opt/homebrew/bin/tart ] && OK "tart: /opt/homebrew/bin/tart" || NG "tart" "/opt/homebrew/bin/tart が無い"
   [ -x /opt/homebrew/bin/cloudflared ] && OK "cloudflared: /opt/homebrew/bin/cloudflared" || NG "cloudflared" "/opt/homebrew/bin/cloudflared が無い"
@@ -155,7 +154,13 @@ if [ -f "$cfgdir/config.json" ]; then
   for k in base_url claude_path; do grep -q "\"$k\"" "$cfgdir/config.json" && OK "config.json: $k" || NG "config.json" "$k が無い"; done
   if [ "$ENV_NAME" = host ]; then grep -q '"tart_path"' "$cfgdir/config.json" && OK "config.json: tart_path" || NG "config.json" "host には tart_path が必要"; fi
 fi
-[ -f "$HOME_DIR/workspace/agentstation/agent/dist/index.js" ] && OK "agent/dist/index.js がある" || NG "agent/dist/index.js" "無い（npm run build --workspace agent）"
+rt="$HOME_DIR/.local/share/agentstation"
+[ -f "$rt/agent/index.js" ] && OK "常駐用のエージェント（$rt/agent/index.js）がある" || NG "常駐用のエージェント" "$rt/agent/index.js が無い（npm run build --workspace agent のあと bash mac/scripts/install-runtime.sh）"
+[ -x "$rt/bin/claude-rc.sh" ] && OK "常駐用の claude-rc.sh がある" || NG "常駐用の claude-rc.sh" "$rt/bin/claude-rc.sh が無い（bash mac/scripts/install-runtime.sh）"
+for f in "$HOME_DIR/Library/LaunchAgents/co.bridgeui.agentstation.agent.plist" "$HOME_DIR/Library/LaunchAgents/co.bridgeui.agentstation.claude-rc.plist"; do
+  [ -f "$f" ] || continue
+  grep -q "/workspace/" "$f" && grep -qE "dist/index\.js|mac/launchd/claude-rc\.sh" "$f" && NG "$(basename "$f")" "リポジトリの checkout を直接指している（作業フォルダを消すと次の再起動で止まる。テンプレートから置き直す）"
+done
 
 # ---- 10. launchd ----
 H "launchd（state = running を期待）"

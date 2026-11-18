@@ -6,10 +6,14 @@
 | `co.bridgeui.agentstation.agent.plist` | LaunchAgent | `~/Library/LaunchAgents/` | host / vm1 / vm2（`__ENV__` を変える） |
 | `co.bridgeui.agentstation.tart-vm1.plist` / `co.bridgeui.agentstation.tart-vm2.plist` | LaunchAgent | `~/Library/LaunchAgents/` | host |
 | `co.bridgeui.agentstation.claude-rc.plist` | LaunchAgent | `~/Library/LaunchAgents/` | host / vm1 / vm2 |
-| `claude-rc.sh` | 上の plist が呼ぶラッパー（`session.json` があれば `--session-id` を付ける） | リポジトリの場所のまま使う（`~/workspace/agentstation/mac/launchd/claude-rc.sh`） | host / vm1 / vm2 |
+| `claude-rc.sh` | 上の plist が呼ぶラッパー（`session.json` があれば `--session-id` を付ける） | `mac/scripts/install-runtime.sh` が `~/.local/share/agentstation/bin/claude-rc.sh` にコピーする | host / vm1 / vm2 |
 | `co.bridgeui.agentstation.codex.plist` | LaunchAgent | `~/Library/LaunchAgents/` | **未確認（docs/verify.md C-5）。確認が取れるまで配置しない** |
 
 ラベルは `co.bridgeui.agentstation.<名前>`（cloudflared だけ公式の `com.cloudflare.cloudflared`）。VM のラベル `co.bridgeui.agentstation.tart-vm1/2` はエージェントの既定値（`agent/src/config.ts` の `DEFAULT_LABELS`）に合わせてある。
+
+## 実体の置き場所
+
+エージェント（`agent/dist/index.js`）と `claude-rc.sh` は、リポジトリから `~/.local/share/agentstation/` にコピーしたものを使う（`bash mac/scripts/install-runtime.sh`）。plist がリポジトリの checkout を直接指していると、作業フォルダを消す・移す・ブランチを切り替えるだけで常駐が壊れ、しかも動いている間は気づけず次の再起動で初めて起動に失敗する（2026-11-19 に実際に起きた。launchd は `last exit code = 78: EX_CONFIG`、ログには何も出ない）。
 
 ## プレースホルダ
 
@@ -50,7 +54,7 @@ sudo plutil -lint /Library/LaunchDaemons/com.cloudflare.cloudflared.plist
 
 ## claude-rc.sh（Remote Control のラッパー）
 
-`co.bridgeui.agentstation.claude-rc.plist` は `claude` を直接ではなく `claude-rc.sh` を起動する。ラッパーは `~/.config/agentstation/session.json`（エージェントの `session_restore` が書く。`{"session_id": "..."}`）があれば ID を読んでファイルを消し、`--session-id` を付けて `claude remote-control --debug-file ~/Library/Logs/claude-rc.log` を `exec` する。無ければそのまま起動する。ファイルはリポジトリの checkout（`~/workspace/agentstation`）をそのまま使うので、コピーは不要（`git pull` で更新される）。
+`co.bridgeui.agentstation.claude-rc.plist` は `claude` を直接ではなく `claude-rc.sh` を起動する。ラッパーは `~/.config/agentstation/session.json`（エージェントの `session_restore` が書く。`{"session_id": "..."}`）があれば ID を読んでファイルを消し、`--session-id` を付けて `claude remote-control --debug-file ~/Library/Logs/claude-rc.log` を `exec` する。無ければそのまま起動する。plist が指すのはリポジトリではなく `~/.local/share/agentstation/bin/claude-rc.sh`（`mac/scripts/install-runtime.sh` がコピーする）。`git pull` しただけでは変わらないので、変えたら `install-runtime.sh` を流してから claude-rc を `kickstart -k` する。
 
 - `claude` の場所が `~/.local/bin/claude` でないときは plist の `EnvironmentVariables` に `CLAUDE_BIN` を足す
 - `--session-id` の挙動は要確認（docs/verify.md C-2）
